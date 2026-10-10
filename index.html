@@ -6513,125 +6513,140 @@
         }
 
         function confirmPaymentProcess() {
-            if (isProcessingPayment) return;
-            syncCartInputsToMemory();
-            let order = activeOrders[currentTableKey];
-            if (!order) return;
+    if (isProcessingPayment) return;
+    syncCartInputsToMemory();
+    let order = activeOrders[currentTableKey];
+    if (!order) return;
 
-            let grand = Math.round(getOrderGrandTotal(order) * 100) / 100;
-            let paid = Math.round((Number(document.getElementById('modal-paid-input').value) || 0) * 100) / 100;
-            if (paid < (grand - 0.001)) {
-                return alert("Paid amount is less than total due!");
-            }
-            isProcessingPayment = true;
+    let grand = Math.round(getOrderGrandTotal(order) * 100) / 100;
+    let paid = Math.round((Number(document.getElementById('modal-paid-input').value) || 0) * 100) / 100;
+    if (paid < (grand - 0.001)) {
+        return alert("Paid amount is less than total due!");
+    }
+    isProcessingPayment = true;
 
-            let change = Math.max(0, Math.round((paid - grand) * 100) / 100);
-            let shouldPrint = document.getElementById('modal-print-checkbox').checked;
-            let invRef = "INV-" + Date.now().toString().slice(-6);
-            let chosenPaymentMethod = activeModalPaymentMethod || (document.getElementById('payment-method') ? document.getElementById('payment-method').value : 'Cash');
+    let change = Math.max(0, Math.round((paid - grand) * 100) / 100);
+    let shouldPrint = document.getElementById('modal-print-checkbox').checked;
+    let invRef = "INV-" + Date.now().toString().slice(-6);
+    let chosenPaymentMethod = activeModalPaymentMethod || (document.getElementById('payment-method') ? document.getElementById('payment-method').value : 'Cash');
 
-            // Accumulate all-time item sales counts so most ordered items permanently stay first in menu categories
-            try {
-                let allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
-                if (order.items && Array.isArray(order.items)) {
-                    order.items.forEach(it => {
-                        if (!it) return;
-                        let q = Number(it.qty) || 1;
-                        if (it.id) allTimeMap[String(it.id)] = (allTimeMap[String(it.id)] || 0) + q;
-                        if (it.name) {
-                            let nk = String(it.name).trim().toLowerCase();
-                            allTimeMap[nk] = (allTimeMap[nk] || 0) + q;
-                        }
-                    });
+    // Accumulate all-time item sales counts so most ordered items permanently stay first in menu categories
+    try {
+        let allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
+        if (order.items && Array.isArray(order.items)) {
+            order.items.forEach(it => {
+                if (!it) return;
+                let q = Number(it.qty) || 1;
+                if (it.id) allTimeMap[String(it.id)] = (allTimeMap[String(it.id)] || 0) + q;
+                if (it.name) {
+                    let nk = String(it.name).trim().toLowerCase();
+                    allTimeMap[nk] = (allTimeMap[nk] || 0) + q;
                 }
-                localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
-            } catch(e) {
-                console.error("All time sales storage error", e);
-            }
-
-            let clonedItems = JSON.parse(JSON.stringify(order.items || []));
-
-            let saleRecord = {
-                timestamp: new Date().toISOString(),
-                date: new Date().toLocaleDateString('en-GB'),
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                ref: invRef,
-                source: currentTableKey,
-                items: clonedItems,
-                subtotal: getOrderSubtotal(order),
-                discount: order.discount || 0,
-                total: grand,
-                paid: paid,
-                change: change,
-                paymentMethod: chosenPaymentMethod,
-                servedBy: document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff',
-                takenBy: order.takenBy || (document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff'),
-                intake: order.orderIntake || "",
-                intakeUpdatedBy: order.intakeUpdatedBy || "",
-                seatedAt: order.seatedAt || null,
-                seatedDuration: order.seatedAt ? getSeatedDurationInfo(order.seatedAt).durationText : null
-            };
-
-            if (order.customerName) {
-                saleRecord.customerName = order.customerName;
-                saleRecord.customerPhone = order.customerPhone || "";
-            }
-
-            // Record sale
-            db.ref('salesHistory').push(saleRecord);
-
-            // Update shift stats
-            if (activeShift) {
-                activeShift.billsCount = (activeShift.billsCount || 0) + 1;
-                activeShift.totalCollected = (activeShift.totalCollected || 0) + grand;
-                db.ref('activeShift').set(activeShift);
-            }
-
-            // Clean up any session record so customers scanning QR never see Payment Complete
-            db.ref('tableSessions/' + currentTableKey).remove().catch(() => {});
-
-            // Clear any alerts for this table
-            db.ref('newCustomerOrderAlerts/' + currentTableKey).remove();
-            db.ref('staffAlerts/' + currentTableKey).remove();
-
-            // Clear table links — values are master-table-name strings, so dissolve the whole group by strict match
-            if (typeof tableLinks !== 'undefined' && tableLinks) {
-                const groupMaster = tableLinks[currentTableKey] || currentTableKey;
-                let linkChanged = false;
-                Object.keys(tableLinks).forEach(k => {
-                    if (k === groupMaster || tableLinks[k] === groupMaster) {
-                        delete tableLinks[k];
-                        linkChanged = true;
-                    }
-                });
-                if (linkChanged) db.ref('tableLinks').set(tableLinks);
-            }
-
-            // Mark paid in sessionStorage
-            // paid flag removed to prevent Payment Complete screen
-
-            order.paymentMethod = chosenPaymentMethod;
-
-            // Remove order. Also clear local memory immediately so the table-grid
-            // seated-time auto-repair cannot recreate a just-paid order before
-            // Firebase's async listener returns the removed state.
-            const paidOrderKey = currentTableKey;
-            db.ref('activeOrders/' + paidOrderKey).remove();
-            if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
-            if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
-
-            closePaymentModal();
-            isProcessingPayment = false;
-
-            if (shouldPrint) {
-                populateCustomerReceipt(order, paid, change);
-                triggerPrint("print-customer", () => {
-                    backToTableSelection();
-                });
-            } else {
-                backToTableSelection();
-            }
+            });
         }
+        localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
+    } catch(e) {
+        console.error("All time sales storage error", e);
+    }
+
+    let clonedItems = JSON.parse(JSON.stringify(order.items || []));
+
+    let saleRecord = {
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleDateString('en-GB'),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        ref: invRef,
+        source: currentTableKey,
+        items: clonedItems,
+        subtotal: getOrderSubtotal(order),
+        discount: order.discount || 0,
+        total: grand,
+        paid: paid,
+        change: change,
+        paymentMethod: chosenPaymentMethod,
+        servedBy: document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff',
+        takenBy: order.takenBy || (document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff'),
+        intake: order.orderIntake || "",
+        intakeUpdatedBy: order.intakeUpdatedBy || "",
+        seatedAt: order.seatedAt || null,
+        seatedDuration: order.seatedAt ? getSeatedDurationInfo(order.seatedAt).durationText : null
+    };
+
+    if (order.customerName) {
+        saleRecord.customerName = order.customerName;
+        saleRecord.customerPhone = order.customerPhone || "";
+    }
+
+    // Record sale
+    db.ref('salesHistory').push(saleRecord);
+
+    // Update shift stats
+    if (activeShift) {
+        activeShift.billsCount = (activeShift.billsCount || 0) + 1;
+        activeShift.totalCollected = (activeShift.totalCollected || 0) + grand;
+        db.ref('activeShift').set(activeShift);
+    }
+
+    // Clean up any session record so customers scanning QR never see Payment Complete
+    db.ref('tableSessions/' + currentTableKey).remove().catch(() => {});
+
+    // Clear any alerts for this table
+    db.ref('newCustomerOrderAlerts/' + currentTableKey).remove();
+    db.ref('staffAlerts/' + currentTableKey).remove();
+
+    // Clear table links — values are master-table-name strings, so dissolve the whole group by strict match
+    if (typeof tableLinks !== 'undefined' && tableLinks) {
+        const groupMaster = tableLinks[currentTableKey] || currentTableKey;
+        let linkChanged = false;
+        Object.keys(tableLinks).forEach(k => {
+            if (k === groupMaster || tableLinks[k] === groupMaster) {
+                delete tableLinks[k];
+                linkChanged = true;
+            }
+        });
+        if (linkChanged) db.ref('tableLinks').set(tableLinks);
+    }
+
+    order.paymentMethod = chosenPaymentMethod;
+
+    // Remove order. Also clear local memory immediately so the table-grid
+    // seated-time auto-repair cannot recreate a just-paid order before
+    // Firebase's async listener returns the removed state.
+    const paidOrderKey = currentTableKey;
+    db.ref('activeOrders/' + paidOrderKey).remove();
+    if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
+    if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
+
+    closePaymentModal();
+    isProcessingPayment = false;
+
+    // ---- Receipt + Cash Drawer logic ----
+    const finishAfterPayment = () => {
+        backToTableSelection();
+    };
+
+    const printReceiptThenFinish = () => {
+        if (shouldPrint) {
+            populateCustomerReceipt(order, paid, change);
+            triggerPrint("print-customer", finishAfterPayment);
+        } else {
+            finishAfterPayment();
+        }
+    };
+
+    // 💵 Cash → drawer kick first, then receipt
+    // 💳 Card / 📱 QR Pay → no drawer, straight to receipt
+    if (chosenPaymentMethod === 'Cash') {
+        try {
+            triggerPrint("print-drawer-mode", printReceiptThenFinish);
+        } catch (e) {
+            console.warn('Cash drawer kick failed:', e);
+            printReceiptThenFinish();
+        }
+    } else {
+        printReceiptThenFinish();
+    }
+}
 
         let targetMoveDestination = null;
 
