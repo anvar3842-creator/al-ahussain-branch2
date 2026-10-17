@@ -1419,6 +1419,119 @@
         .admin-buttons-grid { grid-template-columns: 1fr; }
     }
 
+
+    /* ---------- 13b. CONSISTENT MOBILE UI: QR, TAKEAWAY & STAFF ---------- */
+    * { -webkit-tap-highlight-color: transparent; }
+    button, input, select, textarea { max-width: 100%; }
+    img, canvas, svg { max-width: 100%; }
+
+    /* QR customers should see a focused ordering screen without desktop-sized gaps. */
+    html.is-customer-qr body { min-height: 100%; }
+    html.is-customer-qr #main-app { min-height: 100dvh; height: 100dvh !important; }
+    html.is-customer-qr #pos-main-view { min-height: 0; min-width: 0; }
+    html.is-customer-qr .header-title { min-width: 0; }
+    html.is-customer-qr #app-header-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    html.is-customer-qr #display-user,
+    html.is-customer-qr #btn-logout-elem,
+    html.is-customer-qr #btn-sound-test { display: none !important; }
+    html.is-customer-qr .mobile-tab-bar { gap: 8px; padding: 9px 10px; }
+    html.is-customer-qr .mob-tab-btn { min-height: 48px; padding: 10px 8px; font-size: 13px; }
+    html.is-customer-qr .main-layout { min-height: 0; min-width: 0; flex: 1 1 auto; }
+    html.is-customer-qr .left-panel,
+    html.is-customer-qr .right-panel { min-width: 0; }
+    html.is-customer-qr .controls-bar { min-width: 0; }
+    html.is-customer-qr .category-filters { min-width: 0; max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+    html.is-customer-qr .cat-btn { flex: 0 0 auto; white-space: normal; line-height: 1.2; }
+    html.is-customer-qr .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    html.is-customer-qr .menu-card { min-width: 0; min-height: 124px; padding: 12px; overflow-wrap: anywhere; }
+    html.is-customer-qr .card-title { font-size: clamp(12px, 3.4vw, 14px); line-height: 1.25; overflow-wrap: anywhere; }
+    html.is-customer-qr .card-price { font-size: clamp(14px, 3.8vw, 17px); }
+    html.is-customer-qr .right-panel { min-width: 0; }
+    html.is-customer-qr .bill-summary { width: 100%; box-sizing: border-box; }
+    html.is-customer-qr #customer-action-div { display: flex; gap: 10px; }
+    html.is-customer-qr #customer-action-div button { min-height: 52px; font-size: 15px; }
+
+    /* Waiter login and ordering pages use the same comfortable sizing on phones. */
+    body.is-staff-role #main-app { min-height: 100dvh; height: 100dvh !important; }
+    body.is-staff-role #table-selection-view { min-height: 0; }
+    body.is-staff-role .table-selection-header { min-width: 0; }
+    body.is-staff-role .table-selection-header h2 { line-height: 1.2; }
+    body.is-staff-role .big-table-card { min-width: 0; overflow-wrap: anywhere; }
+    body.is-staff-role .table-items-summary { white-space: normal; overflow-wrap: anywhere; }
+    body.is-staff-role .main-layout { min-width: 0; min-height: 0; }
+    body.is-staff-role .left-panel,
+    body.is-staff-role .right-panel { min-width: 0; }
+    body.is-staff-role .search-container { min-width: 0; }
+    body.is-staff-role .search-box { min-width: 0; }
+    /* 2-column menu is a phone layout only — desktop keeps the auto-fill grid */
+    @media (max-width: 900px) {
+        body.is-staff-role .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    body.is-staff-role .menu-card { min-width: 0; overflow-wrap: anywhere; }
+    body.is-staff-role .card-title { overflow-wrap: anywhere; }
+
+    /* The login panel scales to small screens without clipping account choices. */
+    .login-overlay { overflow-y: auto; overscroll-behavior: contain; }
+    .login-box { box-sizing: border-box; max-height: calc(100dvh - 24px); overflow-y: auto; }
+    #login-accounts-preview, #login-accounts-chips { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+    #login-accounts-chips button { min-height: 38px; max-width: 100%; overflow-wrap: anywhere; }
+
+    /* Takeaway customer details form: touch-friendly fields and no modal cut-off. */
+    #takeaway-details-modal { overflow-y: auto; overscroll-behavior: contain; padding: 14px; box-sizing: border-box; }
+    #takeaway-details-modal .timeout-box { box-sizing: border-box; max-height: calc(100dvh - 28px); overflow-y: auto; }
+    #takeaway-details-modal input,
+    #takeaway-details-modal select { width: 100%; min-height: 48px; box-sizing: border-box; font-size: 16px !important; }
+    #takeaway-details-modal button { min-height: 48px; }
+
+    @media (max-width: 620px) {
+        #main-app { height: 100dvh !important; min-height: 100dvh; }
+        .header { gap: 8px; padding: 9px 10px; align-items: center; }
+        .header-title { gap: 7px; min-width: 0; flex: 1 1 auto; }
+        #app-header-title { font-size: clamp(14px, 4vw, 18px); max-width: 54vw; }
+        .live-sync-badge { font-size: 10px; padding: 4px 6px; }
+        #display-user { max-width: 24vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-logout, .sound-test-btn { min-height: 38px; padding: 7px 9px; font-size: 11px; }
+        #table-selection-view { padding: 9px; overflow-y: auto; }
+        body.is-staff-role .table-selection-header { display: flex; align-items: stretch; gap: 9px; }
+        body.is-staff-role .table-selection-header > div:first-child { width: 100%; gap: 7px !important; }
+        body.is-staff-role .table-selection-header h2 { width: 100%; font-size: 17px; }
+        body.is-staff-role .table-filter-pills { flex-wrap: wrap; }
+        body.is-staff-role .table-filter-btn { min-height: 40px; padding: 8px 12px; }
+        body.is-staff-role #table-grid-count-note { align-self: center; }
+        body.is-staff-role .table-selection-header > .btn-small { width: 100%; min-height: 46px; }
+        body.is-staff-role .big-tables-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px; }
+        body.is-staff-role .big-table-card { min-height: 108px; padding: 14px 9px; }
+        .mobile-tab-bar { flex-shrink: 0; }
+        .main-layout { min-height: 0; }
+        .controls-bar { gap: 9px; }
+        .search-container { max-width: none; }
+        .category-bar-wrapper { min-width: 0; }
+        .category-filters { overflow-x: auto; }
+        .right-panel { padding: 13px 11px; }
+        .bill-summary .total-row { font-size: 19px; }
+        .action-buttons button { white-space: normal; overflow-wrap: anywhere; }
+        .login-box { padding: 26px 20px; border-radius: 22px; }
+        .login-box h2 { font-size: 23px; margin-bottom: 20px; }
+        .login-box input { min-height: 50px; padding: 13px 14px; margin-bottom: 14px; }
+        .btn-login { min-height: 50px; }
+        #takeaway-details-modal .timeout-box { width: 100% !important; padding: 22px 17px !important; }
+    }
+    @media (max-width: 380px) {
+        html.is-customer-qr .menu-grid,
+        body.is-staff-role .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
+        html.is-customer-qr .menu-card,
+        body.is-staff-role .menu-card { padding: 9px; min-height: 118px; }
+        html.is-customer-qr .btn-add,
+        body.is-staff-role .btn-add { width: 32px; height: 32px; }
+        html.is-customer-qr .card-title,
+        body.is-staff-role .card-title { font-size: 12px; }
+        .live-sync-badge { display: none; }
+        .mob-tab-btn { font-size: 12px; }
+    }
+    @media (min-width: 901px) {
+        html.is-customer-qr #pos-main-view { min-height: 0; }
+    }
+
     /* ---------- 14. PRINT SAFETY ---------- */
     @media print {
         .admin-buttons-grid { display: block !important; }
@@ -1565,7 +1678,7 @@
                 <div class="admin-buttons-grid">
                     <button class="admin-btn manage-menu-btn" onclick="openMenuManagerModal()">Manage Menu & Prices</button>
                     <button class="admin-btn manage-cat-btn" onclick="openCategoryManagerModal()">Categories Priority</button>
-                    <button class="admin-btn manage-cat-btn" onclick="openCheckboxManagerModal()">Manage Item Checkboxes</button>
+                    <button class="admin-btn manage-cat-btn checkbox-mgr-btn" onclick="openCheckboxManagerModal()">Manage Item Checkboxes</button>
                     <button class="admin-btn stock-btn" onclick="openStockModal()">Manual Stock</button>
                     <button class="admin-btn expense-btn" onclick="openExpenseModal()">Daily Expense</button>
                     <button class="admin-btn expense-btn" onclick="openExpenseViewModal()">View Expenses</button>
@@ -1576,6 +1689,7 @@
                     <button class="admin-btn history-btn" onclick="openHistoryModal()">Sales History</button>
                     <button class="admin-btn payment-summary-btn" onclick="openPaymentSummaryModal()">Payment Summary</button>
                     <button class="admin-btn manage-suppliers-btn" onclick="openCredentialsModal()">👥 Manage Suppliers & Logins</button>
+                    <button class="admin-btn menu-repair-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);" onclick="repairCategoriesNow()">🛠️ Fix Menu Categories</button>
                     <button class="admin-btn close-day-btn" onclick="closeDay()">Day Close</button>
                 </div>
             </div>
@@ -1861,7 +1975,7 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Display Name (பெயர்):</label>
-                                    <input type="text" id="cred-name" placeholder="e.g. user1" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
+                                    <input type="text" id="cred-name" placeholder="e.g. user1 / சரிஷ்மா" style="width: 100%; padding: 8px 10px; margin-top: 4px; border: 2px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-weight: bold; font-size: 13px;">
                                 </div>
                                 <div>
                                     <label style="font-size: 12px; font-weight: 800; color: #475569;">Role Type (பங்கு):</label>
@@ -2068,9 +2182,16 @@
                 <button class="close-modal" onclick="closeCheckboxManagerModal()">X</button>
             </div>
             <div class="modal-body">
-                <p style="font-size:13px;font-weight:800;color:#64748b;margin-top:0;">Add checkbox options once per category. Every item in that category will use the same options.</p>
+                <p style="font-size:13px;font-weight:800;color:#64748b;margin-top:0;">Add a checkbox option to a whole category, or to one single item only.</p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px;">
+                    <select id="checkbox-manager-scope" onchange="updateCheckboxManagerScopeUI()" title="Where should this checkbox apply?" style="flex:1;min-width:150px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-weight:800;font-family:inherit;">
+                        <option value="category">Whole category</option>
+                        <option value="item">Single item only</option>
+                    </select>
+                    <select id="checkbox-manager-category" onchange="renderCheckboxManagerItemSelect()" style="flex:1;min-width:150px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-weight:800;font-family:inherit;"></select>
+                    <select id="checkbox-manager-item" title="Pick the one item" style="display:none;flex:1;min-width:150px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-weight:800;font-family:inherit;"></select>
+                </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:15px;">
-                    <select id="checkbox-manager-category" style="flex:1;min-width:150px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-weight:800;font-family:inherit;"></select>
                     <input type="text" id="checkbox-manager-name" placeholder="Checkbox name" style="flex:2;min-width:150px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;">
                     <input type="number" id="checkbox-manager-price" placeholder="Extra price" min="0" step="0.01" value="0.00" style="width:105px;padding:9px;border:1px solid #cbd5e1;border-radius:8px;font-family:inherit;">
                     <button class="btn-small" style="background:var(--success);padding:9px 14px;" onclick="addCategoryCheckboxOption()">+ Add</button>
@@ -2365,7 +2486,7 @@
 
         const isCustomerVisitor = (function() {
             const p = new URLSearchParams(window.location.search);
-            return p.has('table') || p.get('order') === 'takeaway';
+            return p.has('table') || p.get('order') === 'takeaway' || p.get('type') === 'takeaway';
         })();
 
         const DEFAULT_PERMISSIONS = {
@@ -2570,6 +2691,10 @@
 
         let categories = ["Mee", "Rice", "Drinks", "Roti", "Soup"];
         let categoryCheckboxes = {};
+        // Per-item checkbox options that apply to ONE specific menu item only.
+        // Array of { itemId, name, price } — an array (not an id-keyed map) because
+        // item ids can contain characters Firebase keys dislike (e.g. "cat|name#2").
+        let itemCheckboxes = [];
         let takeawaySequenceCounter = 100;
         let menu = [];
         let rawMaterials = [];
@@ -2579,6 +2704,10 @@
         let dayCloseHistory = {};
         let currentTableKey = "Table 1";
         let activeOrders = {};
+        // Customer QR sessions keep a private, device-local draft until Send Order.
+        // This prevents each phone from overwriting the shared table order while browsing.
+        let customerDraftOrder = null;
+        let customerDraftTableKey = null;
         let orderItemComments = {};
         let selectedCategory = "All";
         let activeShift = null;
@@ -2607,8 +2736,6 @@
 
         function updateTableCountUI() {
             const n = getTableCount();
-            const val = document.getElementById('table-count-value');
-            if (val) val.textContent = n;
             const note = document.getElementById('table-count-note');
             if (note) note.textContent = 'Table 1 – ' + n;
             const gridNote = document.getElementById('table-grid-count-note');
@@ -2764,6 +2891,18 @@
             renderCheckboxManagerCategorySelect();
         });
 
+        function normalizeItemCheckboxes(val) {
+            if (!val) return [];
+            if (Array.isArray(val)) return val.filter(Boolean);
+            if (typeof val === 'object') return Object.values(val).filter(Boolean);
+            return [];
+        }
+
+        db.ref('itemCheckboxes').on('value', (snapshot) => {
+            itemCheckboxes = normalizeItemCheckboxes(snapshot.val());
+            refreshUnifiedCheckboxes();
+        });
+
         function refreshUnifiedCheckboxes() {
             renderMenuGrid();
             renderCart();
@@ -2787,22 +2926,21 @@
                 } else if (typeof val === 'object') {
                     rawList = Object.entries(val).map(([k, v]) => {
                         if (v && typeof v === 'object') {
-                            return { id: v.id || k, ...v };
+                            return { ...v, id: (v.id != null && v.id !== '') ? v.id : k };
                         }
                         return v;
                     });
                 }
             }
             if (rawList.length > 0) {
-                menu = rawList.map(m => ({
+                menu = normalizeMenuList(rawList.map(m => ({
                     ...m,
-                    id: m.id || Date.now(),
                     code: m.code || "",
                     name: m.name || "",
-                    cat: (m.cat || m.category || "Special").trim(),
+                    cat: String(m.cat || m.category || "").trim(),  // ⛔ "Special" auto-fill நீக்கப்பட்டது
                     price: Number(m.price) || 0
-                }));
-                // Auto sync categories from items if needed
+                })));
+                // Category list-ல இல்லாதவற்றை auto-add
                 const itemCats = Array.from(new Set(menu.map(m => (m.cat || '').trim()).filter(Boolean)));
                 itemCats.forEach(c => {
                     if (!categories.some(x => x.toLowerCase() === c.toLowerCase())) {
@@ -2817,6 +2955,36 @@
 
         let previousActiveOrdersMap = null;
         let initialActiveOrdersLoaded = false;
+
+        function normalizeMenuList(list) {
+            const seen = new Set();
+            return list.map(m => {
+                if (!m || typeof m !== 'object') return m;
+                const item = { ...m, stock: m.stock !== undefined ? m.stock : 999999 };
+                let id = (item.id === undefined || item.id === null || item.id === '')
+                    ? String((item.cat || item.category || '')).trim().toLowerCase() + '|' + String(item.name || '').trim().toLowerCase()
+                    : String(item.id);
+                let cand = id, n = 2;
+                while (seen.has(cand)) { cand = id + '#' + n; n++; }
+                seen.add(cand);
+                item.id = cand;
+                return item;
+            });
+        }
+
+        function assignMissingItemIds(items) {
+            const seen = new Set();
+            items.forEach(x => {
+                if (!x) return;
+                const id = (x.id === undefined || x.id === null || x.id === '')
+                    ? String((x.cat || x.category || '')).trim().toLowerCase() + '|' + String(x.name || 'item').trim().toLowerCase()
+                    : String(x.id);
+                let cand = id, n = 2;
+                while (seen.has(cand)) { cand = id + '#' + n; n++; }
+                seen.add(cand);
+                x.id = cand;
+            });
+        }
 
         function getOrderItemsArray(order) {
             if (!order) return [];
@@ -2836,14 +3004,31 @@
             return order.items;
         }
 
+        // Lightweight per-order summary used only to detect external order changes.
+        // Avoids deep-cloning the whole activeOrders tree on every Firebase snapshot.
+        function buildActiveOrdersSummary(orders) {
+            const summary = {};
+            const keys = Object.keys(orders || {});
+            for (let i = 0; i < keys.length; i++) {
+                const k = keys[i];
+                const o = orders[k];
+                if (!o || typeof o !== 'object') continue;
+                const items = getOrderItemsArray(o);
+                let count = 0;
+                for (let j = 0; j < items.length; j++) count += (Number(items[j] && items[j].qty) || 1);
+                summary[k] = { count: count, lastUpdatedAt: o.lastUpdatedAt || 0 };
+            }
+            return summary;
+        }
+
         function checkActiveOrdersForExternalChanges(incomingOrders) {
             if (!initialActiveOrdersLoaded) {
                 initialActiveOrdersLoaded = true;
-                previousActiveOrdersMap = JSON.parse(JSON.stringify(incomingOrders || {}));
+                previousActiveOrdersMap = buildActiveOrdersSummary(incomingOrders);
                 return;
             }
             if (isCustomerMode || !previousActiveOrdersMap) {
-                previousActiveOrdersMap = JSON.parse(JSON.stringify(incomingOrders || {}));
+                previousActiveOrdersMap = buildActiveOrdersSummary(incomingOrders);
                 return;
             }
 
@@ -2859,9 +3044,8 @@
                 if (curOrd.lastDeviceId && curOrd.lastDeviceId === posDeviceId) return;
 
                 const prevOrd = prev[tKey];
-                const prevItems = getOrderItemsArray(prevOrd);
                 const curCount = curItems.reduce((s, it) => s + (Number(it.qty) || 1), 0);
-                const prevCount = prevItems.reduce((s, it) => s + (Number(it.qty) || 1), 0);
+                const prevCount = prevOrd ? (prevOrd.count || 0) : 0;
                 const who = curOrd.takenBy || curOrd.lastUpdatedBy || '';
                 const total = getOrderGrandTotal(curOrd);
 
@@ -2874,7 +3058,7 @@
                 }
             });
 
-            previousActiveOrdersMap = JSON.parse(JSON.stringify(curr));
+            previousActiveOrdersMap = buildActiveOrdersSummary(curr);
         }
 
         db.ref('activeOrders').on('value', (snapshot) => {
@@ -2884,7 +3068,8 @@
 
             Object.keys(raw).forEach(k => {
                 const ord = raw[k];
-                if (!ord) return;
+                if (!ord || typeof ord !== 'object') return;
+                // Normalize order item arrays before any view calculates counts/totals.
                 getOrderItemsArray(ord);
 
                 // Auto-repair missing or corrupt seatedAt for any table with active items
@@ -2918,6 +3103,11 @@
             }
 
             activeOrders = raw;
+            // Keep the current QR customer's unsent cart local. Other customers/staff
+            // may update Firebase at any time; those snapshots must not replace this draft.
+            if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
+                activeOrders[currentTableKey] = customerDraftOrder;
+            }
             if (isCustomerMode && isTakeawayCustomer && activeOrders[currentTableKey]) {
                 if (activeOrders[currentTableKey].isReady) {
                     document.getElementById('customer-ready-screen').style.display = 'flex';
@@ -2925,7 +3115,83 @@
             }
             checkActiveOrdersForExternalChanges(activeOrders);
             requestRenderBigTablesGrid();
-            if (currentTableKey) renderCart();
+            // This render is driven by a fresh Firebase snapshot. Do not copy the
+            // old cart DOM back into the newly received order; that could restore
+            // stale comments/prices/options over a waiter's latest update.
+            if (currentTableKey) renderCart({ skipInputSync: true });
+        });
+
+        // Extra real-time safety net for table cards:
+        // child events refresh the affected table immediately, while the full
+        // value listener above remains the authoritative complete snapshot.
+        function syncSingleActiveOrderSnapshot(snapshot, removed = false) {
+            const key = snapshot && snapshot.key;
+            if (!key) return;
+            if (removed) {
+                delete activeOrders[key];
+            } else {
+                const value = snapshot.val();
+                if (value && typeof value === 'object') {
+                    // Firebase can return numeric-keyed item collections as objects.
+                    // Normalize them before rendering so table cards never show a false
+                    // empty state while the cart is still unopened.
+                    getOrderItemsArray(value);
+                    activeOrders[key] = value;
+                } else {
+                    delete activeOrders[key];
+                }
+            }
+
+            // Keep an unsent QR draft private on its own device.
+            if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
+                activeOrders[currentTableKey] = customerDraftOrder;
+            }
+            requestRenderBigTablesGrid();
+            if (currentTableKey === key && !isCustomerMode) {
+                renderCart({ skipInputSync: true });
+            }
+        }
+
+        db.ref('activeOrders').on('child_added', (snapshot) => {
+            syncSingleActiveOrderSnapshot(snapshot, false);
+        }, (error) => console.error('activeOrders child_added listener failed:', error));
+
+        db.ref('activeOrders').on('child_changed', (snapshot) => {
+            syncSingleActiveOrderSnapshot(snapshot, false);
+        }, (error) => console.error('activeOrders child_changed listener failed:', error));
+
+        db.ref('activeOrders').on('child_removed', (snapshot) => {
+            syncSingleActiveOrderSnapshot(snapshot, true);
+        }, (error) => console.error('activeOrders child_removed listener failed:', error));
+
+        // Browsers may throttle rendering while the admin POS is backgrounded.
+        // Re-render and re-sync from Firebase when the tab/app becomes active again.
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                db.ref('activeOrders').once('value').then((snapshot) => {
+                    activeOrders = snapshot.val() || {};
+                    if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
+                        activeOrders[currentTableKey] = customerDraftOrder;
+                    }
+                    requestRenderBigTablesGrid();
+                    if (currentTableKey) renderCart({ skipInputSync: true });
+                }).catch((error) => {
+                    console.error('Could not refresh activeOrders after returning to POS:', error);
+                });
+            }
+        });
+
+        window.addEventListener('online', () => {
+            db.ref('activeOrders').once('value').then((snapshot) => {
+                activeOrders = snapshot.val() || {};
+                if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
+                    activeOrders[currentTableKey] = customerDraftOrder;
+                }
+                requestRenderBigTablesGrid();
+                if (currentTableKey) renderCart();
+            }).catch((error) => {
+                console.error('Could not refresh activeOrders after network reconnect:', error);
+            });
         });
 
         db.ref('orderItemComments').on('value', (snapshot) => {
@@ -2950,6 +3216,7 @@
         let salesHistoryRenderTimer = null;
         db.ref('salesHistory').on('value', (snapshot) => {
             salesHistory = snapshot.val() || [];
+            invalidateSalesMapCache();
             calculateTotalSales();
             const modalIsOpen = (id) => {
                 const el = document.getElementById(id);
@@ -2969,6 +3236,7 @@
 
         db.ref('lastDayClose').on('value', (snapshot) => {
             lastDayClose = snapshot.val() || null;
+            invalidateSalesMapCache();
             calculateTotalSales();
             calculateTotalExpenses();
             if (document.getElementById('day-close-modal') && document.getElementById('day-close-modal').style.display === 'flex') {
@@ -3648,9 +3916,9 @@
                 let counter = Number(current);
                 if (!Number.isFinite(counter) || counter < 100) counter = 100;
                 assignedNum = counter;
-                let next = counter + 1;
-                if (next > 1000) next = 100;
-                return next;
+                // Never recycle order numbers: wrapping to 100 could reuse an old
+                // active Order-100 and mix a new customer's takeaway with it.
+                return counter + 1;
             }, (error, committed, snapshot) => {
                 if (error || !committed || assignedNum === null) {
                     if (submitBtn) {
@@ -3693,6 +3961,28 @@
             isCustomerMode = true;
             isTakeawayCustomer = isTakeaway;
             currentTableKey = key;
+
+            // Each scanned QR starts with its own empty cart. The shared table order
+            // remains in Firebase and is merged atomically only when this customer sends.
+            const existingSharedOrder = activeOrders[key] || {};
+            customerDraftTableKey = key;
+            customerDraftOrder = {
+                ...existingSharedOrder,
+                items: [],
+                discount: 0,
+                paymentMethod: existingSharedOrder.paymentMethod || "Cash",
+                status: "Active",
+                takenBy: "Customer QR",
+                orderSource: "Customer QR",
+                customerSent: false,
+                customerSentAt: null,
+                sentToKitchen: false,
+                lastDeviceId: posDeviceId,
+                lastUpdatedAt: Date.now(),
+                lastUpdatedBy: "Customer QR"
+            };
+            delete customerDraftOrder.isReady;
+            activeOrders[key] = customerDraftOrder;
 
             // Mark document element with customer QR class
             document.documentElement.classList.add('is-customer-qr');
@@ -3739,6 +4029,10 @@
             }
 
             document.getElementById('customer-action-div').style.display = 'flex';
+
+            // Keep the cart panel title in sync for QR / takeaway sessions too
+            // (previously only openTable() updated it, so customers always saw the hardcoded "Table 1").
+            refreshCartTitleBadge();
 
             if (isTakeaway) {
                 const callBtn = document.getElementById('btn-call-waiter-elem');
@@ -4018,6 +4312,12 @@
                 const btnCloseDay = adminSection.querySelector('.close-day-btn');
                 if (btnCloseDay) btnCloseDay.style.display = showDayClose ? '' : 'none';
 
+                // Menu repair & item-checkbox manager: admin login only, never staff
+                const btnRepair = adminSection.querySelector('.menu-repair-btn');
+                if (btnRepair) btnRepair.style.display = 'none';
+                const btnChkMgr = adminSection.querySelector('.checkbox-mgr-btn');
+                if (btnChkMgr) btnChkMgr.style.display = 'none';
+
                 // Stats toggles
                 const statBoxes = adminSection.querySelectorAll('.stat-toggle-box');
                 statBoxes.forEach(box => {
@@ -4229,7 +4529,7 @@
                 delete activeOrders[currentTableKey].orderIntake;
                 delete activeOrders[currentTableKey].intakeUpdatedBy;
             }
-            db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
             updateOrderIntakeUI();
             refreshCartTitleBadge();
             updateCartSeatedDisplay();
@@ -4237,7 +4537,7 @@
             requestRenderBigTablesGrid();
         }
 
-        function openTable(tableKey) {
+        async function openTable(tableKey) {
             if (isCustomerMode && currentTableKey && currentTableKey !== tableKey) {
                 return;
             }
@@ -4274,8 +4574,29 @@
             }
 
             switchMobileTab('menu');
-            renderCart();
+            // Load the latest committed Firebase order before showing the cart.
+            // This prevents an old local cache from being treated as the current table.
+            if (!isCustomerMode && currentTableKey) {
+                const openingKey = currentTableKey;
+                try {
+                    const freshSnapshot = await db.ref('activeOrders/' + openingKey).once('value');
+                    // User may have switched tables while the request was in flight.
+                    if (currentTableKey !== openingKey) return;
+                    const freshOrder = freshSnapshot.val();
+                    if (freshOrder && typeof freshOrder === 'object') {
+                        getOrderItemsArray(freshOrder);
+                        activeOrders[openingKey] = freshOrder;
+                    } else {
+                        delete activeOrders[openingKey];
+                    }
+                } catch (error) {
+                    console.error('Could not refresh table order before opening:', error);
+                    // Keep the live-listener cache if Firebase is temporarily unavailable.
+                }
+            }
+            renderCart({ skipInputSync: true });
             renderMenuGrid();
+            requestRenderBigTablesGrid();
             applyRolePermissionsUI();
         }
 
@@ -4417,7 +4738,7 @@
                 activeOrders[currentTableKey].seatedTime = timeStr;
             }
 
-            db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
             flashLiveSyncSuccess();
             renderCart();
             renderBigTablesGrid();
@@ -4448,23 +4769,30 @@
                 if (!confirm("This table has ordered items. Clear table and items completely?")) return;
             }
             delete activeOrders[currentTableKey];
-            db.ref('activeOrders/' + currentTableKey).remove();
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
             flashLiveSyncSuccess();
             renderCart();
             renderBigTablesGrid();
         }
 
         function startTakeawayOrder() {
-            let nextNum = takeawaySequenceCounter;
-            let newOrderKey = `Order-${nextNum}`;
-            let nextCounter = nextNum + 1;
-            if (nextCounter > 1000) nextCounter = 100;
-            takeawaySequenceCounter = nextCounter;
-            db.ref('takeawaySequenceCounter').set(nextCounter);
-
-            if (!activeOrders[newOrderKey]) {
+            // Share the same atomic counter as customer takeaway QR orders so
+            // two staff devices / QR customers cannot receive the same order key.
+            let assignedNum = null;
+            db.ref('takeawaySequenceCounter').transaction(current => {
+                let counter = Number(current);
+                if (!Number.isFinite(counter) || counter < 100) counter = 100;
+                assignedNum = counter;
+                return counter + 1; // Do not wrap and reuse an existing order key.
+            }, (error, committed, snapshot) => {
+                if (error || !committed || assignedNum === null) {
+                    alert("Could not create a takeaway order. Please try again.");
+                    return;
+                }
+                takeawaySequenceCounter = Number(snapshot.val());
+                const newOrderKey = `Order-${assignedNum}`;
                 const now = Date.now();
-                activeOrders[newOrderKey] = {
+                const newOrder = {
                     items: [],
                     discount: 0.00,
                     paymentMethod: "Cash",
@@ -4475,13 +4803,18 @@
                     orderSource: "Staff"
                 };
                 if (currentOrderIntake) {
-                    activeOrders[newOrderKey].orderIntake = currentOrderIntake;
-                    activeOrders[newOrderKey].intakeUpdatedBy = loggedInDisplayName || "Staff";
+                    newOrder.orderIntake = currentOrderIntake;
+                    newOrder.intakeUpdatedBy = loggedInDisplayName || "Staff";
                 }
-                db.ref('activeOrders/' + newOrderKey).set(activeOrders[newOrderKey]);
-            }
-
-            openTable(newOrderKey);
+                // Transactional numbering guarantees this key is new; set the
+                // initial record only after the counter allocation succeeds.
+                activeOrders[newOrderKey] = newOrder;
+                db.ref('activeOrders/' + newOrderKey).set(newOrder).then(() => {
+                    openTable(newOrderKey);
+                }).catch(err => {
+                    alert("Takeaway order was numbered but could not be saved: " + err.message);
+                });
+            });
         }
 
         let renderBigTablesGridScheduled = false;
@@ -4513,7 +4846,8 @@
                 let isLinked = isLinkedSlaveTable(tableKey);
                 let effectiveKey = getMasterTableKey(tableKey);
                 let orderData = activeOrders[effectiveKey];
-                let hasItems = orderData && orderData.items && orderData.items.length > 0;
+                const tableItems = orderData ? getOrderItemsArray(orderData) : [];
+                let hasItems = tableItems.length > 0;
                 let isSeated = orderData && (hasItems || orderData.seatedAt);
                 let isOccupied = isSeated;
 
@@ -4541,7 +4875,7 @@
                     }
                 }
 
-                let itemCount = hasItems ? orderData.items.reduce((s, x) => s + x.qty, 0) : 0;
+                let itemCount = hasItems ? tableItems.reduce((sum, item) => sum + (Number(item && item.qty) || 1), 0) : 0;
                 let orderTotal = hasItems ? getOrderGrandTotal(orderData) : 0;
 
                 // Seated duration indicator banner
@@ -4651,7 +4985,8 @@
 
                 if (key.startsWith("Order-")) {
                     let orderData = activeOrders[key];
-                    let isOccupied = orderData && orderData.items && orderData.items.length > 0;
+                    const takeawayItems = orderData ? getOrderItemsArray(orderData) : [];
+                    let isOccupied = takeawayItems.length > 0;
                     if (isOccupied) {
                         if (currentTableFilter === 'available') return;
                         renderedTableKeys.add(norm);
@@ -4674,7 +5009,7 @@
                             db.ref('activeOrders/' + key + '/seatedTime').set(orderData.seatedTime).catch(() => {});
                         }
 
-                        let itemCount = orderData.items.reduce((s, x) => s + x.qty, 0);
+                        let itemCount = takeawayItems.reduce((sum, item) => sum + (Number(item && item.qty) || 1), 0);
                         let orderTotal = getOrderGrandTotal(orderData);
                         let isReady = orderData.isReady;
 
@@ -4827,8 +5162,8 @@
 
         function getItemLineTotal(item) {
             const qty = Math.max(0, Number(item && item.qty) || 0);
-            const base = Math.max(0, Number(item && item.customPrice) || 0);
-            // Base item price multiplied by item quantity, plus exact option addition
+            const rawBase = item ? (item.customPrice != null ? item.customPrice : item.price) : 0;
+            const base = Math.max(0, Number(rawBase) || 0);
             return (base * qty) + getItemOptionTotal(item);
         }
 
@@ -4968,6 +5303,19 @@
                     }
                 }
             }
+            // Per-item checkboxes (added for ONE item only in the Checkbox Manager)
+            if (Array.isArray(itemCheckboxes) && itemCheckboxes.length > 0) {
+                const itemId = (item.id != null) ? String(item.id) : "";
+                if (itemId) {
+                    itemCheckboxes.forEach(o => {
+                        if (!o || !o.name) return;
+                        if (String(o.itemId) !== itemId) return;
+                        if (!allOpts.some(x => x.name.toLowerCase() === String(o.name).toLowerCase())) {
+                            allOpts.push({ name: o.name, price: Number(o.price !== undefined ? o.price : (o.extraPrice || 0)) || 0 });
+                        }
+                    });
+                }
+            }
             return allOpts;
         }
 
@@ -5018,7 +5366,24 @@
         }
 
         // Persistent all-time popularity map (NEVER resets - keeps popular items at the top)
+        // ---- Perf: memoize expensive sales-history scans ----
+        // These maps walk the ENTIRE salesHistory (which only ever grows) and were
+        // recomputed on every menu render (every keystroke / cart change). Cache them
+        // until the underlying data actually changes, and bump salesMapVersion so the
+        // menu-grid fingerprint below knows a re-render is required.
+        let __allTimeSalesMapCache = null;
+        let __todaySalesMapCache = null;
+        let __todaySalesMapCacheDay = null;
+        let salesMapVersion = 0;
+        function invalidateSalesMapCache() {
+            __allTimeSalesMapCache = null;
+            __todaySalesMapCache = null;
+            __todaySalesMapCacheDay = null;
+            salesMapVersion++;
+        }
+
         function getAllTimeItemSalesMap() {
+            if (__allTimeSalesMapCache) return __allTimeSalesMapCache;
             let counts = {};
             try {
                 counts = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
@@ -5041,11 +5406,14 @@
                     }
                 });
             });
+            __allTimeSalesMapCache = counts;
             return counts;
         }
 
         // Today's sales counts only (RESETS to 0 each new day / session)
         function getTodayItemSalesCountMap() {
+            const todayKey = new Date().toDateString();
+            if (__todaySalesMapCache && __todaySalesMapCacheDay === todayKey) return __todaySalesMapCache;
             const counts = {};
             const sales = Object.values(salesHistory || {});
             sales.forEach(sale => {
@@ -5066,6 +5434,8 @@
                     }
                 });
             });
+            __todaySalesMapCache = counts;
+            __todaySalesMapCacheDay = todayKey;
             return counts;
         }
 
@@ -5076,14 +5446,42 @@
             return Math.max(byId, byName);
         }
 
+        let lastMenuGridSignature = null;
+
+        // Cheap fingerprint of every input that affects the rendered menu grid.
+        // When nothing relevant changed we skip the full DOM rebuild entirely.
+        function buildMenuGridSignature(searchVal, currentItems) {
+            let sig = searchVal + '\u0002' + selectedCategory + '\u0002' + (isCustomerMode ? '1' : '0')
+                + '\u0002' + (currentTableKey || '') + '\u0002' + salesMapVersion + '\u0002' + categories.join('\u0001');
+            for (let i = 0; i < menu.length; i++) {
+                const it = menu[i];
+                sig += '\u0003' + (it.id || '') + '\u0004' + (it.name || '') + '\u0004' + (it.price || 0)
+                    + '\u0004' + (it.cat || it.category || '') + '\u0004' + (it.code || '');
+            }
+            sig += '\u0005';
+            for (let i = 0; i < currentItems.length; i++) {
+                const it = currentItems[i];
+                sig += '\u0006' + (it.id || '') + '\u0004' + (Number(it.qty) || 1);
+            }
+            return sig;
+        }
+
         function renderMenuGrid() {
             const grid = document.getElementById('menu-grid');
             if (!grid) return;
-            grid.innerHTML = "";
 
             const searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : "";
             const currentOrder = activeOrders[currentTableKey];
             const currentItems = getOrderItemsArray(currentOrder);
+
+            const currentQtyById = new Map();
+            currentItems.forEach(x => { if (x && x.id != null) currentQtyById.set(String(x.id), Number(x.qty) || 0); });
+
+            // Skip rebuilding the grid when the result would be byte-for-byte identical.
+            const menuGridSig = buildMenuGridSignature(searchVal, currentItems);
+            if (menuGridSig === lastMenuGridSignature && grid.childElementCount > 0) return;
+
+            grid.innerHTML = "";
 
             const isAll = !selectedCategory || selectedCategory === "All";
             const catsToRender = isAll ? categories : [selectedCategory];
@@ -5128,8 +5526,7 @@
                     const maxTodaySoldInCat = Math.max(0, ...catItems.map(it => getItemPopularityScore(it, todaySalesCounts)));
 
                     catItems.forEach((item, itemIdx) => {
-                        let cartItem = currentItems.find(x => String(x.id) === String(item.id));
-                        let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
+                        let inCartQty = currentQtyById.get(String(item.id)) || 0;
                         let todaySold = getItemPopularityScore(item, todaySalesCounts);
                         let allTimeSold = getItemPopularityScore(item, allTimeSalesCounts);
 
@@ -5199,8 +5596,7 @@
                     const maxTodaySoldOther = Math.max(0, ...otherItems.map(it => getItemPopularityScore(it, todaySalesCounts)));
 
                     otherItems.forEach((item, itemIdx) => {
-                        let cartItem = currentItems.find(x => String(x.id) === String(item.id));
-                        let inCartQty = cartItem ? (Number(cartItem.qty) || 0) : 0;
+                        let inCartQty = currentQtyById.get(String(item.id)) || 0;
                         let todaySold = getItemPopularityScore(item, todaySalesCounts);
                         let allTimeSold = getItemPopularityScore(item, allTimeSalesCounts);
 
@@ -5238,10 +5634,15 @@
                     });
                 }
             }
+
+            lastMenuGridSignature = menuGridSig;
         }
 
+        let searchRenderTimer = null;
         function handleSearchInput(e) {
-            renderMenuGrid();
+            // Debounce: typing no longer rebuilds the whole menu on every keystroke.
+            clearTimeout(searchRenderTimer);
+            searchRenderTimer = setTimeout(renderMenuGrid, 120);
         }
 
         function clearSearch() {
@@ -5255,9 +5656,9 @@
                 const val = snapshot.val();
                 if (val) {
                     if (Array.isArray(val)) {
-                        menu = val.map(m => ({ ...m, stock: 999999 }));
+                        menu = normalizeMenuList(val);
                     } else if (typeof val === 'object') {
-                        menu = Object.entries(val).map(([k, v]) => ({ id: v.id || k, ...v, stock: 999999 }));
+                        menu = normalizeMenuList(Object.entries(val).map(([k, v]) => ({ ...v, id: (v.id != null && v.id !== '') ? v.id : k })));
                     }
                 }
                 renderMenuGrid();
@@ -5329,7 +5730,7 @@
                 });
             }
 
-            db.ref('activeOrders/' + currentTableKey).set(order);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
             renderCart();
             renderMenuGrid();
             showToast(`✓ ${item.name} added!`);
@@ -5364,9 +5765,9 @@
 
             if (order.items.length === 0) {
                 delete activeOrders[currentTableKey];
-                db.ref('activeOrders/' + currentTableKey).remove();
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
             } else {
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
             }
 
             renderCart();
@@ -5374,13 +5775,20 @@
             flashLiveSyncSuccess();
         }
 
+        // Which table the current #cart-items DOM was built for. Between selecting a
+        // new table and re-rendering, the DOM still shows the previous table's rows.
+        let cartDomTableKey = null;
+
         function syncCartInputsToMemory() {
             if (!currentTableKey || !activeOrders[currentTableKey]) return;
+            if (cartDomTableKey !== null && cartDomTableKey !== currentTableKey) return;
             const order = activeOrders[currentTableKey];
             const items = getOrderItemsArray(order);
             if (items.length === 0) return;
 
-            // 1. Sync any typed notes / instructions directly from DOM inputs
+            // Only text inputs need syncing. Checkboxes and qty steppers write to
+            // memory the moment they change, so re-reading them from the DOM here
+            // would let a stale render overwrite newer data from another device.
             const commentInputs = document.querySelectorAll('#cart-items .comment-input');
             commentInputs.forEach(input => {
                 const id = input.getAttribute('data-item-id');
@@ -5392,32 +5800,6 @@
                 }
             });
 
-            // 2. Sync any custom checkboxes directly from DOM
-            const customCheckboxes = document.querySelectorAll('#cart-items .custom-opt-checkbox');
-            customCheckboxes.forEach(cb => {
-                const itemId = cb.getAttribute('data-item-id');
-                const optName = cb.getAttribute('data-opt-name');
-                const optPrice = Number(cb.getAttribute('data-opt-price')) || 0;
-                if (itemId && optName) {
-                    const it = items.find(x => String(x.id) === String(itemId));
-                    if (it) {
-                        const opts = getItemOptionsMap(it);
-                        const resolvedName = optName.trim();
-                        const safeKey = resolvedName.replace(/[.#$\[\]\/]/g, '_');
-                        if (cb.checked) {
-                            const existing = opts[safeKey] || opts[resolvedName];
-                            const curQty = (existing && existing.qty) ? Math.max(1, Number(existing.qty)) : 1;
-                            opts[safeKey] = { name: resolvedName, price: optPrice, qty: curQty };
-                        } else {
-                            delete opts[safeKey];
-                            delete opts[resolvedName];
-                        }
-                        it.options = opts;
-                    }
-                }
-            });
-
-            // 3. Sync any custom price inputs
             const priceInputs = document.querySelectorAll('#cart-items .price-input');
             priceInputs.forEach(input => {
                 const id = input.getAttribute('data-item-id');
@@ -5442,7 +5824,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5483,7 +5865,7 @@
                 } else {
                     item.comment = cur + ", " + noteText;
                 }
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5580,7 +5962,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5596,7 +5978,7 @@
                 if (item.notes && typeof item.notes === 'object') {
                     item.notes.takeaway = false;
                 }
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5613,7 +5995,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5629,7 +6011,7 @@
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
                 item.customPrice = Math.max(0, Number(newPrice) || 0);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 updateCart();
                 flashLiveSyncSuccess();
             }
@@ -5643,10 +6025,63 @@
             if (item) {
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes[noteType] = Boolean(checked);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
+        }
+
+
+        // Persist one checkbox/add-on change against the latest Firebase order.
+        // Do not write the whole stale local order: that can erase another device's changes.
+        function persistItemOptionChange(tableKey, itemId, optName, change) {
+            if (!tableKey || isCustomerMode) return Promise.resolve();
+            const resolvedName = String(optName || "").replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim();
+            const safeKey = resolvedName.replace(/[.#$\[\]\/]/g, '_');
+            return db.ref('activeOrders/' + tableKey).transaction(current => {
+                if (!current || !Array.isArray(current.items)) return;
+                const next = { ...current, items: current.items.map(it => ({ ...it })) };
+                const item = next.items.find(x => String(x.id) === String(itemId));
+                if (!item) return;
+                const opts = getItemOptionsMap(item);
+                if (change.type === 'toggle') {
+                    if (change.checked) {
+                        opts[safeKey] = { name: resolvedName, price: Number(change.price) || 0, qty: 1 };
+                    } else {
+                        delete opts[safeKey];
+                        delete opts[resolvedName];
+                        delete opts[optName];
+                        Object.keys(opts).forEach(k => {
+                            if (opts[k] && opts[k].name && opts[k].name.trim().toLowerCase() === resolvedName.toLowerCase()) delete opts[k];
+                        });
+                    }
+                } else {
+                    const info = getItemOptionInfo(item, resolvedName);
+                    if (change.type === 'delta') {
+                        const currentQty = info.active && info.optObj ? Math.max(1, Number(info.optObj.qty) || 1) : 0;
+                        const newQty = currentQty + Number(change.delta || 0);
+                        if (newQty <= 0) {
+                            delete opts[safeKey];
+                            delete opts[resolvedName];
+                            delete opts[optName];
+                            Object.keys(opts).forEach(k => {
+                                if (opts[k] && opts[k].name && opts[k].name.trim().toLowerCase() === resolvedName.toLowerCase()) delete opts[k];
+                            });
+                        } else {
+                            opts[safeKey] = { name: resolvedName, price: Number(info.optObj?.price ?? change.price) || 0, qty: newQty };
+                        }
+                    } else if (change.type === 'setQty') {
+                        if (!info.active || !info.optObj) return;
+                        info.optObj.qty = Math.max(1, Number(change.qty) || 1);
+                        opts[safeKey] = info.optObj;
+                    }
+                }
+                item.options = opts;
+                next.lastDeviceId = posDeviceId;
+                next.lastUpdatedAt = Date.now();
+                next.lastUpdatedBy = loggedInDisplayName || 'Staff';
+                return next;
+            }).catch(err => console.error('Could not save checkbox option change:', err));
         }
 
         function toggleItemCustomOption(itemId, optName, checked, optPrice) {
@@ -5679,7 +6114,7 @@
                 order.items = items;
                 order.lastDeviceId = posDeviceId;
                 order.lastUpdatedAt = Date.now();
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) persistItemOptionChange(currentTableKey, itemId, resolvedName, { type: 'toggle', checked, price: optPrice });
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5718,7 +6153,7 @@
                 order.items = items;
                 order.lastDeviceId = posDeviceId;
                 order.lastUpdatedAt = Date.now();
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) persistItemOptionChange(currentTableKey, itemId, resolvedName, { type: 'delta', delta, price: info.optObj.price });
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5744,7 +6179,7 @@
                 order.items = items;
                 order.lastDeviceId = posDeviceId;
                 order.lastUpdatedAt = Date.now();
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) persistItemOptionChange(currentTableKey, itemId, resolvedName, { type: 'setQty', qty: targetQty });
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5782,7 +6217,7 @@
                 item.comment = value;
                 clearTimeout(commentDebounceTimers[itemId]);
                 commentDebounceTimers[itemId] = setTimeout(() => {
-                    db.ref('activeOrders/' + currentTableKey).set(order);
+                    if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                     flashLiveSyncSuccess();
                 }, 300);
             }
@@ -5795,7 +6230,7 @@
             if (item) {
                 item.comment = comment;
                 clearTimeout(commentDebounceTimers[itemId]);
-                db.ref('activeOrders/' + currentTableKey).set(order);
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
                 flashLiveSyncSuccess();
             }
         }
@@ -5820,16 +6255,21 @@
                 order.paymentMethod = payMethodSelect.value;
             }
 
-            db.ref('activeOrders/' + currentTableKey).set(order);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
             flashLiveSyncSuccess();
         }
 
-        function renderCart() {
+        function renderCart(options = {}) {
             const tbody = document.getElementById('cart-items');
             if (!tbody) return;
 
-            // Preserve any text currently typed into DOM inputs before clearing
-            syncCartInputsToMemory();
+            // Only preserve typed input when re-rendering the same table locally.
+            // Never apply DOM values from a different/older table or Firebase snapshot.
+            if (!options.skipInputSync && cartDomTableKey === currentTableKey) {
+                syncCartInputsToMemory();
+            }
+
+            cartDomTableKey = currentTableKey;
 
             const activeEl = document.activeElement;
             let focusedItemId = null;
@@ -5848,7 +6288,8 @@
             tbody.innerHTML = "";
 
             const order = activeOrders[currentTableKey];
-            const items = getOrderItemsArray(order);
+            assignMissingItemIds(getOrderItemsArray(order));
+            const items = getSortedOrderItems(getOrderItemsArray(order));
             const totalItemCount = items.reduce((s, x) => s + (Number(x.qty) || 1), 0);
 
             const mobBadge = document.getElementById('mob-cart-badge');
@@ -5880,6 +6321,9 @@
 
             items.forEach(item => {
                 const totalQty = Math.max(1, Number(item.qty) || 1);
+                if (item.customPrice == null && item.price != null) {
+                    item.customPrice = Math.max(0, Number(item.price) || 0);
+                }
                 if (isDedicatedTakeaway) {
                     item.takeawayQty = totalQty;
                     if (!item.notes || typeof item.notes !== 'object') item.notes = {};
@@ -6151,19 +6595,79 @@
                 sendBtn.innerText = "Sending to Kitchen...";
             }
 
-            db.ref("activeOrders/" + currentTableKey).set(order).then(() => {
-                broadcastLiveOrderEvent(currentTableKey, isUpdate ? "update" : "order", order);
+            const tableKeyForSend = currentTableKey;
+            const submittedItems = JSON.parse(JSON.stringify(order.items || []));
+            const submittedOrderMeta = { ...order };
+            // A Firebase transaction serializes simultaneous sends from different phones.
+            // Merge only this phone's private draft into the latest shared table order.
+            db.ref("activeOrders/" + tableKeyForSend).transaction(current => {
+                const latest = current && typeof current === "object" ? current : {
+                    items: [], discount: 0, paymentMethod: "Cash", status: "Active",
+                    seatedAt: submittedOrderMeta.seatedAt || Date.now(),
+                    seatedTime: submittedOrderMeta.seatedTime || new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+                };
+                const merged = { ...latest };
+                const mergedItems = Array.isArray(latest.items) ? latest.items.map(it => ({ ...it })) : [];
+                submittedItems.forEach(incoming => {
+                    const qty = Math.max(0, Number(incoming.qty) || 0);
+                    if (!qty) return;
+                    // Only combine lines when their selected checkboxes/options and notes match.
+                    // Same menu item with different add-ons must remain a separate line, or one
+                    // customer's checkbox choices can overwrite another customer's choices.
+                    const variantKey = it => JSON.stringify({
+                        options: it.options || {},
+                        comment: it.comment || "",
+                        notes: it.notes || {},
+                        customPrice: Number(it.customPrice) || 0
+                    });
+                    const incomingVariant = variantKey(incoming);
+                    const existing = mergedItems.find(it =>
+                        String(it.id) === String(incoming.id) && variantKey(it) === incomingVariant
+                    );
+                    if (existing) {
+                        existing.qty = (Number(existing.qty) || 0) + qty;
+                        if (incoming.takeawayQty) existing.takeawayQty = (Number(existing.takeawayQty) || 0) + Number(incoming.takeawayQty || 0);
+                    } else {
+                        mergedItems.push({ ...incoming, qty });
+                    }
+                });
+                merged.items = mergedItems;
+                merged.status = latest.status || "Active";
+                merged.discount = Number(latest.discount) || 0;
+                merged.paymentMethod = latest.paymentMethod || "Cash";
+                merged.customerSent = true;
+                merged.customerSentAt = Date.now();
+                merged.customerSentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                merged.takenBy = latest.takenBy || "Customer QR";
+                merged.orderSource = latest.orderSource || "Customer QR";
+                merged.lastDeviceId = posDeviceId;
+                merged.lastUpdatedAt = Date.now();
+                merged.lastUpdatedBy = "Customer QR";
+                if (!merged.seatedAt) merged.seatedAt = submittedOrderMeta.seatedAt || Date.now();
+                if (!merged.seatedTime) merged.seatedTime = submittedOrderMeta.seatedTime || merged.customerSentTime;
+                if (isTakeawayCustomer) {
+                    merged.customerName = submittedOrderMeta.customerName || merged.customerName || "Takeaway Customer";
+                    merged.customerPhone = submittedOrderMeta.customerPhone || merged.customerPhone || "";
+                }
+                return merged;
+            }).then(result => {
+                if (!result.committed) throw new Error("Order could not be saved. Please try again.");
+                const savedOrder = result.snapshot.val() || order;
+                broadcastLiveOrderEvent(tableKeyForSend, isUpdate ? "update" : "order", savedOrder);
 
                 const modalTitle = document.querySelector("#customer-success-screen h2");
                 const modalDesc = document.getElementById("customer-success-desc") || document.querySelector("#customer-success-screen p");
                 if (modalTitle) modalTitle.innerText = "Thank You for Your Order!";
                 if (modalDesc) {
                     if (isTakeawayCustomer) {
-                        modalDesc.innerHTML = `Your takeaway order <b>${currentTableKey}</b> has been received by the kitchen.<br>Customer: <b>${order.customerName || ""}</b> ${order.customerPhone ? "(" + order.customerPhone + ")" : ""}<br>Please proceed to the counter when ready.`;
+                        modalDesc.innerHTML = `Your takeaway order <b>${tableKeyForSend}</b> has been received by the kitchen.<br>Customer: <b>${savedOrder.customerName || order.customerName || ""}</b> ${(savedOrder.customerPhone || order.customerPhone) ? "(" + (savedOrder.customerPhone || order.customerPhone) + ")" : ""}<br>Please proceed to the counter when ready.`;
                     } else {
-                        modalDesc.innerHTML = `Your order for <b>${currentTableKey}</b> has been sent to the kitchen and is being prepared! 🍳`;
+                        modalDesc.innerHTML = `Your order for <b>${tableKeyForSend}</b> has been sent to the kitchen and is being prepared! 🍳`;
                     }
                 }
+                // Clear only this device's draft after the transaction commits.
+                customerDraftOrder = { ...customerDraftOrder, items: [], customerSent: false, customerSentAt: null };
+                activeOrders[tableKeyForSend] = customerDraftOrder;
                 const successModal = document.getElementById("customer-success-screen");
                 if (successModal) successModal.style.display = "flex";
                 renderCart();
@@ -6292,6 +6796,62 @@
             });
         }
 
+
+        // Order display helper: group all drinks before food, then keep items together
+        // by their configured menu category. This changes display/print order only;
+        // it never mutates the saved order.items array.
+        function getOrderItemCategory(item) {
+            return String((item && (item.cat || item.category)) || '').trim();
+        }
+
+        function isDrinkOrderItem(item) {
+            const category = getOrderItemCategory(item).toLowerCase().replace(/[_-]+/g, ' ');
+            const name = String((item && item.name) || '').toLowerCase();
+            const drinkCategoryTerms = [
+                'drink', 'beverage', 'tea', 'teh', 'coffee', 'milo', 'milkshake',
+                'milk shake', 'fresh juice', 'juice', 'syrup', 'delina', 'sijoku', 'sizzoku', 'soft drink',
+                'hot drink', 'iced drink', 'ice blended', 'smoothie', 'soda'
+            ];
+            if (drinkCategoryTerms.some(term => category.includes(term))) return true;
+
+            // Fallback for menus where the category field is generic or missing.
+            const drinkItemTerms = [
+                'teh tarik', 'teh c', 'teh o', 'tea', 'coffee', 'milo', 'nescafe',
+                'milkshake', 'milk shake', 'fresh juice', 'juice', 'sirap',
+                'soft drink', 'coke', 'cola', 'sprite', 'soda', 'lemonade',
+                'hot chocolate', 'iced chocolate', 'smoothie'
+            ];
+            return drinkItemTerms.some(term => name.includes(term));
+        }
+
+        function getSortedOrderItems(items) {
+            const source = Array.isArray(items) ? items : [];
+            const categoryPriority = new Map(
+                (Array.isArray(categories) ? categories : []).map((cat, index) => [
+                    String(cat || '').trim().toLowerCase(), index
+                ])
+            );
+            return source.map((item, index) => ({ item, index })).sort((a, b) => {
+                const aDrink = isDrinkOrderItem(a.item);
+                const bDrink = isDrinkOrderItem(b.item);
+                if (aDrink !== bDrink) return aDrink ? -1 : 1;
+
+                const aCat = getOrderItemCategory(a.item);
+                const bCat = getOrderItemCategory(b.item);
+                const aPriority = categoryPriority.has(aCat.toLowerCase()) ? categoryPriority.get(aCat.toLowerCase()) : 9999;
+                const bPriority = categoryPriority.has(bCat.toLowerCase()) ? categoryPriority.get(bCat.toLowerCase()) : 9999;
+                if (aPriority !== bPriority) return aPriority - bPriority;
+                const categoryCompare = aCat.localeCompare(bCat);
+                if (categoryCompare !== 0) return categoryCompare;
+                const nameCompare = String((a.item && a.item.name) || '').localeCompare(String((b.item && b.item.name) || ''));
+                return nameCompare || a.index - b.index;
+            }).map(entry => entry.item);
+        }
+
+        function getOrderDisplayGroupLabel(item) {
+            return isDrinkOrderItem(item) ? 'DRINKS' : 'FOOD';
+        }
+
         function printKitchenKOT(onComplete) {
             syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
@@ -6300,7 +6860,7 @@
             }
 
             // Immediately persist latest notes to DB
-            db.ref('activeOrders/' + currentTableKey).set(order);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
 
             document.getElementById('k-order-type').innerText = currentTableKey.startsWith("Order-") ? "TAKEAWAY" : "DINE-IN";
             document.getElementById('k-table').innerText = currentTableKey;
@@ -6330,7 +6890,24 @@
             const ktbody = document.getElementById('k-items');
             ktbody.innerHTML = "";
 
-            order.items.forEach(item => {
+            let lastGroup = '';
+            let lastCategory = null;
+            getSortedOrderItems(order.items).forEach(item => {
+                const group = getOrderDisplayGroupLabel(item);
+                const category = getOrderItemCategory(item) || 'Other Items';
+                if (group !== lastGroup) {
+                    const groupRow = document.createElement('tr');
+                    groupRow.innerHTML = `<td colspan="2" style="padding:7px 4px; font-size:18px; font-weight:1000; text-align:center; color:#000 !important; background:#e2e8f0; border-top:2px solid #000; border-bottom:1px solid #000;">${group}</td>`;
+                    ktbody.appendChild(groupRow);
+                    lastGroup = group;
+                    lastCategory = null;
+                }
+                if (category !== lastCategory) {
+                    const categoryRow = document.createElement('tr');
+                    categoryRow.innerHTML = `<td colspan="2" style="padding:4px 2px; font-size:14px; font-weight:900; color:#000 !important; background:#f8fafc;">${category}</td>`;
+                    ktbody.appendChild(categoryRow);
+                    lastCategory = category;
+                }
                 let tr = document.createElement('tr');
                 let notesArr = getItemNotesList(item);
                 let notesStr = notesArr.length > 0 ? `<br><div style="font-size:16px; font-weight:900; color:#000 !important; margin-top:3px; line-height:1.3; background:#f1f5f9; padding:3px 6px; border-radius:4px; border:1px solid #000;">[ ${notesArr.join(' | ')} ]</div>` : '';
@@ -6354,7 +6931,7 @@
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
             // Immediately persist latest notes to DB
-            db.ref('activeOrders/' + currentTableKey).set(order);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
 
             populateCustomerReceipt(order, 0, 0);
             triggerPrint("print-customer", onComplete);
@@ -6405,7 +6982,24 @@
             const ptbody = document.getElementById('p-items');
             ptbody.innerHTML = "";
 
-            order.items.forEach(item => {
+            let lastReceiptGroup = '';
+            let lastReceiptCategory = null;
+            getSortedOrderItems(order.items).forEach(item => {
+                const group = getOrderDisplayGroupLabel(item);
+                const category = getOrderItemCategory(item) || 'Other Items';
+                if (group !== lastReceiptGroup) {
+                    const groupRow = document.createElement('tr');
+                    groupRow.innerHTML = `<td colspan="3" style="padding:4px 2px; font-size:12px; font-weight:1000; color:#000 !important; background:#e2e8f0;">${group}</td>`;
+                    ptbody.appendChild(groupRow);
+                    lastReceiptGroup = group;
+                    lastReceiptCategory = null;
+                }
+                if (category !== lastReceiptCategory) {
+                    const categoryRow = document.createElement('tr');
+                    categoryRow.innerHTML = `<td colspan="3" style="padding:3px 2px; font-size:10px; font-weight:900; color:#000 !important;">${category}</td>`;
+                    ptbody.appendChild(categoryRow);
+                    lastReceiptCategory = category;
+                }
                 let tr = document.createElement('tr');
                 let notesArr = getItemNotesList(item);
                 let notesStr = notesArr.length > 0 ? `<br><div style="font-size:13px; font-weight:900; color:#000 !important; margin-top:2px; line-height:1.2;">[ ${notesArr.join(', ')} ]</div>` : '';
@@ -6444,7 +7038,7 @@
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
-            db.ref('activeOrders/' + currentTableKey).set(order);
+            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
 
             let grand = getOrderGrandTotal(order);
             document.getElementById('modal-grand-total').innerText = grand.toFixed(2);
@@ -6527,141 +7121,162 @@
             document.getElementById('modal-change-amount').innerText = change.toFixed(2);
         }
 
-        function confirmPaymentProcess() {
-    if (isProcessingPayment) return;
-    syncCartInputsToMemory();
-    let order = activeOrders[currentTableKey];
-    if (!order) return;
+        async function confirmPaymentProcess() {
+            // Prevent duplicate clicks while a payment is being saved.
+            if (isProcessingPayment) return;
 
-    let grand = Math.round(getOrderGrandTotal(order) * 100) / 100;
-    let paid = Math.round((Number(document.getElementById('modal-paid-input').value) || 0) * 100) / 100;
-    if (paid < (grand - 0.001)) {
-        return alert("Paid amount is less than total due!");
-    }
-    isProcessingPayment = true;
-
-    let change = Math.max(0, Math.round((paid - grand) * 100) / 100);
-    let shouldPrint = document.getElementById('modal-print-checkbox').checked;
-    let invRef = "INV-" + Date.now().toString().slice(-6);
-    let chosenPaymentMethod = activeModalPaymentMethod || (document.getElementById('payment-method') ? document.getElementById('payment-method').value : 'Cash');
-
-    // Accumulate all-time item sales counts so most ordered items permanently stay first in menu categories
-    try {
-        let allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
-        if (order.items && Array.isArray(order.items)) {
-            order.items.forEach(it => {
-                if (!it) return;
-                let q = Number(it.qty) || 1;
-                if (it.id) allTimeMap[String(it.id)] = (allTimeMap[String(it.id)] || 0) + q;
-                if (it.name) {
-                    let nk = String(it.name).trim().toLowerCase();
-                    allTimeMap[nk] = (allTimeMap[nk] || 0) + q;
-                }
-            });
-        }
-        localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
-    } catch(e) {
-        console.error("All time sales storage error", e);
-    }
-
-    let clonedItems = JSON.parse(JSON.stringify(order.items || []));
-
-    let saleRecord = {
-        timestamp: new Date().toISOString(),
-        date: new Date().toLocaleDateString('en-GB'),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        ref: invRef,
-        source: currentTableKey,
-        items: clonedItems,
-        subtotal: getOrderSubtotal(order),
-        discount: order.discount || 0,
-        total: grand,
-        paid: paid,
-        change: change,
-        paymentMethod: chosenPaymentMethod,
-        servedBy: document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff',
-        takenBy: order.takenBy || (document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff'),
-        intake: order.orderIntake || "",
-        intakeUpdatedBy: order.intakeUpdatedBy || "",
-        seatedAt: order.seatedAt || null,
-        seatedDuration: order.seatedAt ? getSeatedDurationInfo(order.seatedAt).durationText : null
-    };
-
-    if (order.customerName) {
-        saleRecord.customerName = order.customerName;
-        saleRecord.customerPhone = order.customerPhone || "";
-    }
-
-    // Record sale
-    db.ref('salesHistory').push(saleRecord);
-
-    // Update shift stats
-    if (activeShift) {
-        activeShift.billsCount = (activeShift.billsCount || 0) + 1;
-        activeShift.totalCollected = (activeShift.totalCollected || 0) + grand;
-        db.ref('activeShift').set(activeShift);
-    }
-
-    // Clean up any session record so customers scanning QR never see Payment Complete
-    db.ref('tableSessions/' + currentTableKey).remove().catch(() => {});
-
-    // Clear any alerts for this table
-    db.ref('newCustomerOrderAlerts/' + currentTableKey).remove();
-    db.ref('staffAlerts/' + currentTableKey).remove();
-
-    // Clear table links — values are master-table-name strings, so dissolve the whole group by strict match
-    if (typeof tableLinks !== 'undefined' && tableLinks) {
-        const groupMaster = tableLinks[currentTableKey] || currentTableKey;
-        let linkChanged = false;
-        Object.keys(tableLinks).forEach(k => {
-            if (k === groupMaster || tableLinks[k] === groupMaster) {
-                delete tableLinks[k];
-                linkChanged = true;
+            syncCartInputsToMemory();
+            const paidOrderKey = currentTableKey;
+            const currentOrder = paidOrderKey ? activeOrders[paidOrderKey] : null;
+            if (!currentOrder || !Array.isArray(currentOrder.items) || currentOrder.items.length === 0) {
+                alert("Cart is empty!");
+                return;
             }
-        });
-        if (linkChanged) db.ref('tableLinks').set(tableLinks);
-    }
 
-    order.paymentMethod = chosenPaymentMethod;
+            const grand = Math.round(getOrderGrandTotal(currentOrder) * 100) / 100;
+            const paidInput = document.getElementById('modal-paid-input');
+            const paid = Math.round((Number(paidInput ? paidInput.value : 0) || 0) * 100) / 100;
+            const chosenPaymentMethod = activeModalPaymentMethod ||
+                (document.getElementById('payment-method') ? document.getElementById('payment-method').value : 'Cash');
 
-    // Remove order. Also clear local memory immediately so the table-grid
-    // seated-time auto-repair cannot recreate a just-paid order before
-    // Firebase's async listener returns the removed state.
-    const paidOrderKey = currentTableKey;
-    db.ref('activeOrders/' + paidOrderKey).remove();
-    if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
-    if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
+            // Card and QR payments are entered as the exact bill amount by default;
+            // cash must cover the bill total.
+            if (!Number.isFinite(paid) || paid < (grand - 0.001)) {
+                alert("Paid amount is less than total due!");
+                return;
+            }
 
-    closePaymentModal();
-    isProcessingPayment = false;
+            if (!db || !db.ref) {
+                alert("Payment could not be saved because the database is unavailable. Please try again.");
+                return;
+            }
 
-    // ---- Receipt + Cash Drawer logic ----
-    const finishAfterPayment = () => {
-        backToTableSelection();
-    };
+            isProcessingPayment = true;
+            const confirmBtn = document.querySelector('#payment-modal .pay-btn-confirm');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = 'Saving Payment…';
+            }
 
-    const printReceiptThenFinish = () => {
-        if (shouldPrint) {
-            populateCustomerReceipt(order, paid, change);
-            triggerPrint("print-customer", finishAfterPayment);
-        } else {
-            finishAfterPayment();
+            const change = Math.max(0, Math.round((paid - grand) * 100) / 100);
+            const printCheckbox = document.getElementById('modal-print-checkbox');
+            const shouldPrint = !!(printCheckbox && printCheckbox.checked);
+            // Firebase push keys are unique, unlike a timestamp suffix which can collide.
+            const saleRef = db.ref('salesHistory').push();
+            const invRef = "INV-" + String(saleRef.key || Date.now()).toUpperCase();
+            const order = JSON.parse(JSON.stringify(currentOrder));
+            const now = new Date();
+
+            const saleRecord = {
+                timestamp: now.toISOString(),
+                date: now.toLocaleDateString('en-GB'),
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                ref: invRef,
+                source: paidOrderKey,
+                items: Array.isArray(order.items) ? order.items : [],
+                subtotal: getOrderSubtotal(order),
+                discount: Number(order.discount) || 0,
+                total: grand,
+                paid: paid,
+                change: change,
+                paymentMethod: chosenPaymentMethod,
+                servedBy: document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff',
+                takenBy: order.takenBy || (document.getElementById('display-user') ? document.getElementById('display-user').innerText : 'Staff'),
+                intake: order.orderIntake || "",
+                intakeUpdatedBy: order.intakeUpdatedBy || "",
+                seatedAt: order.seatedAt || null,
+                seatedDuration: order.seatedAt ? getSeatedDurationInfo(order.seatedAt).durationText : null
+            };
+            if (order.customerName) {
+                saleRecord.customerName = order.customerName;
+                saleRecord.customerPhone = order.customerPhone || "";
+            }
+
+            try {
+                // Save the sale and remove the active order atomically. If Firebase fails,
+                // the order remains open and the cashier can retry without losing the bill.
+                const updates = {};
+                updates['salesHistory/' + saleRef.key] = saleRecord;
+                updates['activeOrders/' + paidOrderKey] = null;
+                updates['tableSessions/' + paidOrderKey] = null;
+                updates['newCustomerOrderAlerts/' + paidOrderKey] = null;
+                updates['staffAlerts/' + paidOrderKey] = null;
+                await db.ref().update(updates);
+
+                // Update shift totals without overwriting concurrent cashier updates.
+                if (activeShift) {
+                    try {
+                        const shiftResult = await db.ref('activeShift').transaction(function (shift) {
+                            if (!shift) return shift;
+                            shift.billsCount = (Number(shift.billsCount) || 0) + 1;
+                            shift.totalCollected = Math.round(((Number(shift.totalCollected) || 0) + grand) * 100) / 100;
+                            return shift;
+                        });
+                        if (shiftResult && shiftResult.committed && shiftResult.snapshot) {
+                            activeShift = shiftResult.snapshot.val() || activeShift;
+                        }
+                    } catch (shiftError) {
+                        console.error("Payment saved, but shift totals could not be updated:", shiftError);
+                        alert("Payment was saved, but shift totals could not be updated. Please check the shift summary.");
+                    }
+                }
+
+                // Keep the local menu popularity counter only after payment is safely saved.
+                try {
+                    const allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
+                    order.items.forEach(it => {
+                        if (!it) return;
+                        const q = Number(it.qty) || 1;
+                        if (it.id) allTimeMap[String(it.id)] = (Number(allTimeMap[String(it.id)]) || 0) + q;
+                        if (it.name) {
+                            const nk = String(it.name).trim().toLowerCase();
+                            allTimeMap[nk] = (Number(allTimeMap[nk]) || 0) + q;
+                        }
+                    });
+                    localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
+                    invalidateSalesMapCache();
+                } catch (e) {
+                    console.error("All time sales storage error", e);
+                }
+
+                if (typeof tableLinks !== 'undefined' && tableLinks) {
+                    const groupMaster = tableLinks[paidOrderKey] || paidOrderKey;
+                    let linkChanged = false;
+                    Object.keys(tableLinks).forEach(k => {
+                        if (k === groupMaster || tableLinks[k] === groupMaster) {
+                            delete tableLinks[k];
+                            linkChanged = true;
+                        }
+                    });
+                    if (linkChanged) {
+                        try { await db.ref('tableLinks').set(tableLinks); }
+                        catch (linkError) { console.error("Could not clear table links after payment:", linkError); }
+                    }
+                }
+
+                if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
+                if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
+
+                order.paymentMethod = chosenPaymentMethod;
+                closePaymentModal();
+
+                if (shouldPrint) {
+                    populateCustomerReceipt(order, paid, change);
+                    triggerPrint("print-customer", () => backToTableSelection());
+                } else {
+                    backToTableSelection();
+                }
+            } catch (error) {
+                console.error("Payment save failed:", error);
+                alert("Payment could not be saved. Your order has been kept open. Please check your connection and try again.");
+            } finally {
+                isProcessingPayment = false;
+                if (confirmBtn) {
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = 'Confirm & Pay';
+                }
+            }
         }
-    };
-
-    // 💵 Cash → drawer kick first, then receipt
-    // 💳 Card / 📱 QR Pay → no drawer, straight to receipt
-    if (chosenPaymentMethod === 'Cash') {
-        try {
-            triggerPrint("print-drawer-mode", printReceiptThenFinish);
-        } catch (e) {
-            console.warn('Cash drawer kick failed:', e);
-            printReceiptThenFinish();
-        }
-    } else {
-        printReceiptThenFinish();
-    }
-}
 
         let targetMoveDestination = null;
 
@@ -6719,11 +7334,11 @@
                     else destOrder.items.push(it);
                 });
                 db.ref('activeOrders/' + targetMoveDestination).set(destOrder);
-                db.ref('activeOrders/' + currentTableKey).remove();
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
             } else {
                 let currentOrder = activeOrders[currentTableKey];
                 db.ref('activeOrders/' + targetMoveDestination).set(currentOrder);
-                db.ref('activeOrders/' + currentTableKey).remove();
+                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
             }
 
             closeMoveTableModal();
@@ -7020,60 +7635,72 @@
         }
 
         function renderMenuManagerTable() {
-            const tbody = document.getElementById('menu-manager-tbody');
-            if (!tbody) return;
-            tbody.innerHTML = "";
+    const tbody = document.getElementById('menu-manager-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = "";
 
-            const sVal = document.getElementById('menu-manager-search') ? document.getElementById('menu-manager-search').value.trim().toLowerCase() : "";
+    const sVal = document.getElementById('menu-manager-search')
+        ? document.getElementById('menu-manager-search').value.trim().toLowerCase() : "";
 
-            menu.forEach(item => {
-                if (sVal && !item.name.toLowerCase().includes(sVal) && !item.code.toLowerCase().includes(sVal)) return;
+    const esc = s => String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><input type="text" value="${item.code || ''}" style="width:70px; padding:6px; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField(${item.id}, 'code', this.value)"></td>
-                    <td><input type="text" value="${item.name}" style="width:100%; padding:6px; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField(${item.id}, 'name', this.value)"></td>
-                    <td>
-                        <select style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" onchange="updateMenuItemField(${item.id}, 'cat', this.value)">
-                            ${categories.map(c => `<option value="${c}" ${item.cat === c ? 'selected' : ''}>${c}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td style="text-align:right;"><input type="number" step="0.50" value="${Number(item.price).toFixed(2)}" style="width:75px; padding:6px; text-align:right; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField(${item.id}, 'price', this.value)"></td>
-                    <td style="text-align:center;">
-                        <button class="btn-small" style="background:#ef4444;" onclick="deleteMenuItem(${item.id})">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+    menu.forEach(item => {
+        const nm = String(item.name || '').toLowerCase();
+        const cd = String(item.code || '').toLowerCase();
+        if (sVal && !nm.includes(sVal) && !cd.includes(sVal)) return;
 
-        function filterMenuManagerList() {
-            renderMenuManagerTable();
-        }
+        const safeId = esc(item.id);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" value="${escapeHtml(item.code || '')}" style="width:70px; padding:6px; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField('${safeId}', 'code', this.value)"></td>
+            <td><input type="text" value="${escapeHtml(item.name || '')}" style="width:100%; padding:6px; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField('${safeId}', 'name', this.value)"></td>
+            <td>
+                <select style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-weight:bold;" onchange="updateMenuItemField('${safeId}', 'cat', this.value)">
+                    ${categories.map(c => `<option value="${escapeHtml(c)}" ${String(item.cat) === String(c) ? 'selected' : ''}>${escapeHtml(c)}</option>`).join('')}
+                </select>
+            </td>
+            <td style="text-align:right;"><input type="number" step="0.50" value="${(Number(item.price) || 0).toFixed(2)}" style="width:75px; padding:6px; text-align:right; font-weight:bold; border:1px solid #cbd5e1; border-radius:6px;" onchange="updateMenuItemField('${safeId}', 'price', this.value)"></td>
+            <td style="text-align:center;">
+                <button class="btn-small" style="background:#ef4444;" onclick="deleteMenuItem('${safeId}')">Delete</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-        function updateMenuItemField(itemId, field, val) {
-            let item = menu.find(m => m.id === itemId);
-            if (!item) return;
-            if (field === 'price') {
-                item[field] = Math.max(0, Number(val) || 0);
-            } else {
-                item[field] = val;
-            }
-            db.ref('menu').set(menu);
-            renderMenuGrid();
-        }
+function filterMenuManagerList() {
+    renderMenuManagerTable();
+}
+
+function updateMenuItemField(itemId, field, val) {
+    const item = menu.find(m => String(m.id) === String(itemId));
+    if (!item) return;
+
+    if (field === 'price') {
+        item.price = Math.max(0, Number(val) || 0);
+    } else if (field === 'cat') {
+        item.cat = String(val || '').trim();
+        item.category = item.cat;
+    } else {
+        item[field] = String(val || '');
+    }
+
+    db.ref('menu').set(menu);
+    renderMenuGrid();
+    renderMenuManagerTable();
+}
 
         function toggleItemStockStatus(itemId) {
             // All items are unlimited in restaurant POS
         }
 
-        function deleteMenuItem(itemId) {
-            if (!confirm("Are you sure you want to delete this item?")) return;
-            menu = menu.filter(m => m.id !== itemId);
-            db.ref('menu').set(menu);
-            renderMenuManagerTable();
-            renderMenuGrid();
-        }
+function deleteMenuItem(itemId) {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+    menu = menu.filter(m => String(m.id) !== String(itemId));
+    db.ref('menu').set(menu);
+    renderMenuManagerTable();
+    renderMenuGrid();
+}
 
         function addNewMenuItem() {
             const code = document.getElementById('add-m-code').value.trim();
@@ -7156,11 +7783,16 @@
 
         // Checkbox Manager
         function openCheckboxManagerModal() {
+            if (!(loggedInRole === 'admin' || (credentials[loggedInRole] && credentials[loggedInRole].roleType === 'admin'))) {
+                alert("⛔ Admin மட்டும் Item Checkboxes manage பண்ண முடியும்.");
+                return;
+            }
             if (!hasPermission('manage_menu')) {
                 alert("Permission denied: You do not have permission to manage Item Checkboxes.");
                 return;
             }
             renderCheckboxManagerCategorySelect();
+            updateCheckboxManagerScopeUI();
             renderCheckboxManagerList();
             document.getElementById('checkbox-manager-modal').style.display = 'flex';
         }
@@ -7179,6 +7811,43 @@
                 opt.innerText = c;
                 sel.appendChild(opt);
             });
+            renderCheckboxManagerItemSelect();
+        }
+
+        // Show / hide the "single item" picker depending on the chosen scope.
+        function updateCheckboxManagerScopeUI() {
+            const scopeEl = document.getElementById('checkbox-manager-scope');
+            const itemSel = document.getElementById('checkbox-manager-item');
+            if (!scopeEl || !itemSel) return;
+            if (scopeEl.value === 'item') {
+                itemSel.style.display = '';
+                renderCheckboxManagerItemSelect();
+            } else {
+                itemSel.style.display = 'none';
+            }
+        }
+
+        // Populate the item picker with only the items of the selected category.
+        function renderCheckboxManagerItemSelect() {
+            const sel = document.getElementById('checkbox-manager-item');
+            if (!sel) return;
+            const catEl = document.getElementById('checkbox-manager-category');
+            const cat = catEl ? String(catEl.value || '').trim().toLowerCase() : '';
+            sel.innerHTML = "";
+            const items = menu.filter(m => String(m.cat || m.category || '').trim().toLowerCase() === cat);
+            if (items.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.innerText = "(no items in this category)";
+                sel.appendChild(opt);
+                return;
+            }
+            items.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = String(m.id);
+                opt.innerText = m.name ? (m.name + (m.code ? ' (' + m.code + ')' : '')) : String(m.id);
+                sel.appendChild(opt);
+            });
         }
 
         function renderCheckboxManagerList() {
@@ -7193,7 +7862,7 @@
                 sec.style.padding = "10px";
                 sec.style.background = "#f8fafc";
                 sec.style.borderRadius = "10px";
-                sec.innerHTML = `<h4 style="margin:0 0 8px 0; color:var(--primary);">${cat} Checkboxes</h4>`;
+                sec.innerHTML = `<h4 style="margin:0 0 8px 0; color:var(--primary);">${escapeHtml(cat)} — whole category</h4>`;
 
                 if (opts.length === 0) {
                     sec.innerHTML += '<span style="font-size:12px; color:#94a3b8;">No options added yet.</span>';
@@ -7201,29 +7870,87 @@
                     opts.forEach((o, i) => {
                         sec.innerHTML += `
                             <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed #e2e8f0;">
-                                <span style="font-size:13px; font-weight:bold;">${o.name} (+$ ${Number(o.price).toFixed(2)})</span>
-                                <button class="btn-small" style="background:#ef4444; padding:3px 8px;" onclick="deleteCategoryCheckboxOption('${cat}', ${i})">Delete</button>
+                                <span style="font-size:13px; font-weight:bold;">${escapeHtml(o.name)} (+$ ${Number(o.price).toFixed(2)})</span>
+                                <button class="btn-small" style="background:#ef4444; padding:3px 8px;" onclick="deleteCategoryCheckboxOption(decodeURIComponent('${encodeURIComponent(cat)}'), ${i})">Delete</button>
                             </div>
                         `;
                     });
                 }
                 list.appendChild(sec);
             });
+
+            // ---- Single-item checkbox options (apply to ONE item only) ----
+            if (Array.isArray(itemCheckboxes) && itemCheckboxes.length > 0) {
+                const groups = {};
+                itemCheckboxes.forEach((o, i) => {
+                    if (!o) return;
+                    const key = String(o.itemId);
+                    (groups[key] = groups[key] || []).push({ opt: o, index: i });
+                });
+
+                Object.keys(groups).forEach(itemId => {
+                    const menuItem = menu.find(m => String(m.id) === itemId);
+                    const label = menuItem ? (menuItem.name || menuItem.code || itemId) : itemId;
+                    const catLabel = menuItem ? (menuItem.cat || menuItem.category || '') : '';
+
+                    let sec = document.createElement('div');
+                    sec.style.marginBottom = "15px";
+                    sec.style.padding = "10px";
+                    sec.style.background = "#eef2ff";
+                    sec.style.border = "1px solid #c7d2fe";
+                    sec.style.borderRadius = "10px";
+                    sec.innerHTML = `<h4 style="margin:0 0 8px 0; color:#4338ca;">🔖 ${escapeHtml(label)}${catLabel ? ' <span style="color:#94a3b8; font-weight:700; font-size:12px;">(' + escapeHtml(catLabel) + ')</span>' : ''} — this item only</h4>`;
+
+                    groups[itemId].forEach(g => {
+                        sec.innerHTML += `
+                            <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px dashed #c7d2fe;">
+                                <span style="font-size:13px; font-weight:bold;">${escapeHtml(g.opt.name)} (+$ ${Number(g.opt.price).toFixed(2)})</span>
+                                <button class="btn-small" style="background:#ef4444; padding:3px 8px;" onclick="deleteItemCheckboxOption(${g.index})">Delete</button>
+                            </div>
+                        `;
+                    });
+                    list.appendChild(sec);
+                });
+            }
         }
 
         function addCategoryCheckboxOption() {
-            const cat = document.getElementById('checkbox-manager-category').value;
-            const name = document.getElementById('checkbox-manager-name').value.trim();
-            const price = Number(document.getElementById('checkbox-manager-price').value) || 0;
+            const scopeEl = document.getElementById('checkbox-manager-scope');
+            const scope = scopeEl ? scopeEl.value : 'category';
+            const catEl = document.getElementById('checkbox-manager-category');
+            const cat = catEl ? catEl.value : "";
+            const nameEl = document.getElementById('checkbox-manager-name');
+            const name = nameEl ? nameEl.value.trim() : "";
+            const priceEl = document.getElementById('checkbox-manager-price');
+            const price = Number(priceEl ? priceEl.value : 0) || 0;
 
             if (!name) return alert("Please enter checkbox option name!");
 
+            const resetInputs = () => {
+                if (nameEl) nameEl.value = "";
+                if (priceEl) priceEl.value = "0.00";
+            };
+
+            // Single item only: store in the per-item list.
+            if (scope === 'item') {
+                const itemSel = document.getElementById('checkbox-manager-item');
+                const itemId = itemSel ? itemSel.value : "";
+                if (!itemId) return alert("Please choose an item in this category first!");
+                if (!Array.isArray(itemCheckboxes)) itemCheckboxes = [];
+                itemCheckboxes.push({ itemId: itemId, name: name, price: price });
+                db.ref('itemCheckboxes').set(itemCheckboxes).then(() => {
+                    resetInputs();
+                    renderCheckboxManagerList();
+                }).catch(err => alert("Could not save: " + (err && err.message ? err.message : err)));
+                return;
+            }
+
+            // Whole category (existing behaviour).
             if (!categoryCheckboxes[cat]) categoryCheckboxes[cat] = [];
             categoryCheckboxes[cat].push({ name: name, price: price });
 
             db.ref('categoryCheckboxes').set(categoryCheckboxes).then(() => {
-                document.getElementById('checkbox-manager-name').value = "";
-                document.getElementById('checkbox-manager-price').value = "0.00";
+                resetInputs();
                 renderCheckboxManagerList();
             });
         }
@@ -7232,6 +7959,14 @@
             if (!categoryCheckboxes[cat]) return;
             categoryCheckboxes[cat].splice(index, 1);
             db.ref('categoryCheckboxes').set(categoryCheckboxes).then(() => {
+                renderCheckboxManagerList();
+            });
+        }
+
+        function deleteItemCheckboxOption(index) {
+            if (!Array.isArray(itemCheckboxes)) return;
+            itemCheckboxes.splice(index, 1);
+            db.ref('itemCheckboxes').set(itemCheckboxes).then(() => {
                 renderCheckboxManagerList();
             });
         }
@@ -8522,6 +9257,128 @@
             });
         }
     
+
+async function repairCategoriesNow() {
+    if (!(loggedInRole === 'admin' || (credentials[loggedInRole] && credentials[loggedInRole].roleType === 'admin'))) {
+        alert("⛔ Admin மட்டும் இதை use பண்ண முடியும்.");
+        return;
+    }
+    if (!confirm("இது மெனுவில் duplicate items-ஐ நீக்கி, கேட்டகிரிகளை சரிசெய்யும்.\n\nFirebase backup எடுத்தாச்சா?\n\nதொடரவா?")) return;
+
+    try {
+        const snap = await db.ref('menu').once('value');
+        const val = snap.val();
+        let rawList = [];
+        if (Array.isArray(val)) rawList = val.slice();
+        else if (val && typeof val === 'object') rawList = Object.values(val);
+
+        const cleaned = [];
+        const seenKeys = new Set();
+        rawList.forEach(m => {
+            if (!m || typeof m !== 'object') return;
+            const name = String(m.name || '').trim();
+            if (!name) return;
+            const cat = String(m.cat || m.category || '').trim() || 'Uncategorized';
+            const dupKey = name.toLowerCase() + '||' + cat.toLowerCase();
+            if (seenKeys.has(dupKey)) return;
+            seenKeys.add(dupKey);
+            cleaned.push({
+                ...m,
+                id: String(m.id || (cat.toLowerCase() + '|' + name.toLowerCase())),
+                code: String(m.code || '').trim(),
+                name: name,
+                cat: cat,
+                category: cat,
+                price: Number(m.price) || 0,
+                stock: m.stock !== undefined ? m.stock : 999999
+            });
+        });
+
+        const catSnap = await db.ref('categories').once('value');
+        const cval = catSnap.val();
+        let catList = [];
+        if (Array.isArray(cval)) catList = cval.slice();
+        else if (cval && typeof cval === 'object') {
+            catList = Object.keys(cval)
+                .sort((a, b) => {
+                    const na = Number(a), nb = Number(b);
+                    const aN = !isNaN(na), bN = !isNaN(nb);
+                    if (aN && bN) return na - nb;
+                    if (aN) return -1;
+                    if (bN) return 1;
+                    return String(a).localeCompare(String(b));
+                })
+                .map(k => cval[k]);
+        }
+        catList = catList.map(c => String(c || '').trim()).filter(Boolean);
+
+        const lowerSet = new Set(catList.map(c => c.toLowerCase()));
+        cleaned.forEach(m => {
+            if (!lowerSet.has(m.cat.toLowerCase())) {
+                lowerSet.add(m.cat.toLowerCase());
+                catList.push(m.cat);
+            }
+        });
+
+        await db.ref('menu').set(cleaned);
+        await db.ref('categories').set(catList);
+
+        menu = cleaned;
+        categories = catList;
+
+        renderCategories();
+        populateCategoryDropdowns();
+        renderMenuGrid();
+        renderCategoryManagerTable();
+        renderMenuManagerTable();
+
+        alert("✅ சரிசெய்யப்பட்டது!\n\n" + cleaned.length + " items\n" + catList.length + " categories\n\n" + (rawList.length - cleaned.length) + " duplicate(s) நீக்கப்பட்டது.");
+    } catch (e) {
+        console.error(e);
+        alert("Repair failed: " + e.message);
+    }
+}
+
     </script>
+
+    <style id="pc-login-size-restore">
+      /* Restore the larger desktop login panel while keeping the mobile layout intact. */
+      @media (min-width: 768px) {
+        #login-screen.login-overlay {
+          padding: 28px !important;
+        }
+        #login-screen .login-box {
+          width: min(92vw, 520px) !important;
+          max-width: 520px !important;
+          padding: 48px 44px !important;
+          max-height: calc(100vh - 56px) !important;
+        }
+        #login-screen .login-box h2 {
+          font-size: 32px !important;
+          margin-bottom: 30px !important;
+        }
+        #login-screen .login-box input {
+          font-size: 18px !important;
+          min-height: 56px !important;
+          padding: 16px 18px !important;
+          margin-bottom: 20px !important;
+        }
+        #login-screen .login-box .btn-login,
+        #login-screen .login-box button[type="submit"] {
+          min-height: 56px !important;
+          font-size: 17px !important;
+        }
+        #login-accounts-preview, #login-accounts-chips {
+          font-size: 15px;
+        }
+      }
+      @media (max-width: 767px) {
+        #login-screen .login-box {
+          width: min(100%, 420px);
+          max-width: 100%;
+        }
+      }
+    </style>
+
 </body>
 </html>
