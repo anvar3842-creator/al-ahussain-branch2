@@ -6769,6 +6769,30 @@
         }
 
         function triggerPrint(modeClass, onComplete) {
+            // Kitchen/reports must NEVER carry the ESC/POS drawer-kick bytes that
+            // live inside #print-receipt and #print-drawer. Some thermal printer
+            // drivers in text/ESC-POS mode pass hidden bytes through and pulse the
+            // cash drawer on every print job. Detach those sections for any print
+            // mode that is not the customer receipt or the explicit drawer open.
+            const drawerKickModes = { 'print-customer': true, 'print-drawer-mode': true };
+            let detached = [];
+            if (!drawerKickModes[modeClass]) {
+                ['print-receipt', 'print-drawer'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.parentNode) {
+                        detached.push({ el, parent: el.parentNode, next: el.nextSibling });
+                        el.parentNode.removeChild(el);
+                    }
+                });
+            }
+            const restoreDetached = () => {
+                detached.forEach(({ el, parent, next }) => {
+                    if (next && next.parentNode === parent) parent.insertBefore(el, next);
+                    else parent.appendChild(el);
+                });
+                detached = [];
+            };
+
             document.body.classList.add(modeClass);
             let finished = false;
             const cleanup = () => {
@@ -6776,6 +6800,7 @@
                 finished = true;
                 document.body.classList.remove(modeClass);
                 window.removeEventListener('afterprint', cleanup);
+                restoreDetached();
                 if (typeof onComplete === 'function') {
                     try { onComplete(); } catch (err) { console.error(err); }
                 }
