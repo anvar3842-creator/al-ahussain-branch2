@@ -1390,6 +1390,7 @@
     }
 
     /* Phones under 400px: single-column menu would be too wide, keep 2 but tighten */
+
     @media (max-width: 380px) {
         body.is-staff-role .menu-grid { grid-template-columns: 1fr !important; }
         body.is-staff-role .menu-card { min-height: 108px; }
@@ -1516,6 +1517,7 @@
         .btn-login { min-height: 50px; }
         #takeaway-details-modal .timeout-box { width: 100% !important; padding: 22px 17px !important; }
     }
+
     @media (max-width: 380px) {
         html.is-customer-qr .menu-grid,
         body.is-staff-role .menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px; }
@@ -1690,7 +1692,7 @@
                     <button class="admin-btn payment-summary-btn" onclick="openPaymentSummaryModal()">Payment Summary</button>
                     <button class="admin-btn manage-suppliers-btn" onclick="openCredentialsModal()">👥 Manage Suppliers & Logins</button>
                     <button class="admin-btn menu-repair-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);" onclick="repairCategoriesNow()">🛠️ Fix Menu Categories</button>
-                    <button class="admin-btn" style="background:linear-gradient(135deg,#0f766e,#0d9488);" onclick="openDrawerSetupModal()">Cash Drawer Setup</button>
+                    <button class="admin-btn drawer-setup-btn" style="background:linear-gradient(135deg,#0f766e,#0d9488);" onclick="openDrawerSetupModal()">Cash Drawer Setup</button>
                     <button class="admin-btn close-day-btn" onclick="closeDay()">Day Close</button>
                 </div>
             </div>
@@ -4355,6 +4357,9 @@
                 if (btnRepair) btnRepair.style.display = 'none';
                 const btnChkMgr = adminSection.querySelector('.checkbox-mgr-btn');
                 if (btnChkMgr) btnChkMgr.style.display = 'none';
+                // Cash Drawer Setup: admin login only, never staff
+                const btnDrawerSetup = adminSection.querySelector('.drawer-setup-btn');
+                if (btnDrawerSetup) btnDrawerSetup.style.display = 'none';
 
                 // Stats toggles
                 const statBoxes = adminSection.querySelectorAll('.stat-toggle-box');
@@ -7319,7 +7324,16 @@
             }
         }
 
+        function isAdminAccount() {
+            return loggedInRole === 'admin' ||
+                (typeof credentials !== 'undefined' && credentials[loggedInRole] && credentials[loggedInRole].roleType === 'admin');
+        }
+
         function openDrawerSetupModal() {
+            if (!isAdminAccount()) {
+                alert('Only the Admin account can open Cash Drawer Setup.');
+                return;
+            }
             updateDrawerSetupStatus();
             const cb = document.getElementById('drawer-open-on-pay');
             if (cb) cb.checked = drawerConfig.openOnPayNow !== false;
@@ -9712,6 +9726,8 @@ async function repairCategoriesNow() {
         }
       }
     
+    /* Cash Drawer Setup is visible to the Admin account only */
+    body.is-staff-role .drawer-setup-btn { display: none !important; }
     /* Mobile layout: keep the POS usable on narrow screens after login. */
     @media (max-width: 600px) {
         html, body { min-width: 0; width: 100%; }
@@ -9731,6 +9747,7 @@ async function repairCategoriesNow() {
         .login-box { width: 100%; max-width: 380px; padding: 30px 22px; box-sizing: border-box; }
         .login-box input { font-size: 16px; }
     }
+
     @media (max-width: 380px) {
         .header-title { gap: 5px; }
         .header h2 { font-size: 15px; }
