@@ -35,6 +35,7 @@
       html.is-customer-qr .mob-home-btn,
       html.is-customer-qr .btn-back-tables,
       html.is-customer-qr .table-link-controls,
+      html.is-customer-qr #btn-customer-display,
       html.is-customer-qr #btn-sound-test,
       html.is-customer-qr #btn-logout-elem,
       html.is-customer-qr #staff-action-buttons,
@@ -524,6 +525,7 @@
         .staff-alert-banner.update-type { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fdba74; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.15); }
         .sound-test-btn { background: #f1f5f9; border: 1.5px solid #cbd5e1; color: #1e293b; padding: 6px 12px; border-radius: 9px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
         .sound-test-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
+        @media (max-width: 760px) { #btn-customer-display { display: none !important; } }
         .staff-alert-btn-view { background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 12.5px; font-weight: 800; cursor: pointer; }
         .staff-alert-btn-dismiss { background: transparent; color: #64748b; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; }
 
@@ -1434,6 +1436,7 @@
     html.is-customer-qr #app-header-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     html.is-customer-qr #display-user,
     html.is-customer-qr #btn-logout-elem,
+    html.is-customer-qr #btn-customer-display,
     html.is-customer-qr #btn-sound-test { display: none !important; }
     html.is-customer-qr .mobile-tab-bar { gap: 8px; padding: 9px 10px; }
     html.is-customer-qr .mob-tab-btn { min-height: 48px; padding: 10px 8px; font-size: 13px; }
@@ -1609,6 +1612,7 @@
                 <span class="badge" id="display-user">Admin</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
+                <button type="button" id="btn-customer-display" class="sound-test-btn" onclick="openCustomerDisplay()" title="Open the customer display on the second monitor">Display</button>
                 <button type="button" id="btn-sound-test" class="sound-test-btn" onclick="testPosSound()" title="Sound active - click to test voice announcement">🔊 Sound</button>
                 <button class="btn-logout" id="btn-logout-elem" onclick="logout()">Logout</button>
             </div>
@@ -2762,6 +2766,111 @@
         let isProcessingPayment = false;
         let privateStatsState = { sales: false, expenses: false };
 
+        // ---- Order session protection --------------------------------------
+        // Every seating gets a unique session id. A paid table is left behind as a
+        // tiny "Closed" marker instead of being deleted, so a device that was asleep
+        // or offline can never push its old, already-settled cart back over the new
+        // customer's order. Every whole-order write must go through writeActiveOrder().
+        function newOrderSessionId() {
+            return 's_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+        }
+
+        function isClosedOrder(order) {
+            return Boolean(order && typeof order === 'object' && order.status === 'Closed');
+        }
+
+        // Removes settled-table markers from a snapshot before it reaches the UI.
+        function stripClosedOrders(orders) {
+            if (!orders || typeof orders !== 'object') return {};
+            Object.keys(orders).forEach(k => {
+                if (isClosedOrder(orders[k])) delete orders[k];
+            });
+            return orders;
+        }
+
+        // Marks a table as settled without deleting the node (tombstone).
+        function closedOrderMarker(order, reason, extra) {
+            return Object.assign({
+                status: 'Closed',
+                sessionId: (order && order.sessionId) || '',
+                closedSessionId: (order && order.sessionId) || '',
+                closedAt: Date.now(),
+                closedReason: reason || 'paid'
+            }, extra || {});
+        }
+
+        // Reload one table after a blocked write so the cashier never keeps working
+        // on a phantom (already settled) cart.
+        function refreshActiveOrderFromServer(tableKey) {
+            if (isCustomerMode || !tableKey || typeof db === 'undefined' || !db || !db.ref) return;
+            db.ref('activeOrders/' + tableKey).once('value').then(function (snap) {
+                const latest = snap.val();
+                if (latest && !isClosedOrder(latest)) {
+                    getOrderItemsArray(latest);
+                    activeOrders[tableKey] = latest;
+                } else {
+                    delete activeOrders[tableKey];
+                }
+                requestRenderBigTablesGrid();
+                if (currentTableKey === tableKey) renderCart({ skipInputSync: true });
+                if (typeof showToast === 'function') {
+                    showToast('⚠️ ' + tableKey + ' changed on another device — latest order reloaded');
+                }
+            }).catch(function () { /* ignore */ });
+        }
+
+        // Guarded writer: refuses to overwrite a newer seating or to resurrect a
+        // settled bill. Returns a promise that resolves with { committed }.
+        function writeActiveOrder(tableKey, order) {
+            if (isCustomerMode || !tableKey || !order ||
+                typeof db === 'undefined' || !db || !db.ref) {
+                return Promise.resolve({ committed: false, skipped: true });
+            }
+            return db.ref('activeOrders/' + tableKey).transaction(function (current) {
+                if (!current) return order;
+                if (current.status === 'Closed') {
+                    // Only a genuinely new seating may reopen a settled table.
+                    if (!order.sessionId || order.sessionId === current.closedSessionId) {
+                        console.warn('Blocked stale cart write for ' + tableKey + ': bill already settled.');
+                        return;
+                    }
+                    return order;
+                }
+                if (current.sessionId && current.sessionId !== (order.sessionId || '')) {
+                    // This local cart belongs to an older seating of the same table.
+                    console.warn('Blocked stale cart write for ' + tableKey + ': table was re-seated.');
+                    return;
+                }
+                return order;
+            }).then(function (result) {
+                if (result && result.committed === false) refreshActiveOrderFromServer(tableKey);
+                return result;
+            }).catch(function (error) {
+                console.error('Could not save order for ' + tableKey + ':', error);
+                return { committed: false, error: error };
+            });
+        }
+
+        // Guarded delete: never removes a newer seating's order from a stale cart.
+        function clearActiveOrder(tableKey, order) {
+            if (isCustomerMode || !tableKey || typeof db === 'undefined' || !db || !db.ref) {
+                return Promise.resolve({ committed: false });
+            }
+            const sessionId = (order && order.sessionId) || '';
+            return db.ref('activeOrders/' + tableKey).transaction(function (current) {
+                if (!current) return null;
+                if (current.status === 'Closed') return;
+                if (current.sessionId && current.sessionId !== sessionId) return;
+                return null;
+            }).then(function (result) {
+                if (result && result.committed === false) refreshActiveOrderFromServer(tableKey);
+                return result;
+            }).catch(function (error) {
+                console.error('Could not clear order for ' + tableKey + ':', error);
+                return { committed: false, error: error };
+            });
+        }
+
         // ---- Table count (admin-configurable: 13 -> 14, 15, 16 ...) ----
         const DEFAULT_TABLE_COUNT = 13;
         const MIN_TABLE_COUNT = 1;
@@ -3102,7 +3211,7 @@
         }
 
         db.ref('activeOrders').on('value', (snapshot) => {
-            const raw = snapshot.val() || {};
+            const raw = stripClosedOrders(snapshot.val() || {});
             const now = Date.now();
             let missingSeatedUpdates = {};
 
@@ -3171,7 +3280,7 @@
                 delete activeOrders[key];
             } else {
                 const value = snapshot.val();
-                if (value && typeof value === 'object') {
+                if (value && typeof value === 'object' && !isClosedOrder(value)) {
                     // Firebase can return numeric-keyed item collections as objects.
                     // Normalize them before rendering so table cards never show a false
                     // empty state while the cart is still unopened.
@@ -3209,7 +3318,7 @@
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
                 db.ref('activeOrders').once('value').then((snapshot) => {
-                    activeOrders = snapshot.val() || {};
+                    activeOrders = stripClosedOrders(snapshot.val() || {});
                     if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
                         activeOrders[currentTableKey] = customerDraftOrder;
                     }
@@ -3223,7 +3332,7 @@
 
         window.addEventListener('online', () => {
             db.ref('activeOrders').once('value').then((snapshot) => {
-                activeOrders = snapshot.val() || {};
+                activeOrders = stripClosedOrders(snapshot.val() || {});
                 if (isCustomerMode && customerDraftOrder && customerDraftTableKey === currentTableKey) {
                     activeOrders[currentTableKey] = customerDraftOrder;
                 }
@@ -3980,12 +4089,13 @@
                 if (!activeOrders[storedTkKey]) {
                     activeOrders[storedTkKey] = {
                         items: [],
+                        sessionId: newOrderSessionId(),
                         customerName: name,
                         customerPhone: phone,
                         takenBy: 'Customer QR',
                         createdAt: Date.now()
                     };
-                    db.ref('activeOrders/' + storedTkKey).set(activeOrders[storedTkKey]);
+                    writeActiveOrder(storedTkKey, activeOrders[storedTkKey]);
                 }
 
                 document.getElementById('takeaway-details-modal').style.display = 'none';
@@ -4004,7 +4114,7 @@
 
             // Each scanned QR starts with its own empty cart. The shared table order
             // remains in Firebase and is merged atomically only when this customer sends.
-            const existingSharedOrder = activeOrders[key] || {};
+            const existingSharedOrder = (activeOrders[key] && !isClosedOrder(activeOrders[key])) ? activeOrders[key] : {};
             customerDraftTableKey = key;
             customerDraftOrder = {
                 ...existingSharedOrder,
@@ -4012,6 +4122,7 @@
                 discount: 0,
                 paymentMethod: existingSharedOrder.paymentMethod || "Cash",
                 status: "Active",
+                sessionId: existingSharedOrder.sessionId || newOrderSessionId(),
                 takenBy: "Customer QR",
                 orderSource: "Customer QR",
                 customerSent: false,
@@ -4492,7 +4603,7 @@
                     if (!ord.sentToKitchen) {
                         ord.sentToKitchen = true;
                         ord.lastUpdatedAt = Date.now();
-                        db.ref('activeOrders/' + currentTableKey).set(ord);
+                        writeActiveOrder(currentTableKey, ord);
                         broadcastLiveOrderEvent(currentTableKey, 'order', ord);
                     }
                 }
@@ -4559,6 +4670,7 @@
                     discount: 0.00,
                     paymentMethod: "Cash",
                     status: "Active",
+                    sessionId: newOrderSessionId(),
                     seatedAt: now,
                     seatedTime: new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     takenBy: loggedInDisplayName,
@@ -4572,7 +4684,7 @@
                 delete activeOrders[currentTableKey].orderIntake;
                 delete activeOrders[currentTableKey].intakeUpdatedBy;
             }
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
+            if (!isCustomerMode) writeActiveOrder(currentTableKey, activeOrders[currentTableKey]);
             updateOrderIntakeUI();
             refreshCartTitleBadge();
             updateCartSeatedDisplay();
@@ -4626,7 +4738,7 @@
                     // User may have switched tables while the request was in flight.
                     if (currentTableKey !== openingKey) return;
                     const freshOrder = freshSnapshot.val();
-                    if (freshOrder && typeof freshOrder === 'object') {
+                    if (freshOrder && typeof freshOrder === 'object' && !isClosedOrder(freshOrder)) {
                         getOrderItemsArray(freshOrder);
                         activeOrders[openingKey] = freshOrder;
                     } else {
@@ -4767,6 +4879,7 @@
                     discount: 0.00,
                     paymentMethod: "Cash",
                     status: "Active",
+                    sessionId: newOrderSessionId(),
                     seatedAt: seatedMs,
                     seatedTime: timeStr,
                     takenBy: isCustomerMode ? "Customer" : loggedInDisplayName,
@@ -4781,7 +4894,7 @@
                 activeOrders[currentTableKey].seatedTime = timeStr;
             }
 
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(activeOrders[currentTableKey]);
+            if (!isCustomerMode) writeActiveOrder(currentTableKey, activeOrders[currentTableKey]);
             flashLiveSyncSuccess();
             renderCart();
             renderBigTablesGrid();
@@ -4812,7 +4925,9 @@
                 if (!confirm("This table has ordered items. Clear table and items completely?")) return;
             }
             delete activeOrders[currentTableKey];
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
+            // Leave a closed marker so a stale device cannot push these cleared
+            // items back later. The next guest starts a new session on top of it.
+            if (!isCustomerMode) writeActiveOrder(currentTableKey, closedOrderMarker(order, 'cleared'));
             flashLiveSyncSuccess();
             renderCart();
             renderBigTablesGrid();
@@ -4840,6 +4955,7 @@
                     discount: 0.00,
                     paymentMethod: "Cash",
                     status: "Active",
+                    sessionId: newOrderSessionId(),
                     seatedAt: now,
                     seatedTime: new Date(now).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     takenBy: loggedInDisplayName,
@@ -4852,7 +4968,7 @@
                 // Transactional numbering guarantees this key is new; set the
                 // initial record only after the counter allocation succeeds.
                 activeOrders[newOrderKey] = newOrder;
-                db.ref('activeOrders/' + newOrderKey).set(newOrder).then(() => {
+                writeActiveOrder(newOrderKey, newOrder).then(() => {
                     openTable(newOrderKey);
                 }).catch(err => {
                     alert("Takeaway order was numbered but could not be saved: " + err.message);
@@ -5724,6 +5840,7 @@
                     discount: 0.00,
                     paymentMethod: "Cash",
                     status: "Active",
+                    sessionId: newOrderSessionId(),
                     seatedAt: now,
                     seatedTime: timeStr,
                     takenBy: isCustomerMode ? "Customer" : loggedInDisplayName,
@@ -5773,7 +5890,7 @@
                 });
             }
 
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+            writeActiveOrder(currentTableKey, order);
             renderCart();
             renderMenuGrid();
             showToast(`✓ ${item.name} added!`);
@@ -5808,9 +5925,9 @@
 
             if (order.items.length === 0) {
                 delete activeOrders[currentTableKey];
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
+                clearActiveOrder(currentTableKey, order);
             } else {
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
             }
 
             renderCart();
@@ -5867,7 +5984,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -5908,7 +6025,7 @@
                 } else {
                     item.comment = cur + ", " + noteText;
                 }
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -6005,7 +6122,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -6021,7 +6138,7 @@
                 if (item.notes && typeof item.notes === 'object') {
                     item.notes.takeaway = false;
                 }
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -6038,7 +6155,7 @@
                 item.takeawayQty = newTk;
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes.takeaway = (newTk > 0);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -6054,7 +6171,7 @@
             let item = order.items.find(x => String(x.id) === String(itemId));
             if (item) {
                 item.customPrice = Math.max(0, Number(newPrice) || 0);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 updateCart();
                 flashLiveSyncSuccess();
             }
@@ -6068,7 +6185,7 @@
             if (item) {
                 if (!item.notes || typeof item.notes !== 'object') item.notes = {};
                 item.notes[noteType] = Boolean(checked);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 renderCart();
                 flashLiveSyncSuccess();
             }
@@ -6081,8 +6198,11 @@
             if (!tableKey || isCustomerMode) return Promise.resolve();
             const resolvedName = String(optName || "").replace(/&#39;/g, "'").replace(/&quot;/g, '"').trim();
             const safeKey = resolvedName.replace(/[.#$\[\]\/]/g, '_');
+            const localSession = (activeOrders[tableKey] && activeOrders[tableKey].sessionId) || '';
             return db.ref('activeOrders/' + tableKey).transaction(current => {
                 if (!current || !Array.isArray(current.items)) return;
+                if (current.status === 'Closed') return;
+                if (localSession && current.sessionId && current.sessionId !== localSession) return;
                 const next = { ...current, items: current.items.map(it => ({ ...it })) };
                 const item = next.items.find(x => String(x.id) === String(itemId));
                 if (!item) return;
@@ -6260,7 +6380,7 @@
                 item.comment = value;
                 clearTimeout(commentDebounceTimers[itemId]);
                 commentDebounceTimers[itemId] = setTimeout(() => {
-                    if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                    writeActiveOrder(currentTableKey, order);
                     flashLiveSyncSuccess();
                 }, 300);
             }
@@ -6273,7 +6393,7 @@
             if (item) {
                 item.comment = comment;
                 clearTimeout(commentDebounceTimers[itemId]);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+                writeActiveOrder(currentTableKey, order);
                 flashLiveSyncSuccess();
             }
         }
@@ -6298,7 +6418,7 @@
                 order.paymentMethod = payMethodSelect.value;
             }
 
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+            writeActiveOrder(currentTableKey, order);
             flashLiveSyncSuccess();
         }
 
@@ -6644,8 +6764,16 @@
             // A Firebase transaction serializes simultaneous sends from different phones.
             // Merge only this phone's private draft into the latest shared table order.
             db.ref("activeOrders/" + tableKeyForSend).transaction(current => {
-                const latest = current && typeof current === "object" ? current : {
+                const serverClosed = !!(current && typeof current === "object" && current.status === "Closed");
+                // Already settled on the server: never let a phone that still holds
+                // the paid session re-open this table.
+                if (serverClosed && submittedOrderMeta.sessionId &&
+                    submittedOrderMeta.sessionId === current.closedSessionId) {
+                    return;
+                }
+                const latest = (current && typeof current === "object" && !serverClosed) ? current : {
                     items: [], discount: 0, paymentMethod: "Cash", status: "Active",
+                    sessionId: submittedOrderMeta.sessionId || newOrderSessionId(),
                     seatedAt: submittedOrderMeta.seatedAt || Date.now(),
                     seatedTime: submittedOrderMeta.seatedTime || new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
                 };
@@ -6675,7 +6803,8 @@
                     }
                 });
                 merged.items = mergedItems;
-                merged.status = latest.status || "Active";
+                merged.status = serverClosed ? "Active" : (latest.status || "Active");
+                merged.sessionId = latest.sessionId || submittedOrderMeta.sessionId || newOrderSessionId();
                 merged.discount = Number(latest.discount) || 0;
                 merged.paymentMethod = latest.paymentMethod || "Cash";
                 merged.customerSent = true;
@@ -6766,7 +6895,8 @@
             let order = activeOrders[currentTableKey];
             if (!order) return;
             order.isReady = !order.isReady;
-            db.ref('activeOrders/' + currentTableKey).set(order).then(() => {
+            writeActiveOrder(currentTableKey, order).then((result) => {
+                if (result && result.committed === false) return;
                 const btnReady = document.getElementById('btn-ready-order-elem');
                 if (btnReady) {
                     btnReady.innerText = order.isReady ? "Mark Order Not Ready" : "Mark Order Ready";
@@ -6791,7 +6921,8 @@
                 order.takenBy = loggedInDisplayName || "Staff";
             }
 
-            db.ref('activeOrders/' + currentTableKey).set(order).then(() => {
+            writeActiveOrder(currentTableKey, order).then((result) => {
+                if (result && result.committed === false) return;
                 broadcastLiveOrderEvent(currentTableKey, isUpdate ? 'update' : 'order', order);
                 showToast(isUpdate ? `✓ ${currentTableKey} update sent to Kitchen & Counter!` : `✓ ${currentTableKey} order sent to Kitchen & Counter!`);
 
@@ -6944,7 +7075,7 @@
             }
 
             // Immediately persist latest notes to DB
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+            writeActiveOrder(currentTableKey, order);
 
             document.getElementById('k-order-type').innerText = currentTableKey.startsWith("Order-") ? "TAKEAWAY" : "DINE-IN";
             document.getElementById('k-table').innerText = currentTableKey;
@@ -7015,7 +7146,7 @@
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
             // Immediately persist latest notes to DB
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+            writeActiveOrder(currentTableKey, order);
 
             populateCustomerReceipt(order, 0, 0);
             triggerPrint("print-customer", onComplete);
@@ -7371,6 +7502,137 @@
             pulseCashDrawer(true);
         }
 
+        /* ============================================================
+           CUSTOMER DISPLAY (second monitor / VGL51-2)
+           The POS broadcasts the current bill state to customer-display.html
+           using BroadcastChannel (with a localStorage fallback). The display
+           window can be moved to the customer-facing monitor and run in
+           full screen. No Firebase data is shared between branches.
+           ============================================================ */
+        // Branch 2 must never share the customer-display channel or storage with
+        // branch 1, even though both sites are served from the same GitHub Pages
+        // origin (anvar3842-creator.github.io). Keep these names branch-specific.
+        const CUSTOMER_DISPLAY_CHANNEL = 'al_hussain_customer_display_branch2_v1';
+        const CUSTOMER_DISPLAY_STORAGE = 'al_hussain_customer_display_state_branch2';
+        const CUSTOMER_DISPLAY_DONE_MS = 15000;
+
+        let customerDisplayChannel = null;
+        let customerDisplayIdleTimer = null;
+        let lastCustomerDisplayState = { type: 'idle', ts: Date.now() };
+
+        function getCustomerDisplayChannel() {
+            if (!('BroadcastChannel' in window)) return null;
+            if (!customerDisplayChannel) {
+                try {
+                    customerDisplayChannel = new BroadcastChannel(CUSTOMER_DISPLAY_CHANNEL);
+                    customerDisplayChannel.onmessage = function (event) {
+                        const data = event && event.data;
+                        if (!data) return;
+                        if (data.type === 'request') {
+                            try { customerDisplayChannel.postMessage(lastCustomerDisplayState); } catch (e) {}
+                        }
+                    };
+                } catch (e) {
+                    customerDisplayChannel = null;
+                }
+            }
+            return customerDisplayChannel;
+        }
+
+        function pushCustomerDisplayState(state) {
+            const payload = Object.assign({}, state || {}, { ts: Date.now() });
+            lastCustomerDisplayState = payload;
+
+            try {
+                localStorage.setItem(CUSTOMER_DISPLAY_STORAGE, JSON.stringify(payload));
+            } catch (e) { /* storage may be unavailable on file:// */ }
+
+            const channel = getCustomerDisplayChannel();
+            if (channel) {
+                try { channel.postMessage(payload); } catch (e) {}
+            }
+
+            if (customerDisplayIdleTimer) {
+                clearTimeout(customerDisplayIdleTimer);
+                customerDisplayIdleTimer = null;
+            }
+            if (payload.type === 'done') {
+                customerDisplayIdleTimer = setTimeout(function () {
+                    pushCustomerDisplayState({ type: 'idle' });
+                }, CUSTOMER_DISPLAY_DONE_MS);
+            }
+        }
+
+        function updateCustomerDisplayForPayment() {
+            const order = currentTableKey ? activeOrders[currentTableKey] : null;
+            const total = order ? getOrderGrandTotal(order) : 0;
+            const paidEl = document.getElementById('modal-paid-input');
+            const paid = paidEl ? (Number(paidEl.value) || 0) : 0;
+            const change = Math.max(0, paid - total);
+            const method = activeModalPaymentMethod || 'Cash';
+            pushCustomerDisplayState({
+                type: 'pay',
+                total: total,
+                paid: paid,
+                change: change,
+                method: method,
+                table: currentTableKey || ''
+            });
+        }
+
+        function openCustomerDisplay() {
+            const displayUrl = new URL('customer-display.html', window.location.href);
+            displayUrl.searchParams.set('branch', 'branch2');
+            const url = displayUrl.href;
+            const width = 1024;
+            const height = 600;
+            const screenWidth = (window.screen && window.screen.availWidth) || 1024;
+            const screenHeight = (window.screen && window.screen.availHeight) || 768;
+            // Open on the current screen first, then try to move it to the second
+            // monitor automatically (Chrome Window Management API).
+            const left = Math.max(0, Math.round((screenWidth - width) / 2));
+            const top = Math.max(0, Math.round((screenHeight - height) / 2));
+            const features = 'popup=yes,width=' + width + ',height=' + height +
+                ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=no';
+            const win = window.open(url, 'alHussainCustomerDisplay', features);
+            if (!win) {
+                alert('Please allow pop-ups for this page, then click Display again.\n\n' +
+                    'After the window opens, drag it to the customer monitor (VGL51-2) and press F11 for full screen.');
+                return;
+            }
+
+            if ('getScreenDetails' in window) {
+                try {
+                    const screensPromise = window.getScreenDetails();
+                    if (screensPromise && typeof screensPromise.then === 'function') {
+                        screensPromise.then(function (details) {
+                            try {
+                                const current = details.currentScreen;
+                                const other = details.screens.find(function (s) {
+                                    return s !== current && s.availWidth > 0 && s.availHeight > 0;
+                                });
+                                if (other) {
+                                    win.moveTo(other.availLeft, other.availTop);
+                                    win.resizeTo(
+                                        Math.min(width, other.availWidth),
+                                        Math.min(height, other.availHeight)
+                                    );
+                                }
+                            } catch (e) { /* ignore move errors */ }
+                        }).catch(function () { /* permission denied - user can drag it */ });
+                    }
+                } catch (e) { /* ignore */ }
+            }
+
+            setTimeout(function () {
+                try { win.focus(); } catch (e) {}
+                try { win.postMessage({ type: 'request' }, '*'); } catch (e) {}
+            }, 500);
+        }
+
+        // Start idle when the POS loads; the display window will pick this up.
+        pushCustomerDisplayState({ type: 'idle' });
+
         function openPaymentModal() {
             if (hasPermission('billing') && drawerConfig.openOnPayNow !== false) {
                 pulseCashDrawer(false).then(function (opened) {
@@ -7385,7 +7647,7 @@
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
-            if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).set(order);
+            writeActiveOrder(currentTableKey, order);
 
             let grand = getOrderGrandTotal(order);
             document.getElementById('modal-grand-total').innerText = grand.toFixed(2);
@@ -7445,8 +7707,11 @@
             }
         }
 
-        function closePaymentModal() {
+        function closePaymentModal(keepDisplay) {
             document.getElementById('payment-modal').style.display = 'none';
+            if (!keepDisplay) {
+                pushCustomerDisplayState({ type: 'idle' });
+            }
         }
 
         function setQuickCash(val) {
@@ -7466,6 +7731,7 @@
             let paid = Number(document.getElementById('modal-paid-input').value) || 0;
             let change = Math.max(0, paid - grand);
             document.getElementById('modal-change-amount').innerText = change.toFixed(2);
+            updateCustomerDisplayForPayment();
         }
 
         async function confirmPaymentProcess() {
@@ -7540,11 +7806,38 @@
             }
 
             try {
-                // Save the sale and remove the active order atomically. If Firebase fails,
-                // the order remains open and the cashier can retry without losing the bill.
+                // Final safety check: never charge a cart that belongs to an older
+                // seating (or to a bill that another device already settled).
+                try {
+                    const serverSnap = await db.ref('activeOrders/' + paidOrderKey).once('value');
+                    const serverOrder = serverSnap.val();
+                    const serverClosed = isClosedOrder(serverOrder);
+                    const localSid = currentOrder.sessionId || '';
+                    const serverOtherSession = serverOrder && typeof serverOrder === 'object' &&
+                        !serverClosed && serverOrder.sessionId && localSid && serverOrder.sessionId !== localSid;
+                    if (serverClosed || serverOtherSession) {
+                        alert('This table was settled or re-seated on another device. The latest table data will be reloaded — please check the order before charging.');
+                        if (serverOrder && !serverClosed) activeOrders[paidOrderKey] = serverOrder;
+                        else delete activeOrders[paidOrderKey];
+                        closePaymentModal();
+                        renderCart({ skipInputSync: true });
+                        requestRenderBigTablesGrid();
+                        return;
+                    }
+                } catch (checkError) {
+                    console.error('Could not verify the table before payment:', checkError);
+                }
+
+                // Save the sale and close the table atomically. A tiny "Closed" marker
+                // stays behind instead of a hard delete, so an old cart from a sleeping
+                // or offline device can never resurrect this paid bill on the same table.
                 const updates = {};
                 updates['salesHistory/' + saleRef.key] = saleRecord;
-                updates['activeOrders/' + paidOrderKey] = null;
+                updates['activeOrders/' + paidOrderKey] = closedOrderMarker(order, 'paid', {
+                    closedRef: invRef,
+                    closedTotal: grand,
+                    closedBy: loggedInDisplayName || 'Staff'
+                });
                 updates['tableSessions/' + paidOrderKey] = null;
                 updates['newCustomerOrderAlerts/' + paidOrderKey] = null;
                 updates['staffAlerts/' + paidOrderKey] = null;
@@ -7605,11 +7898,25 @@
                 if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
 
                 order.paymentMethod = chosenPaymentMethod;
-                closePaymentModal();
+                closePaymentModal(true);
+                pushCustomerDisplayState({
+                    type: 'done',
+                    total: grand,
+                    paid: paid,
+                    change: change,
+                    method: chosenPaymentMethod,
+                    table: paidOrderKey || ''
+                });
 
                 if (shouldPrint) {
                     populateCustomerReceipt(order, paid, change);
-                    triggerPrint("print-customer", () => backToTableSelection());
+                    triggerPrint("print-customer", () => {
+                        // The print callbacks can fire several seconds later. Never yank
+                        // the cashier out of a table they already re-opened meanwhile.
+                        if (currentTableKey !== paidOrderKey) return;
+                        if (activeOrders[paidOrderKey]) return;
+                        backToTableSelection();
+                    });
                 } else {
                     backToTableSelection();
                 }
@@ -7667,10 +7974,11 @@
 
         function confirmMoveTable() {
             if (!targetMoveDestination) return alert("Please select a destination table!");
+            const sourceKey = currentTableKey;
             if (activeOrders[targetMoveDestination] && activeOrders[targetMoveDestination].items && activeOrders[targetMoveDestination].items.length > 0) {
                 if (!confirm("Destination table already has an active order! Merge orders?")) return;
                 let destOrder = activeOrders[targetMoveDestination];
-                let currentOrder = activeOrders[currentTableKey];
+                let currentOrder = activeOrders[sourceKey];
                 if (currentOrder.seatedAt && (!destOrder.seatedAt || currentOrder.seatedAt < destOrder.seatedAt)) {
                     destOrder.seatedAt = currentOrder.seatedAt;
                     destOrder.seatedTime = currentOrder.seatedTime;
@@ -7680,12 +7988,20 @@
                     if (ex) ex.qty += it.qty;
                     else destOrder.items.push(it);
                 });
-                db.ref('activeOrders/' + targetMoveDestination).set(destOrder);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
+                writeActiveOrder(targetMoveDestination, destOrder).then(result => {
+                    if (!isCustomerMode && (!result || result.committed !== false)) {
+                        clearActiveOrder(sourceKey, currentOrder);
+                        delete activeOrders[sourceKey];
+                    }
+                });
             } else {
-                let currentOrder = activeOrders[currentTableKey];
-                db.ref('activeOrders/' + targetMoveDestination).set(currentOrder);
-                if (!isCustomerMode) db.ref('activeOrders/' + currentTableKey).remove();
+                let currentOrder = activeOrders[sourceKey];
+                writeActiveOrder(targetMoveDestination, currentOrder).then(result => {
+                    if (!isCustomerMode && (!result || result.committed !== false)) {
+                        clearActiveOrder(sourceKey, currentOrder);
+                        delete activeOrders[sourceKey];
+                    }
+                });
             }
 
             closeMoveTableModal();
@@ -7748,11 +8064,11 @@
                 linkedKeys.forEach(k => { nextLinks[k] = master; });
 
                 const updates = { tableLinks: nextLinks };
-                const masterOrder = orders[master];
+                const masterOrder = (orders[master] && typeof orders[master] === 'object' && orders[master].status !== 'Closed') ? orders[master] : null;
                 const slaveEntries = linkedKeys
                     .filter(k => k !== master)
                     .map(k => [k, orders[k]])
-                    .filter(([, o]) => o && typeof o === 'object');
+                    .filter(([, o]) => o && typeof o === 'object' && o.status !== 'Closed');
 
                 if (masterOrder || slaveEntries.length > 0) {
                     const variantKey = it => JSON.stringify({
@@ -7762,7 +8078,8 @@
                         customPrice: Number(it.customPrice) || 0
                     });
 
-                    const merged = (masterOrder && typeof masterOrder === 'object') ? { ...masterOrder } : { status: "Active", discount: 0, paymentMethod: "Cash" };
+                    const merged = (masterOrder && typeof masterOrder === 'object') ? { ...masterOrder } : { status: "Active", discount: 0, paymentMethod: "Cash", sessionId: newOrderSessionId(), seatedAt: Date.now(), seatedTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) };
+                    if (!merged.sessionId) merged.sessionId = newOrderSessionId();
                     getOrderItemsArray(merged);
                     const mergedItems = merged.items.map(it => ({ ...it }));
                     merged.items = mergedItems;
