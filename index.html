@@ -1537,6 +1537,167 @@
         html.is-customer-qr #pos-main-view { min-height: 0; }
     }
 
+    /* ---------- 13b. TAKEAWAY ORDER CARDS ---------- */
+    /* Takeaway orders use a "parcel ticket" look so they never get confused
+       with the square table cards: dashed amber border, striped top edge,
+       left-aligned ticket header and a dashed tear line. */
+    .big-table-card.occupied.takeaway-card {
+        background: linear-gradient(180deg, #fffbeb 0%, #fff7ed 55%, #ffffff 100%);
+        border: 2px dashed #f59e0b;
+        border-radius: 16px;
+        box-shadow: 0 8px 22px rgba(245, 158, 11, 0.16);
+        text-align: left;
+        padding: 16px 14px 14px;
+    }
+    .big-table-card.occupied.takeaway-card::before {
+        height: 8px;
+        background: repeating-linear-gradient(135deg, #f59e0b 0 10px, #fbbf24 10px 20px);
+    }
+    .big-table-card.occupied.takeaway-card:hover {
+        border-color: #d97706;
+        box-shadow: 0 14px 30px rgba(245, 158, 11, 0.26);
+    }
+    .big-table-card.occupied.takeaway-card:hover::before {
+        background: repeating-linear-gradient(135deg, #d97706 0 10px, #f59e0b 10px 20px);
+    }
+    .big-table-card.occupied.takeaway-card.takeaway-ready {
+        border-color: #10b981;
+        background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 55%, #ffffff 100%);
+    }
+    .big-table-card.occupied.takeaway-card.takeaway-ready::before {
+        background: repeating-linear-gradient(135deg, #10b981 0 10px, #34d399 10px 20px);
+    }
+    .takeaway-order-head {
+        display: flex; justify-content: space-between; align-items: center; gap: 8px;
+        border-bottom: 1.5px dashed #fcd34d; padding-bottom: 8px; margin-bottom: 8px;
+    }
+    .takeaway-ready .takeaway-order-head { border-bottom-color: #a7f3d0; }
+    .takeaway-order-name {
+        display: flex; align-items: center; gap: 6px; min-width: 0;
+        font-size: 16px; font-weight: 900; color: #92400e; letter-spacing: -0.2px;
+    }
+    .takeaway-ready .takeaway-order-name { color: #047857; }
+    .takeaway-order-name .tk-bag { font-size: 17px; flex: none; }
+    .takeaway-order-name .tk-no { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .takeaway-type-tag {
+        flex: none; font-size: 9.5px; font-weight: 900; letter-spacing: 0.09em;
+        color: #ffffff; background: linear-gradient(135deg, #f59e0b, #d97706);
+        padding: 3px 7px; border-radius: 999px; text-transform: uppercase;
+        box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3);
+    }
+    .takeaway-type-tag.is-ready {
+        background: linear-gradient(135deg, #10b981, #059669);
+        box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+    }
+    .takeaway-customer { font-size: 12px; font-weight: 900; color: #4f46e5; margin-bottom: 2px; overflow-wrap: anywhere; }
+    .takeaway-card .table-seated-banner { background-color: rgba(255, 255, 255, 0.72); border-style: dashed; }
+    .big-table-card .takeaway-total { font-weight: 900; font-size: 15px; color: #b45309; margin: 6px 0 0; }
+    .takeaway-ready .takeaway-total { color: #047857; }
+    .big-table-card .takeaway-total small { font-size: 11.5px; font-weight: 800; color: #92400e; opacity: 0.8; }
+    .takeaway-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+    .takeaway-section-header {
+        grid-column: 1 / -1;
+        display: flex; align-items: center; gap: 9px;
+        margin: 10px 2px 0;
+        font-size: 12px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
+        color: #b45309;
+    }
+    .takeaway-section-header .tk-count {
+        background: #fef3c7; border: 1px solid #fde68a; color: #b45309;
+        font-size: 10px; letter-spacing: 0; padding: 2px 7px; border-radius: 999px;
+    }
+    .takeaway-section-header::after { content: ''; flex: 1; border-top: 2px dashed #fcd34d; }
+    body.is-staff-role .big-table-card.occupied.takeaway-card { min-height: 104px; padding: 12px 10px 10px; border-radius: 12px; }
+    body.is-staff-role .takeaway-order-name { font-size: 14px; }
+    body.is-staff-role .takeaway-total { font-size: 13px; }
+    body.is-staff-role .takeaway-section-header { font-size: 10.5px; margin-top: 6px; }
+    @media (max-width: 550px) {
+        .takeaway-order-name { font-size: 14px; }
+        .takeaway-order-name .tk-bag { font-size: 15px; }
+        .takeaway-type-tag { font-size: 8.5px; padding: 2px 6px; }
+        .takeaway-total { font-size: 13.5px; }
+    }
+
+    /* ---------- 13c. PREMIUM TABLE CARDS ---------- */
+    /* Softer, more premium table cards: small "TABLE" kicker, big number,
+       glassy status chip, gradient top edge and a faint number watermark. */
+    .big-table-card:not(.takeaway-card) {
+        text-align: left;
+        justify-content: flex-start;
+        padding: 14px 14px 13px;
+        min-height: 142px;
+        border-radius: 18px;
+    }
+    .big-table-card.free:not(.takeaway-card) {
+        background: linear-gradient(160deg, #ffffff 0%, #f4fdf8 60%, #ecfdf5 100%);
+        border-color: #d1fae5;
+        box-shadow: 0 6px 18px rgba(5, 150, 105, 0.06);
+    }
+    .big-table-card.free:not(.takeaway-card)::before {
+        height: 5px;
+        background: linear-gradient(90deg, #10b981, #34d399);
+    }
+    .big-table-card.free:not(.takeaway-card):hover {
+        border-color: #6ee7b7;
+        box-shadow: 0 16px 32px rgba(5, 150, 105, 0.14);
+    }
+    .big-table-card.free:not(.takeaway-card):hover::before {
+        background: linear-gradient(90deg, #059669, #10b981);
+    }
+    .big-table-card.occupied:not(.takeaway-card) {
+        background: linear-gradient(160deg, #ffffff 0%, #fff7f8 58%, #fff1f2 100%);
+        border-color: #fecdd3;
+        box-shadow: 0 6px 18px rgba(225, 29, 72, 0.07);
+    }
+    .big-table-card.occupied:not(.takeaway-card)::before {
+        height: 5px;
+        background: linear-gradient(90deg, #e11d48, #fb7185);
+    }
+    .big-table-card.occupied:not(.takeaway-card):hover {
+        border-color: #fda4af;
+        box-shadow: 0 16px 32px rgba(225, 29, 72, 0.14);
+    }
+    .big-table-card.occupied:not(.takeaway-card):hover::before {
+        background: linear-gradient(90deg, #be123c, #e11d48);
+    }
+
+    .tc-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; position: relative; z-index: 1; }
+    .tc-kicker { display: block; font-size: 8.5px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase; color: #94a3b8; margin-bottom: 1px; }
+    .big-table-card.occupied .tc-kicker { color: #fda4af; }
+    .big-table-card .tc-number { margin: 0; font-size: 25px; line-height: 1.02; font-weight: 900; letter-spacing: -0.6px; color: #0f172a; }
+    .tc-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+    .tc-status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 999px; font-size: 9px; font-weight: 900; letter-spacing: 0.07em; text-transform: uppercase; white-space: nowrap; }
+    .tc-status.is-free { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .tc-status.is-occ { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
+    .tc-status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+    .tc-status.is-occ .tc-status-dot { animation: livePulse 1.8s infinite; }
+    .tc-link-chip { font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 999px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; white-space: nowrap; }
+    .tc-alert { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 5px 0 1px; padding: 4px 6px; border-radius: 8px; color: #ffffff; font-size: 10px; font-weight: 900; letter-spacing: 0.03em; text-transform: uppercase; animation: livePulse 1.4s infinite; position: relative; z-index: 1; }
+    .tc-alert.order { background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 3px 10px rgba(37, 99, 235, 0.28); }
+    .tc-alert.waiter { background: linear-gradient(135deg, #d97706, #b45309); box-shadow: 0 3px 10px rgba(217, 119, 6, 0.28); }
+    .big-table-card:not(.takeaway-card) .table-seated-banner { border-radius: 8px; padding: 4px 8px; margin: 5px 0 2px; position: relative; z-index: 1; }
+    .tc-summary { margin-top: auto; position: relative; z-index: 1; }
+    .big-table-card .tc-total { font-size: 18px; font-weight: 900; color: #be123c; line-height: 1.1; letter-spacing: -0.3px; margin: 0; display: flex; align-items: baseline; gap: 5px; }
+    .big-table-card .tc-total span { font-size: 9.5px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; color: #9f1239; opacity: 0.72; }
+    .big-table-card .tc-total-muted { color: #b45309; font-size: 15px; }
+    .big-table-card .tc-total-muted span { color: #b45309; opacity: 0.75; }
+    .tc-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+    .tc-staff { display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tc-staff.is-customer { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+    .tc-empty { margin: auto 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; position: relative; z-index: 1; }
+    .tc-empty-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ecfdf5; border: 1px solid #bbf7d0; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.6); }
+    .tc-empty-text { font-size: 12px; font-weight: 900; color: #047857; letter-spacing: 0.01em; }
+    .tc-watermark { position: absolute; right: 10px; bottom: -8px; font-size: 64px; font-weight: 900; line-height: 1; color: #059669; opacity: 0.05; pointer-events: none; user-select: none; z-index: 0; }
+    .big-table-card.occupied .tc-watermark { color: #e11d48; opacity: 0.06; }
+    body.is-staff-role .big-table-card:not(.takeaway-card) { min-height: 108px; padding: 11px 9px 9px; border-radius: 13px; }
+    body.is-staff-role .big-table-card .tc-number { font-size: 21px; }
+    body.is-staff-role .tc-kicker { font-size: 7.5px; }
+    body.is-staff-role .tc-status { font-size: 8px; padding: 2px 6px; }
+    body.is-staff-role .big-table-card .tc-total { font-size: 15px; }
+    body.is-staff-role .tc-empty-icon { width: 28px; height: 28px; font-size: 13px; }
+    body.is-staff-role .tc-empty-text { font-size: 10.5px; }
+    body.is-staff-role .tc-watermark { font-size: 48px; }
+
     /* ---------- 14. PRINT SAFETY ---------- */
     @media print {
         .admin-buttons-grid { display: block !important; }
@@ -1697,6 +1858,7 @@
                     <button class="admin-btn manage-suppliers-btn" onclick="openCredentialsModal()">👥 Manage Suppliers & Logins</button>
                     <button class="admin-btn menu-repair-btn" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);" onclick="repairCategoriesNow()">🛠️ Fix Menu Categories</button>
                     <button class="admin-btn drawer-setup-btn" style="background:linear-gradient(135deg,#0f766e,#0d9488);" onclick="openDrawerSetupModal()">Cash Drawer Setup</button>
+                    <button class="admin-btn notif-settings-btn" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);" onclick="openNotificationSettingsModal()">🔔 Notification Settings</button>
                     <button class="admin-btn close-day-btn" onclick="closeDay()">Day Close</button>
                 </div>
             </div>
@@ -1969,6 +2131,25 @@
                     <b>Best for silent opening:</b> run <b>Start Cash Drawer Helper.bat</b> once on the POS computer (folder <b>cash-drawer-helper</b> next to this HTML). It stays in the background and sends the drawer pulse directly to the printer. No print dialog appears when you confirm a cash payment.<br>
                     With the helper running, press <b>Check Helper</b>. The status above turns green.
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="notification-settings-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 640px; width: 96%; max-height: 92vh; display: flex; flex-direction: column; padding: 18px 22px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px;">
+                <div>
+                    <h3 style="margin:0;font-size:18px;">🔔 Notification Settings</h3>
+                    <p style="margin:4px 0 0;font-size:12px;color:#64748b;font-weight:700;">யாருக்கு எந்த notification வேண்டும் என்று தேர்வு செய்யுங்கள்</p>
+                </div>
+                <button class="close-modal" onclick="closeNotificationSettingsModal()">Close</button>
+            </div>
+            <div class="modal-body" style="max-height:70vh;">
+                <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;font-size:12.5px;font-weight:700;color:#1e3a8a;line-height:1.7;margin-bottom:14px;">
+                    🔔 <b>Orders</b> = புது ஆர்டர் / ஆர்டர் update (சத்தம் + banner).<br>
+                    🙋 <b>Waiter</b> = customer "Call Waiter" (சத்தம் + banner).<br>
+                    மாற்றம் உடனே எல்லா devices-க்கும் apply ஆகும்.
+                </div>
+                <div id="notification-settings-list"></div>
             </div>
         </div>
     </div>
@@ -3022,6 +3203,19 @@
             if (typeof renderTableLinkModalList === 'function') renderTableLinkModalList();
         });
 
+        // Admin-controlled notification recipients. Shape:
+        //   { roleKey: { orders: true/false, waiter: true/false } }
+        // Missing entries fall back to the safe defaults (orders = admin only,
+        // waiter calls = everyone) so the app keeps working before it is configured.
+        let notificationSettings = {};
+        db.ref('settings/notificationSettings').on('value', (snap) => {
+            notificationSettings = snap.val() || {};
+            const modal = document.getElementById('notification-settings-modal');
+            if (modal && modal.style.display === 'flex') renderNotificationSettingsList();
+            requestRenderBigTablesGrid();
+            renderLiveStaffAlerts();
+        });
+
         db.ref('categories').on('value', (snapshot) => {
             const val = snapshot.val();
             let list = [];
@@ -3661,8 +3855,34 @@
             showToast("🔊 Testing Audio: 'New Order, Table 1'");
         }
 
+        // Per-account notification preferences. Admin can change these from
+        // Admin > Notification Settings. Defaults keep the previous behaviour:
+        // orders -> admin accounts only, waiter calls -> everyone.
+        function roleNotificationPrefs(roleKey) {
+            const cfg = (notificationSettings && notificationSettings[roleKey]) || {};
+            const isAdmin = roleKey === 'admin' ||
+                (credentials[roleKey] && credentials[roleKey].roleType === 'admin');
+            return {
+                orders: typeof cfg.orders === 'boolean' ? cfg.orders : isAdmin,
+                waiter: typeof cfg.waiter === 'boolean' ? cfg.waiter : true
+            };
+        }
+
+        function canReceiveOrderNotifications() {
+            if (isCustomerMode) return false;
+            return roleNotificationPrefs(loggedInRole).orders;
+        }
+
+        function canReceiveWaiterNotifications() {
+            if (isCustomerMode) return false;
+            return roleNotificationPrefs(loggedInRole).waiter;
+        }
+
         function handleIncomingOrderAlert(type, tableKey, byUser, itemsCount, total) {
             if (isCustomerMode) return;
+            // New-order / update chime + toast + banner follows the admin-managed
+            // per-account notification settings.
+            if (!canReceiveOrderNotifications()) return;
             const now = Date.now();
             const debKey = type + '_' + tableKey;
             if (lastAnnouncedTableActionTimes[debKey] && (now - lastAnnouncedTableActionTimes[debKey] < 3500)) {
@@ -3791,8 +4011,10 @@
                     const prevTs = lastNotifiedStaffAlerts[tKey] || 0;
                     if (ts > prevTs) {
                         lastNotifiedStaffAlerts[tKey] = ts;
-                        playChimeAndVoice('waiter', item.table || tKey);
-                        showToast(`🙋 Call Waiter: ${item.table || tKey}`);
+                        if (canReceiveWaiterNotifications()) {
+                            playChimeAndVoice('waiter', item.table || tKey);
+                            showToast(`🙋 Call Waiter: ${item.table || tKey}`);
+                        }
                     }
                 });
             }
@@ -3849,8 +4071,9 @@
             }
 
             const now = Date.now();
-            const orderKeys = Object.keys(newCustomerOrderAlerts);
-            const waiterKeys = Object.keys(staffAlerts);
+            // Banners follow the same per-account settings as the chime/toast.
+            const orderKeys = canReceiveOrderNotifications() ? Object.keys(newCustomerOrderAlerts) : [];
+            const waiterKeys = canReceiveWaiterNotifications() ? Object.keys(staffAlerts) : [];
 
             let visibleOrderCount = 0;
             let visibleWaiterCount = 0;
@@ -4471,6 +4694,9 @@
                 // Cash Drawer Setup: admin login only, never staff
                 const btnDrawerSetup = adminSection.querySelector('.drawer-setup-btn');
                 if (btnDrawerSetup) btnDrawerSetup.style.display = 'none';
+                // Notification Settings: admin login only, never staff
+                const btnNotifSettings = adminSection.querySelector('.notif-settings-btn');
+                if (btnNotifSettings) btnNotifSettings.style.display = 'none';
 
                 // Stats toggles
                 const statBoxes = adminSection.querySelectorAll('.stat-toggle-box');
@@ -4729,14 +4955,31 @@
             }
 
             switchMobileTab('menu');
-            // Load the latest committed Firebase order before showing the cart.
-            // This prevents an old local cache from being treated as the current table.
+            // Paint the locally cached cart immediately, then refresh this table from
+            // Firebase in the background. Waiting for the network here made opening
+            // a table feel slow on every click.
+            renderCart({ skipInputSync: true });
+            renderMenuGrid();
+            requestRenderBigTablesGrid();
+            applyRolePermissionsUI();
+
             if (!isCustomerMode && currentTableKey) {
                 const openingKey = currentTableKey;
-                try {
-                    const freshSnapshot = await db.ref('activeOrders/' + openingKey).once('value');
+                const cachedAtOpen = activeOrders[openingKey];
+                const stampAtOpen = (cachedAtOpen && cachedAtOpen.lastUpdatedAt) || 0;
+                const sessionAtOpen = (cachedAtOpen && cachedAtOpen.sessionId) || '';
+                db.ref('activeOrders/' + openingKey).once('value').then((freshSnapshot) => {
                     // User may have switched tables while the request was in flight.
                     if (currentTableKey !== openingKey) return;
+                    // The cashier may have already edited the cart while this
+                    // network request was running. Never overwrite newer local
+                    // edits with the older snapshot; the live listener and the
+                    // transactional writer will reconcile Firebase safely.
+                    const localNow = activeOrders[openingKey];
+                    if (localNow && ((localNow.lastUpdatedAt || 0) > stampAtOpen ||
+                        (localNow.sessionId || '') !== sessionAtOpen)) {
+                        return;
+                    }
                     const freshOrder = freshSnapshot.val();
                     if (freshOrder && typeof freshOrder === 'object' && !isClosedOrder(freshOrder)) {
                         getOrderItemsArray(freshOrder);
@@ -4744,15 +4987,13 @@
                     } else {
                         delete activeOrders[openingKey];
                     }
-                } catch (error) {
+                    requestRenderBigTablesGrid();
+                    if (currentTableKey === openingKey) renderCart({ skipInputSync: true });
+                }).catch((error) => {
                     console.error('Could not refresh table order before opening:', error);
                     // Keep the live-listener cache if Firebase is temporarily unavailable.
-                }
+                });
             }
-            renderCart({ skipInputSync: true });
-            renderMenuGrid();
-            requestRenderBigTablesGrid();
-            applyRolePermissionsUI();
         }
 
         // Robust parsing of any seated timestamp format (number, numeric string, ISO date, or locale time string)
@@ -5058,12 +5299,12 @@
                 card.className = `big-table-card ${isOccupied ? 'occupied' : 'free'} ${isLinked ? 'linked-table-card' : ''}`;
                 card.onclick = () => openTable(tableKey);
 
-                let orderAlertData = newCustomerOrderAlerts[tableKey];
+                let orderAlertData = canReceiveOrderNotifications() ? newCustomerOrderAlerts[tableKey] : null;
                 let isOrderAlertActive = orderAlertData && (!orderAlertData.timestamp || (Date.now() - orderAlertData.timestamp <= ALERT_TIMEOUT_MS));
-                let orderAlert = isOrderAlertActive || (orderData && orderData.customerSent && !orderData.staffAcknowledged && (!orderData.customerSentAt || (Date.now() - orderData.customerSentAt <= ALERT_TIMEOUT_MS)));
+                let orderAlert = canReceiveOrderNotifications() && (isOrderAlertActive || (orderData && orderData.customerSent && !orderData.staffAcknowledged && (!orderData.customerSentAt || (Date.now() - orderData.customerSentAt <= ALERT_TIMEOUT_MS))));
 
                 let waiterAlertData = staffAlerts[tableKey];
-                let waiterAlert = waiterAlertData && (!waiterAlertData.timestamp || (Date.now() - waiterAlertData.timestamp <= ALERT_TIMEOUT_MS));
+                let waiterAlert = canReceiveWaiterNotifications() && waiterAlertData && (!waiterAlertData.timestamp || (Date.now() - waiterAlertData.timestamp <= ALERT_TIMEOUT_MS));
 
                 if (orderAlert) {
                     card.style.borderColor = "#2563eb";
@@ -5075,63 +5316,62 @@
 
                 let alertBadgeHtml = '';
                 if (orderAlert) {
-                    alertBadgeHtml = `
-                        <div style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:white; font-size:11.5px; font-weight:900; padding:4px 8px; border-radius:8px; margin: 4px 0; display:flex; align-items:center; justify-content:center; gap:5px; animation:livePulse 1.4s infinite; box-shadow:0 3px 10px rgba(37,99,235,0.35);">
-                            <span>🔔</span> NEW CUSTOMER ORDER!
-                        </div>
-                    `;
+                    alertBadgeHtml = `<div class="tc-alert order"><span>🔔</span> New Customer Order</div>`;
                 } else if (waiterAlert) {
-                    alertBadgeHtml = `
-                        <div style="background:linear-gradient(135deg, #d97706, #b45309); color:white; font-size:11.5px; font-weight:900; padding:4px 8px; border-radius:8px; margin: 4px 0; display:flex; align-items:center; justify-content:center; gap:5px; animation:livePulse 1.4s infinite; box-shadow:0 3px 10px rgba(217,119,6,0.35);">
-                            <span>🙋</span> WAITER CALLED!
-                        </div>
-                    `;
+                    alertBadgeHtml = `<div class="tc-alert waiter"><span>🙋</span> Waiter Called</div>`;
                 }
 
                 let linkedBadge = '';
                 if (isLinked) {
-                    linkedBadge = `<div class="table-link-badge">🔗 ${effectiveKey}</div>`;
+                    linkedBadge = `<div class="tc-link-chip">🔗 ${effectiveKey}</div>`;
                 } else {
                     const linkedTables = getLinkedTablesForMaster(tableKey);
                     if (linkedTables.length > 1) {
-                        linkedBadge = `<div class="table-link-badge">🔗 Linked (${linkedTables.length})</div>`;
+                        linkedBadge = `<div class="tc-link-chip">🔗 Linked (${linkedTables.length})</div>`;
                     }
                 }
 
-                let statusSubtitle = 'Ready for guests';
-                if (isOccupied) {
-                    if (hasItems) {
-                        statusSubtitle = `$${orderTotal.toFixed(2)} (${itemCount} Items)`;
-                    } else {
-                        statusSubtitle = '👥 Seated • Waiting to order';
-                    }
-                }
+                const isCustomerTaken = orderData && (orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR');
+                const intakeBadge = orderData && orderData.orderIntake ? getOrderIntakeBadgeHtml(orderData.orderIntake) : '';
 
                 card.innerHTML = `
-                    ${linkedBadge}
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-                        <h3 style="margin:0; font-size: 18px; font-weight: 900;">Table ${i}</h3>
-                        <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:900; padding:2px 8px; border-radius:999px; ${isOccupied ? 'background:#fee2e2; color:#e11d48; border:1px solid #fecdd3;' : 'background:#dcfce7; color:#16a34a; border:1px solid #bbf7d0;'}">
-                            <span style="width:6px; height:6px; border-radius:50%; background:${isOccupied ? '#e11d48' : '#16a34a'}; ${isOccupied ? 'animation: livePulse 1.8s infinite;' : ''}"></span>
-                            ${isOccupied ? 'Occupied' : 'Available'}
-                        </span>
+                    <div class="tc-head">
+                        <div class="tc-title">
+                            <span class="tc-kicker">Table</span>
+                            <h3 class="tc-number">${i}</h3>
+                        </div>
+                        <div class="tc-head-right">
+                            ${linkedBadge}
+                            <span class="tc-status ${isOccupied ? 'is-occ' : 'is-free'}">
+                                <span class="tc-status-dot"></span>
+                                ${isOccupied ? 'Occupied' : 'Available'}
+                            </span>
+                        </div>
                     </div>
                     ${alertBadgeHtml}
                     ${seatedBannerHtml}
-                    <p style="font-weight: 900; font-size: 14px; color: ${isOccupied ? (hasItems ? '#b91c1c' : '#d97706') : '#475569'}; margin: 4px 0;">
-                        ${statusSubtitle}
-                    </p>
                     ${isOccupied ? `
-                    <div style="margin-top: 6px; display:flex; justify-content:center;">
-                        <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? 'background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd;' : 'background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff;'}">
-                            ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
-                        </span>
-                        ${orderData.orderIntake ? ' ' + getOrderIntakeBadgeHtml(orderData.orderIntake) : ''}
-                    </div>` : ''}
+                        <div class="tc-summary">
+                            ${hasItems
+                                ? `<p class="tc-total">$${orderTotal.toFixed(2)} <span>${itemCount} items</span></p>`
+                                : `<p class="tc-total tc-total-muted">Seated <span>Waiting to order</span></p>`}
+                            <div class="tc-meta">
+                                <span class="tc-staff${isCustomerTaken ? ' is-customer' : ''}">
+                                    ${isCustomerTaken ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
+                                </span>
+                                ${intakeBadge}
+                            </div>
+                        </div>` : `
+                        <div class="tc-empty">
+                            <span class="tc-empty-icon">🍽️</span>
+                            <span class="tc-empty-text">Ready for guests</span>
+                        </div>`}
+                    <span class="tc-watermark">${i}</span>
                 `;
                 fragment.appendChild(card);
             }
 
+            const takeawayCards = [];
             Object.keys(activeOrders).forEach(key => {
                 const norm = key.trim().toLowerCase();
                 // Strictly skip any table 1 to 13 key so it NEVER duplicates
@@ -5186,38 +5426,46 @@
                         </div>`;
 
                         const card = document.createElement('div');
-                        card.className = `big-table-card occupied`;
-                        card.style.borderColor = isReady ? '#10b981' : '#f59e0b';
+                        card.className = `big-table-card occupied takeaway-card${isReady ? ' takeaway-ready' : ''}`;
                         card.onclick = () => openTable(key);
 
                         let custInfoHtml = "";
                         if (orderData.customerName) {
-                            custInfoHtml = `<div style="font-size: 12px; font-weight: 900; color: #4f46e5; margin-bottom: 2px;">${orderData.customerName} (${orderData.customerPhone || ''})</div>`;
+                            custInfoHtml = `<div class="takeaway-customer">${orderData.customerName} (${orderData.customerPhone || ''})</div>`;
                         }
 
                         card.innerHTML = `
-                            ${isReady ? '<div style="position:absolute; top:8px; right:8px; background:#10b981; color:white; font-size:10px; font-weight:bold; padding:2px 6px; border-radius:6px;">READY</div>' : ''}
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
-                                <h3 style="margin:0; font-size: 18px; font-weight: 900;">${key}</h3>
-                                <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:900; padding:2px 8px; border-radius:999px; background:#fef3c7; color:#d97706; border:1px solid #fde68a;">
-                                    <span style="width:6px; height:6px; border-radius:50%; background:#d97706; animation: livePulse 1.8s infinite;"></span>
-                                    Takeaway
-                                </span>
+                            <div class="takeaway-order-head">
+                                <div class="takeaway-order-name">
+                                    <span class="tk-bag">🥡</span>
+                                    <span class="tk-no">${key}</span>
+                                </div>
+                                <span class="takeaway-type-tag${isReady ? ' is-ready' : ''}">${isReady ? 'READY' : 'PARCEL'}</span>
                             </div>
                             ${custInfoHtml}
                             ${waitBannerHtml}
-                            <p style="font-weight: 900; font-size: 14px; color: #b45309; margin: 4px 0;">$${orderTotal.toFixed(2)} (${itemCount} Items)</p>
-                            <div style="margin-top: 6px; display:flex; justify-content:center;">
+                            <p class="takeaway-total">$${orderTotal.toFixed(2)} <small>(${itemCount} Items)</small></p>
+                            <div class="takeaway-foot">
                                 <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? 'background:#e0f2fe; color:#0284c7; border:1px solid #bae6fd;' : 'background:#f3e8ff; color:#7e22ce; border:1px solid #e9d5ff;'}">
                                     ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
                                 </span>
                                 ${orderData.orderIntake ? ' ' + getOrderIntakeBadgeHtml(orderData.orderIntake) : ''}
                             </div>
                         `;
-                        fragment.appendChild(card);
+                        takeawayCards.push(card);
                     }
                 }
             });
+
+            // Takeaway orders get their own labelled section with a parcel-ticket
+            // card style, so they never look like just another table.
+            if (takeawayCards.length > 0) {
+                const tkHeader = document.createElement('div');
+                tkHeader.className = 'takeaway-section-header';
+                tkHeader.innerHTML = `<span>🥡 Takeaway Orders</span><span class="tk-count">${takeawayCards.length}</span>`;
+                fragment.appendChild(tkHeader);
+                takeawayCards.forEach(card => fragment.appendChild(card));
+            }
 
             // Atomic replacement: zero flash, zero blink, zero duplicate elements
             grid.replaceChildren(fragment);
@@ -5611,18 +5859,37 @@
         // When nothing relevant changed we skip the full DOM rebuild entirely.
         function buildMenuGridSignature(searchVal, currentItems) {
             let sig = searchVal + '\u0002' + selectedCategory + '\u0002' + (isCustomerMode ? '1' : '0')
-                + '\u0002' + (currentTableKey || '') + '\u0002' + salesMapVersion + '\u0002' + categories.join('\u0001');
+                + '\u0002' + salesMapVersion + '\u0002' + categories.join('\u0001');
             for (let i = 0; i < menu.length; i++) {
                 const it = menu[i];
                 sig += '\u0003' + (it.id || '') + '\u0004' + (it.name || '') + '\u0004' + (it.price || 0)
                     + '\u0004' + (it.cat || it.category || '') + '\u0004' + (it.code || '');
             }
-            sig += '\u0005';
-            for (let i = 0; i < currentItems.length; i++) {
-                const it = currentItems[i];
-                sig += '\u0006' + (it.id || '') + '\u0004' + (Number(it.qty) || 1);
-            }
+            // Cart quantities are intentionally NOT part of the signature: they are
+            // patched onto the existing cards by updateMenuGridQuantityBadges(), so
+            // adding an item no longer rebuilds the whole menu.
             return sig;
+        }
+
+        function updateMenuGridQuantityBadges(currentQtyById) {
+            const grid = document.getElementById('menu-grid');
+            if (!grid) return;
+            const cards = grid.querySelectorAll('.menu-card[data-item-id]');
+            cards.forEach(card => {
+                const qty = currentQtyById.get(String(card.getAttribute('data-item-id'))) || 0;
+                let badge = card.querySelector('.card-qty-badge');
+                if (qty > 0) {
+                    if (!badge) {
+                        badge = document.createElement('div');
+                        badge.className = 'card-qty-badge';
+                        card.insertBefore(badge, card.firstChild);
+                    }
+                    badge.textContent = qty;
+                    badge.style.display = '';
+                } else if (badge) {
+                    badge.remove();
+                }
+            });
         }
 
         function renderMenuGrid() {
@@ -5638,7 +5905,12 @@
 
             // Skip rebuilding the grid when the result would be byte-for-byte identical.
             const menuGridSig = buildMenuGridSignature(searchVal, currentItems);
-            if (menuGridSig === lastMenuGridSignature && grid.childElementCount > 0) return;
+            if (menuGridSig === lastMenuGridSignature && grid.childElementCount > 0) {
+                // Only the "in cart" quantities can change without a structural
+                // reason to rebuild; update those badges in place.
+                updateMenuGridQuantityBadges(currentQtyById);
+                return;
+            }
 
             grid.innerHTML = "";
 
@@ -5691,6 +5963,7 @@
 
                         const card = document.createElement('div');
                         card.className = 'menu-card';
+                        card.setAttribute('data-item-id', String(item.id));
                         card.onclick = (e) => {
                             if (e) e.stopPropagation();
                             addToCart(item);
@@ -5761,6 +6034,7 @@
 
                         const card = document.createElement('div');
                         card.className = 'menu-card';
+                        card.setAttribute('data-item-id', String(item.id));
                         card.onclick = (e) => {
                             if (e) e.stopPropagation();
                             addToCart(item);
@@ -7466,6 +7740,85 @@
                 (typeof credentials !== 'undefined' && credentials[loggedInRole] && credentials[loggedInRole].roleType === 'admin');
         }
 
+        // ================= NOTIFICATION SETTINGS (ADMIN) =================
+        // Lets the admin choose, per login account, which alerts that account
+        // receives. Saved in Firebase so every device follows the same choice.
+        function openNotificationSettingsModal() {
+            if (!isAdminAccount()) {
+                alert('Only the Admin account can change notification settings.');
+                return;
+            }
+            renderNotificationSettingsList();
+            const modal = document.getElementById('notification-settings-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeNotificationSettingsModal() {
+            const modal = document.getElementById('notification-settings-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function renderNotificationSettingsList() {
+            const container = document.getElementById('notification-settings-list');
+            if (!container) return;
+            if (!isAdminAccount()) {
+                container.innerHTML = '<p style="font-size:13px;font-weight:700;color:#64748b;">Only the Admin account can change these settings.</p>';
+                return;
+            }
+            const keys = Object.keys(credentials || {});
+            keys.sort((a, b) => {
+                const aAdmin = a === 'admin' || (credentials[a] && credentials[a].roleType === 'admin');
+                const bAdmin = b === 'admin' || (credentials[b] && credentials[b].roleType === 'admin');
+                if (aAdmin !== bAdmin) return aAdmin ? -1 : 1;
+                const aName = String((credentials[a] && credentials[a].name) || a);
+                const bName = String((credentials[b] && credentials[b].name) || b);
+                return aName.localeCompare(bName);
+            });
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="font-size:13px;font-weight:700;color:#64748b;">No accounts found.</p>';
+                return;
+            }
+            container.innerHTML = keys.map(key => {
+                const cred = credentials[key] || {};
+                const prefs = roleNotificationPrefs(key);
+                const isAdmin = key === 'admin' || cred.roleType === 'admin';
+                const roleLabel = (cred.roleType || (isAdmin ? 'admin' : 'supplier')).toUpperCase();
+                return `
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;margin-bottom:8px;background:#fff;">
+                        <div style="flex:1;min-width:150px;">
+                            <div style="font-weight:900;color:#0f172a;font-size:14px;">${isAdmin ? '👑 ' : '👤 '}${escapeHtml(cred.name || key)}</div>
+                            <div style="font-size:11px;color:#64748b;font-weight:700;">${escapeHtml(cred.user || key)} · ${escapeHtml(roleLabel)}</div>
+                        </div>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#1e3a8a;cursor:pointer;">
+                            <input type="checkbox" style="width:18px;height:18px;accent-color:#2563eb;" ${prefs.orders ? 'checked' : ''} onchange="setRoleNotificationPref('${key}','orders',this.checked)">
+                            🔔 Orders
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#b45309;cursor:pointer;">
+                            <input type="checkbox" style="width:18px;height:18px;accent-color:#d97706;" ${prefs.waiter ? 'checked' : ''} onchange="setRoleNotificationPref('${key}','waiter',this.checked)">
+                            🙋 Waiter
+                        </label>
+                    </div>`;
+            }).join('');
+        }
+
+        function setRoleNotificationPref(roleKey, field, value) {
+            if (!isAdminAccount()) return;
+            if (field !== 'orders' && field !== 'waiter') return;
+            if (!roleKey || !credentials[roleKey]) return;
+            const patch = {};
+            patch[field] = !!value;
+            db.ref('settings/notificationSettings/' + roleKey).update(patch).then(() => {
+                if (!notificationSettings[roleKey] || typeof notificationSettings[roleKey] !== 'object') {
+                    notificationSettings[roleKey] = {};
+                }
+                notificationSettings[roleKey][field] = !!value;
+                showToast('Notification setting saved for ' + (credentials[roleKey].name || roleKey));
+            }).catch((err) => {
+                alert('Could not save notification setting: ' + (err && err.message ? err.message : err));
+                renderNotificationSettingsList();
+            });
+        }
+
         function openDrawerSetupModal() {
             if (!isAdminAccount()) {
                 alert('Only the Admin account can open Cash Drawer Setup.');
@@ -7648,8 +8001,6 @@
             let order = activeOrders[currentTableKey];
             if (!order || !order.items || order.items.length === 0) return alert("Cart is empty!");
 
-            writeActiveOrder(currentTableKey, order);
-
             let grand = getOrderGrandTotal(order);
             document.getElementById('modal-grand-total').innerText = grand.toFixed(2);
             document.getElementById('modal-paid-input').value = grand.toFixed(2);
@@ -7809,9 +8160,17 @@
             try {
                 // Final safety check: never charge a cart that belongs to an older
                 // seating (or to a bill that another device already settled).
-                try {
-                    const serverSnap = await db.ref('activeOrders/' + paidOrderKey).once('value');
-                    const serverOrder = serverSnap.val();
+                // Race it against a short timeout: on a weak connection the old
+                // code could sit on "Saving Payment…" forever.
+                const checkPromise = db.ref('activeOrders/' + paidOrderKey).once('value')
+                    .then(function (snap) { return { snap: snap }; })
+                    .catch(function (err) { return { error: err }; });
+                const checkTimeout = new Promise(function (resolve) {
+                    setTimeout(function () { resolve({ timedOut: true }); }, 1500);
+                });
+                const checkResult = await Promise.race([checkPromise, checkTimeout]);
+                if (checkResult && checkResult.snap) {
+                    const serverOrder = checkResult.snap.val();
                     const serverClosed = isClosedOrder(serverOrder);
                     const localSid = currentOrder.sessionId || '';
                     const serverOtherSession = serverOrder && typeof serverOrder === 'object' &&
@@ -7825,8 +8184,10 @@
                         requestRenderBigTablesGrid();
                         return;
                     }
-                } catch (checkError) {
-                    console.error('Could not verify the table before payment:', checkError);
+                } else if (checkResult && checkResult.timedOut) {
+                    console.warn('Payment safety check timed out; saving the bill with the local seating id.');
+                } else if (checkResult && checkResult.error) {
+                    console.error('Could not verify the table before payment:', checkResult.error);
                 }
 
                 // Save the sale and close the table atomically. A tiny "Closed" marker
@@ -7842,65 +8203,84 @@
                 updates['tableSessions/' + paidOrderKey] = null;
                 updates['newCustomerOrderAlerts/' + paidOrderKey] = null;
                 updates['staffAlerts/' + paidOrderKey] = null;
-                await db.ref().update(updates);
 
-                // Open the cash drawer only after a CASH bill has been saved successfully.
+                // Do NOT await the network write. Firebase applies it to the local
+                // cache immediately, so the cashier can take the next order while
+                // the bill syncs. The promise below only handles confirmation and
+                // the rare failure (rules/connection) to restore the table.
+                const paymentWrite = db.ref().update(updates);
+                paymentWrite.then(function () {
+                    // Shift totals are updated only after the bill is confirmed.
+                    if (activeShift) {
+                        db.ref('activeShift').transaction(function (shift) {
+                            if (!shift) return shift;
+                            shift.billsCount = (Number(shift.billsCount) || 0) + 1;
+                            shift.totalCollected = Math.round(((Number(shift.totalCollected) || 0) + grand) * 100) / 100;
+                            return shift;
+                        }).then(function (shiftResult) {
+                            if (shiftResult && shiftResult.committed && shiftResult.snapshot) {
+                                activeShift = shiftResult.snapshot.val() || activeShift;
+                            }
+                        }).catch(function (shiftError) {
+                            console.error("Payment saved, but shift totals could not be updated:", shiftError);
+                            showToast('⚠️ Payment saved, but shift totals could not be updated');
+                        });
+                    }
+
+                    // Keep the local menu popularity counter only after payment is safely saved.
+                    try {
+                        const allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
+                        order.items.forEach(it => {
+                            if (!it) return;
+                            const q = Number(it.qty) || 1;
+                            if (it.id) allTimeMap[String(it.id)] = (Number(allTimeMap[String(it.id)]) || 0) + q;
+                            if (it.name) {
+                                const nk = String(it.name).trim().toLowerCase();
+                                allTimeMap[nk] = (Number(allTimeMap[nk]) || 0) + q;
+                            }
+                        });
+                        localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
+                        invalidateSalesMapCache();
+                    } catch (e) {
+                        console.error("All time sales storage error", e);
+                    }
+
+                    if (typeof tableLinks !== 'undefined' && tableLinks) {
+                        const groupMaster = tableLinks[paidOrderKey] || paidOrderKey;
+                        const linkRemovals = {};
+                        Object.keys(tableLinks).forEach(k => {
+                            if (k === groupMaster || tableLinks[k] === groupMaster) {
+                                delete tableLinks[k];
+                                linkRemovals[k] = null;
+                            }
+                        });
+                        if (Object.keys(linkRemovals).length > 0) {
+                            db.ref('tableLinks').update(linkRemovals).catch(function (linkError) {
+                                console.error("Could not clear table links after payment:", linkError);
+                            });
+                        }
+                    }
+                }).catch(function (writeError) {
+                    console.error('Payment could not be saved:', writeError);
+                    // Put the unpaid cart back (only if the table is still on this
+                    // seating) so the cashier can retry instead of losing the order.
+                    if (paidOrderKey) {
+                        const localNow = activeOrders[paidOrderKey];
+                        if (!localNow || (localNow.sessionId || '') === (order.sessionId || '')) {
+                            activeOrders[paidOrderKey] = order;
+                        }
+                    }
+                    requestRenderBigTablesGrid();
+                    alert('Payment could not be saved. Please check the connection — the table has been restored so you can try again.');
+                });
+
+                // Open the cash drawer immediately for a cash bill; the write is
+                // already queued locally, so this no longer waits on the network.
                 if (String(chosenPaymentMethod).trim().toLowerCase() === 'cash' &&
                     hasPermission('billing') && drawerConfig.openOnPayNow !== false) {
                     pulseCashDrawer(false).then(function (opened) {
                         if (!opened) showToast('Drawer not connected - open Admin > Cash Drawer Setup');
                     });
-                }
-
-                // Update shift totals without overwriting concurrent cashier updates.
-                if (activeShift) {
-                    try {
-                        const shiftResult = await db.ref('activeShift').transaction(function (shift) {
-                            if (!shift) return shift;
-                            shift.billsCount = (Number(shift.billsCount) || 0) + 1;
-                            shift.totalCollected = Math.round(((Number(shift.totalCollected) || 0) + grand) * 100) / 100;
-                            return shift;
-                        });
-                        if (shiftResult && shiftResult.committed && shiftResult.snapshot) {
-                            activeShift = shiftResult.snapshot.val() || activeShift;
-                        }
-                    } catch (shiftError) {
-                        console.error("Payment saved, but shift totals could not be updated:", shiftError);
-                        alert("Payment was saved, but shift totals could not be updated. Please check the shift summary.");
-                    }
-                }
-
-                // Keep the local menu popularity counter only after payment is safely saved.
-                try {
-                    const allTimeMap = JSON.parse(localStorage.getItem('al_hussain_alltime_sales') || '{}');
-                    order.items.forEach(it => {
-                        if (!it) return;
-                        const q = Number(it.qty) || 1;
-                        if (it.id) allTimeMap[String(it.id)] = (Number(allTimeMap[String(it.id)]) || 0) + q;
-                        if (it.name) {
-                            const nk = String(it.name).trim().toLowerCase();
-                            allTimeMap[nk] = (Number(allTimeMap[nk]) || 0) + q;
-                        }
-                    });
-                    localStorage.setItem('al_hussain_alltime_sales', JSON.stringify(allTimeMap));
-                    invalidateSalesMapCache();
-                } catch (e) {
-                    console.error("All time sales storage error", e);
-                }
-
-                if (typeof tableLinks !== 'undefined' && tableLinks) {
-                    const groupMaster = tableLinks[paidOrderKey] || paidOrderKey;
-                    let linkChanged = false;
-                    Object.keys(tableLinks).forEach(k => {
-                        if (k === groupMaster || tableLinks[k] === groupMaster) {
-                            delete tableLinks[k];
-                            linkChanged = true;
-                        }
-                    });
-                    if (linkChanged) {
-                        try { await db.ref('tableLinks').set(tableLinks); }
-                        catch (linkError) { console.error("Could not clear table links after payment:", linkError); }
-                    }
                 }
 
                 if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
@@ -7917,15 +8297,13 @@
                     table: paidOrderKey || ''
                 });
 
+                // Leave the table screen first; the receipt print runs afterwards.
                 if (shouldPrint) {
                     populateCustomerReceipt(order, paid, change);
-                    triggerPrint("print-customer", () => {
-                        // The print callbacks can fire several seconds later. Never yank
-                        // the cashier out of a table they already re-opened meanwhile.
-                        if (currentTableKey !== paidOrderKey) return;
-                        if (activeOrders[paidOrderKey]) return;
-                        backToTableSelection();
-                    }, { drawerKick: String(chosenPaymentMethod).trim().toLowerCase() === 'cash' });
+                    backToTableSelection();
+                    triggerPrint("print-customer", null, {
+                        drawerKick: String(chosenPaymentMethod).trim().toLowerCase() === 'cash'
+                    });
                 } else {
                     backToTableSelection();
                 }
