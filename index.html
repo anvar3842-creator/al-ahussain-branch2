@@ -523,6 +523,7 @@
         .staff-alert-banner { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; border-radius: 14px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.15); margin-bottom: 8px; gap: 10px; }
         .staff-alert-banner.waiter-type { background: linear-gradient(135deg, #fffbeb, #fef3c7); border-color: #fcd34d; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); }
         .staff-alert-banner.update-type { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-color: #fdba74; box-shadow: 0 4px 15px rgba(234, 88, 12, 0.15); }
+        .staff-alert-banner.qr-type { background: linear-gradient(135deg, #ecfeff, #cffafe); border-color: #67e8f9; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.18); }
         .sound-test-btn { background: #f1f5f9; border: 1.5px solid #cbd5e1; color: #1e293b; padding: 6px 12px; border-radius: 9px; font-size: 12.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: 0.2s; }
         .sound-test-btn:hover { background: #e2e8f0; border-color: #94a3b8; }
         @media (max-width: 760px) { #btn-customer-display { display: none !important; } }
@@ -1767,7 +1768,6 @@
     <div id="main-app" role="main" style="display: none; height: 100vh; flex-direction: column;">
         <div class="header">
             <div class="header-title">
-                <button type="button" class="header-home-btn" id="header-home-btn" onclick="backToTableSelection()" title="Home - All Tables Grid" style="display:none;">🏠 Tables</button>
                 <h2 id="app-header-title">Al Hussain Restaurant POS</h2>
                 <span class="live-sync-badge" id="live-sync-indicator" title="Cloud synchronization active"><span class="live-dot"></span> Live Sync</span>
                 <span class="badge" id="display-user">Admin</span>
@@ -2141,11 +2141,15 @@
                     <h3 style="margin:0;font-size:18px;">🔔 Notification Settings</h3>
                     <p style="margin:4px 0 0;font-size:12px;color:#64748b;font-weight:700;">யாருக்கு எந்த notification வேண்டும் என்று தேர்வு செய்யுங்கள்</p>
                 </div>
-                <button class="close-modal" onclick="closeNotificationSettingsModal()">Close</button>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button type="button" class="btn-small" style="background:linear-gradient(135deg,#0891b2,#06b6d4);color:#fff;padding:8px 12px;font-size:12px;" onclick="testCustomerQrSound()">▶ Test QR Sound</button>
+                    <button class="close-modal" onclick="closeNotificationSettingsModal()">Close</button>
+                </div>
             </div>
             <div class="modal-body" style="max-height:70vh;">
                 <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;font-size:12.5px;font-weight:700;color:#1e3a8a;line-height:1.7;margin-bottom:14px;">
-                    🔔 <b>Orders</b> = புது ஆர்டர் / ஆர்டர் update (சத்தம் + banner).<br>
+                    🔔 <b>Orders</b> = staff எடுக்கும் புது ஆர்டர் / update (சத்தம் + banner).<br>
+                    📱 <b>QR Order</b> = customer QR scan ஆர்டர் — தனி சத்தம் + <b>"Customer Order, Table …"</b> குரல். Default: எல்லா account-க்கும் ON.<br>
                     🙋 <b>Waiter</b> = customer "Call Waiter" (சத்தம் + banner).<br>
                     மாற்றம் உடனே எல்லா devices-க்கும் apply ஆகும்.
                 </div>
@@ -2615,12 +2619,12 @@
       </div>
     </div>
 
-    <div id="print-receipt"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 22px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2><p style="margin: 2px 0; font-size: 16px; font-weight: 900;">Nagara Brunei Darussalam.</p><p style="margin: 2px 0; font-size: 13px; font-weight: 900;">Company Acc: Al Hussain Enterprise</p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;"><div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="p-taken-by" class="print-ref-strong"></span></div><div id="p-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="p-intake-val" class="print-ref-strong"></span></div><div id="p-cust-info" style="display:none; margin-top:2px;"><b>Customer:</b> <span id="p-cust-name-val"></span><br><b>Phone:</b> <span id="p-cust-phone-val"></span></div><div><b>Pay:</b> <span id="p-method"></span> | <b>Time:</b> <span id="p-time"></span></div><div id="p-seated-info" style="display:none; font-size:14px; margin-top:2px;"><b>Seated:</b> <span id="p-seated-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 17px; font-weight: 900; margin-bottom: 6px;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Qty</th><th style="text-align: right; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Price</th></tr></thead><tbody id="p-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="font-size: 17px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>$<span id="p-subtotal">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 900; margin-top: 4px;"><span>TOTAL:</span><span>$<span id="p-total">0.00</span></span></div><div style="font-size: 17px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;"><div style="display: flex; justify-content: space-between;"><span>Paid:</span><span>$<span id="p-paid">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 19px;"><span>Change:</span><span>$<span id="p-change">0.00</span></span></div></div><div style="text-align: center; margin-top: 8px; font-size: 17px; font-weight: 900;"><p>Thank you! Please come again.</p></div><div id="receipt-kick" style="display:none;"></div></div>
+    <div id="print-receipt"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 22px; font-weight: 900;">AL HUSSAIN RESTAURANT</h2><p style="margin: 2px 0; font-size: 16px; font-weight: 900;">Nagara Brunei Darussalam.</p><p style="margin: 2px 0; font-size: 13px; font-weight: 900;">Company Acc: Al Hussain Enterprise</p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;"><div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="p-taken-by" class="print-ref-strong"></span></div><div id="p-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="p-intake-val" class="print-ref-strong"></span></div><div id="p-cust-info" style="display:none; margin-top:2px;"><b>Customer:</b> <span id="p-cust-name-val"></span><br><b>Phone:</b> <span id="p-cust-phone-val"></span></div><div><b>Pay:</b> <span id="p-method"></span></div><div><b>Date:</b> <span id="p-date"></span> | <b>Time:</b> <span id="p-time"></span></div><div id="p-seated-info" style="display:none; font-size:14px; margin-top:2px;"><b>Seated:</b> <span id="p-seated-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 17px; font-weight: 900; margin-bottom: 6px;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Qty</th><th style="text-align: right; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Price</th></tr></thead><tbody id="p-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="font-size: 17px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span>$<span id="p-subtotal">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 900; margin-top: 4px;"><span>TOTAL:</span><span>$<span id="p-total">0.00</span></span></div><div style="font-size: 17px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;"><div style="display: flex; justify-content: space-between;"><span>Paid:</span><span>$<span id="p-paid">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 19px;"><span>Change:</span><span>$<span id="p-change">0.00</span></span></div></div><div style="text-align: center; margin-top: 8px; font-size: 17px; font-weight: 900;"><p>Thank you! Please come again.</p></div><div id="receipt-kick" style="display:none;"></div></div>
     
-    <div id="print-kitchen"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 24px; font-weight: 900;">*** KITCHEN ORDER ***</h2><hr style="border-top: 4px solid black; margin: 4px 0;"></div><div style="font-size: 18px; font-weight: 900; margin-bottom: 8px;"><div><b>Type:</b> <span id="k-order-type"></span> | <b>No:</b> <span id="k-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="k-taken-by" class="print-ref-strong"></span></div><div id="k-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="k-intake-val" class="print-ref-strong"></span></div><div id="k-cust-info" style="display:none; margin-top:2px;"><b>Customer Name:</b> <span id="k-cust-name-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 20px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 20px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; font-size: 20px; font-weight: 900; color: #000;">Qty</th></tr></thead><tbody id="k-items"></tbody></table></div>
+    <div id="print-kitchen"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 24px; font-weight: 900;">*** KITCHEN ORDER ***</h2><hr style="border-top: 4px solid black; margin: 4px 0;"></div><div style="font-size: 18px; font-weight: 900; margin-bottom: 8px;"><div><b>Type:</b> <span id="k-order-type"></span> | <b>No:</b> <span id="k-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="k-taken-by" class="print-ref-strong"></span></div><div id="k-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="k-intake-val" class="print-ref-strong"></span></div><div id="k-cust-info" style="display:none; margin-top:2px;"><b>Customer Name:</b> <span id="k-cust-name-val"></span></div><div><b>Date:</b> <span id="k-date"></span> | <b>Time:</b> <span id="k-time"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 20px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 20px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; font-size: 20px; font-weight: 900; color: #000;">Qty</th></tr></thead><tbody id="k-items"></tbody></table></div>
     
     <div id="print-drawer"><div style="text-align: center; font-size: 16px; font-weight: 900;"><p>*** OPEN CASH DRAWER ***</p></div><div id="drawer-kick" style="display:none;"></div></div>
-    <div id="print-sales-history"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>SALES HISTORY REPORT</b></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead><tbody id="print-history-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;"><span>TOTAL:</span><span>$<span id="print-history-grand-total">0.00</span></span></div></div>
+    <div id="print-sales-history"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>SALES HISTORY REPORT</b></p><p id="print-history-time" style="margin:2px 0; font-size:12px; font-weight:900;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead><tbody id="print-history-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;"><span>TOTAL:</span><span>$<span id="print-history-grand-total">0.00</span></span></div></div>
     <div id="print-day-close"><div style="text-align: center; margin-bottom: 6px;"><h2>AL HUSSAIN RESTAURANT</h2><p><b>DAY CLOSE REPORT</b></p><p id="dc-date" style="margin:2px 0; font-size:13px;"></p><p id="dc-closed-by" style="margin:2px 0; font-size:13px; font-weight:bold;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 15px; font-weight: 900; margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Sales:</span><span>$<span id="dc-sales">0.00</span></span></div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Expenses:</span><span>$<span id="dc-expenses">0.00</span></span></div><hr style="border-top: 2px dashed black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 18px;"><span>Net Balance:</span><span>$<span id="dc-net">0.00</span></span></div><div style="margin-top: 6px; font-size: 13px; border-top: 1px dotted black; padding-top: 4px;"><div style="display:flex; justify-content:space-between;"><span>Cash Sales:</span><span>$<span id="dc-cash">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Card Sales:</span><span>$<span id="dc-card">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>QR Pay Sales:</span><span>$<span id="dc-qr">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Total Bills Count:</span><span id="dc-bills-count">0</span></div></div></div><div><p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>EXPENSES:</b></p><table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900; margin-top: 4px;"><tbody id="dc-expenses-list"></tbody></table></div></div>
     <div id="print-item-report">
         <div style="text-align: center; margin-bottom: 6px;">
@@ -2652,7 +2656,7 @@
             <p style="margin: 0;">Printed on: <span id="print-item-report-time"></span></p>
         </div>
     </div>
-    <div id="print-qr-batch"><div style="text-align: center; margin-bottom: 20px;"><h2>AL HUSSAIN RESTAURANT - QR CODES</h2></div><div id="print-qr-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
+    <div id="print-qr-batch"><div style="text-align: center; margin-bottom: 20px;"><h2>AL HUSSAIN RESTAURANT - QR CODES</h2><p id="print-qr-time" style="margin:4px 0 0; font-size:12px; font-weight:900;"></p></div><div id="print-qr-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
 
     <div id="table-link-modal">
       <div class="table-link-box">
@@ -2945,6 +2949,10 @@
         let tableLinks = {};
         let pendingLinkSelection = [];
         let isProcessingPayment = false;
+        // Tables whose payment write has been queued but not acknowledged yet.
+        // While a table is in this set, opening it is blocked so a fast cashier
+        // cannot start a new order on a table that is still being closed.
+        const pendingPaymentTables = new Set();
         let privateStatsState = { sales: false, expenses: false };
 
         // ---- Order session protection --------------------------------------
@@ -2969,12 +2977,41 @@
             return orders;
         }
 
+        // Takeaway order keys are never reused (the sequence counter only moves
+        // forward), so their tombstones only protect devices that still hold that
+        // exact cart. Keeping them forever bloats activeOrders and makes every
+        // live snapshot slower, so old takeaway markers are pruned automatically.
+        const TAKEAWAY_TOMBSTONE_TTL_MS = 24 * 60 * 60 * 1000;
+        function cleanupOldTakeawayTombstones(orders) {
+            if (isCustomerMode || !orders || typeof orders !== 'object' ||
+                typeof db === 'undefined' || !db || !db.ref) return;
+            const now = Date.now();
+            const removals = {};
+            Object.keys(orders).forEach(function (key) {
+                if (!key || key.indexOf('Order-') !== 0) return;
+                const marker = orders[key];
+                if (!isClosedOrder(marker)) return;
+                const closedAt = Number(marker.closedAt) || 0;
+                if (closedAt > 0 && (now - closedAt) > TAKEAWAY_TOMBSTONE_TTL_MS) {
+                    removals[key] = null;
+                }
+            });
+            if (Object.keys(removals).length === 0) return;
+            db.ref('activeOrders').update(removals).catch(function (error) {
+                console.warn('Could not clean old takeaway order markers:', error);
+            });
+        }
+
         // Marks a table as settled without deleting the node (tombstone).
+        // The marker MUST always carry a real session id. An empty
+        // closedSessionId used to let a stale cart that still had an old
+        // sessionId slip past the tombstone and resurrect a paid table.
         function closedOrderMarker(order, reason, extra) {
+            const sessionId = (order && order.sessionId) || newOrderSessionId();
             return Object.assign({
                 status: 'Closed',
-                sessionId: (order && order.sessionId) || '',
-                closedSessionId: (order && order.sessionId) || '',
+                sessionId: sessionId,
+                closedSessionId: sessionId,
                 closedAt: Date.now(),
                 closedReason: reason || 'paid'
             }, extra || {});
@@ -3014,6 +3051,17 @@
                     if (!order.sessionId || order.sessionId === current.closedSessionId) {
                         console.warn('Blocked stale cart write for ' + tableKey + ': bill already settled.');
                         return;
+                    }
+                    // Very old markers may have no closedSessionId (legacy bug).
+                    // For those, require the incoming cart to be demonstrably newer
+                    // than the settlement; otherwise a stale cart could reopen it.
+                    if (!current.closedSessionId) {
+                        const orderStamp = Number(order.lastUpdatedAt || order.seatedAt || order.createdAt) || 0;
+                        const closedAt = Number(current.closedAt) || 0;
+                        if (!orderStamp || !closedAt || orderStamp <= closedAt) {
+                            console.warn('Blocked stale cart write for ' + tableKey + ': legacy settled marker.');
+                            return;
+                        }
                     }
                     return order;
                 }
@@ -3204,9 +3252,10 @@
         });
 
         // Admin-controlled notification recipients. Shape:
-        //   { roleKey: { orders: true/false, waiter: true/false } }
+        //   { roleKey: { orders: true/false, customerQr: true/false, waiter: true/false } }
         // Missing entries fall back to the safe defaults (orders = admin only,
-        // waiter calls = everyone) so the app keeps working before it is configured.
+        // customer QR orders = everyone, waiter calls = everyone) so the app
+        // keeps working before it is configured.
         let notificationSettings = {};
         db.ref('settings/notificationSettings').on('value', (snap) => {
             notificationSettings = snap.val() || {};
@@ -3392,12 +3441,13 @@
                 const who = curOrd.takenBy || curOrd.lastUpdatedBy || '';
                 const total = getOrderGrandTotal(curOrd);
 
+                const qrOrder = isCustomerQrAlert(curOrd);
                 if (!prevOrd) {
                     // New order on table
-                    handleIncomingOrderAlert('order', tKey, who, curCount, total);
+                    handleIncomingOrderAlert('order', tKey, who, curCount, total, qrOrder);
                 } else if (curCount > prevCount || (curOrd.lastUpdatedAt && curOrd.lastUpdatedAt > (prevOrd.lastUpdatedAt || 0))) {
                     // Items added or order updated
-                    handleIncomingOrderAlert('update', tKey, who, curCount, total);
+                    handleIncomingOrderAlert('update', tKey, who, curCount, total, qrOrder);
                 }
             });
 
@@ -3405,7 +3455,9 @@
         }
 
         db.ref('activeOrders').on('value', (snapshot) => {
-            const raw = stripClosedOrders(snapshot.val() || {});
+            const snapshotOrders = snapshot.val() || {};
+            cleanupOldTakeawayTombstones(snapshotOrders);
+            const raw = stripClosedOrders(snapshotOrders);
             const now = Date.now();
             let missingSeatedUpdates = {};
 
@@ -3647,6 +3699,11 @@
             }
         }
 
+        // Show the real state from the start. Before this, the button said
+        // "Sound" even while browser audio was still locked, so silence looked
+        // like a bug. Now it clearly says "Tap to Enable" until unlocked.
+        updateSoundButtonUI();
+
         function unlockAudio() {
             if (audioUnlocked) {
                 const ctx = getPosAudioContext();
@@ -3713,7 +3770,39 @@
                 if (ctx.state === 'suspended') {
                     ctx.resume().catch(() => {});
                 }
-                const now = ctx.currentTime;
+                const now = ctx.currentTime + 0.02;
+
+                // One reusable note envelope so every alert type sounds clean.
+                function playNote(freq, startAt, peak, endAt, wave) {
+                    try {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = wave || 'sine';
+                        osc.frequency.setValueAtTime(freq, startAt);
+                        gain.gain.setValueAtTime(0.0001, startAt);
+                        gain.gain.exponentialRampToValueAtTime(peak, startAt + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, endAt);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startAt);
+                        osc.stop(endAt + 0.03);
+                    } catch (e) { /* ignore a single bad note */ }
+                }
+
+                if (type === 'customer' || type === 'customerUpdate') {
+                    // Bright G5-C6-E6 rising motif played twice. The double
+                    // triplet is intentionally different from the staff order
+                    // and waiter chimes, so everyone recognises "QR order".
+                    const notes = [783.99, 1046.50, 1318.51]; // G5, C6, E6
+                    const rounds = [0, 0.72];
+                    rounds.forEach(function (roundStart) {
+                        notes.forEach(function (freq, i) {
+                            const startAt = now + roundStart + (i * 0.15);
+                            playNote(freq, startAt, 0.55, startAt + 0.22, 'triangle');
+                        });
+                    });
+                    return;
+                }
 
                 let f1 = 523.25; // C5
                 let f2 = 783.99; // G5
@@ -3732,29 +3821,8 @@
                     gainVal2 = 0.46;
                 }
 
-                // Tone 1: gentle sine chime
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(f1, now);
-                gain1.gain.setValueAtTime(gainVal1, now);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-                osc1.connect(gain1);
-                gain1.connect(ctx.destination);
-                osc1.start(now);
-                osc1.stop(now + 0.35);
-
-                // Tone 2: melodic harmonic chime
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(f2, now + 0.16);
-                gain2.gain.setValueAtTime(gainVal2, now + 0.16);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.70);
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.start(now + 0.16);
-                osc2.stop(now + 0.70);
+                playNote(f1, now, gainVal1, now + 0.35, 'sine');
+                playNote(f2, now + 0.16, gainVal2, now + 0.70, 'sine');
             } catch (e) {
                 console.warn("Audio chime error:", e);
                 playFallbackBeep(type);
@@ -3836,6 +3904,10 @@
             let speechText = "";
             if (type === 'waiter') {
                 speechText = `Call Waiter, ${tableVoice}`;
+            } else if (type === 'customer') {
+                speechText = `Customer Order, ${tableVoice}`;
+            } else if (type === 'customerUpdate') {
+                speechText = `Customer Order Updated, ${tableVoice}`;
             } else if (type === 'update') {
                 speechText = `Order Updated, ${tableVoice}`;
             } else {
@@ -3855,6 +3927,15 @@
             showToast("🔊 Testing Audio: 'New Order, Table 1'");
         }
 
+        // Distinct "customer QR order" test used from Notification Settings so
+        // the owner can verify the sound on every POS device.
+        function testCustomerQrSound() {
+            unlockAudio();
+            updateSoundButtonUI();
+            playChimeAndVoice('customer', 'Table 1');
+            showToast("📱 Testing: 'Customer Order, Table 1'");
+        }
+
         // Per-account notification preferences. Admin can change these from
         // Admin > Notification Settings. Defaults keep the previous behaviour:
         // orders -> admin accounts only, waiter calls -> everyone.
@@ -3864,6 +3945,10 @@
                 (credentials[roleKey] && credentials[roleKey].roleType === 'admin');
             return {
                 orders: typeof cfg.orders === 'boolean' ? cfg.orders : isAdmin,
+                // Customer QR orders are shouted on every device by default so a
+                // QR order is never missed. The admin can still disable it per
+                // account from Admin > Notification Settings.
+                customerQr: typeof cfg.customerQr === 'boolean' ? cfg.customerQr : true,
                 waiter: typeof cfg.waiter === 'boolean' ? cfg.waiter : true
             };
         }
@@ -3873,31 +3958,60 @@
             return roleNotificationPrefs(loggedInRole).orders;
         }
 
+        function canReceiveCustomerQrNotifications() {
+            if (isCustomerMode) return false;
+            return roleNotificationPrefs(loggedInRole).customerQr;
+        }
+
         function canReceiveWaiterNotifications() {
             if (isCustomerMode) return false;
             return roleNotificationPrefs(loggedInRole).waiter;
         }
 
-        function handleIncomingOrderAlert(type, tableKey, byUser, itemsCount, total) {
+        // True when an alert came from a customer's phone (QR menu) instead of
+        // staff. Supports both the live event payload and a saved order object.
+        function isCustomerQrAlert(data) {
+            if (!data || typeof data !== 'object') return false;
+            return data.source === 'Customer QR' ||
+                data.orderSource === 'Customer QR' ||
+                data.by === 'Customer QR' ||
+                data.takenBy === 'Customer QR';
+        }
+
+        function handleIncomingOrderAlert(type, tableKey, byUser, itemsCount, total, isCustomerQr) {
             if (isCustomerMode) return;
-            // New-order / update chime + toast + banner follows the admin-managed
-            // per-account notification settings.
-            if (!canReceiveOrderNotifications()) return;
+            // Customer QR orders have their own per-account switch and their own
+            // unmistakable sound ("Customer Order, Table X"). Staff-entered
+            // orders and updates still follow the normal Orders switch.
+            const qrOrder = !!isCustomerQr;
+            if (qrOrder ? !canReceiveCustomerQrNotifications() : !canReceiveOrderNotifications()) return;
+            const alertType = qrOrder ? (type === 'update' ? 'customerUpdate' : 'customer') : type;
             const now = Date.now();
-            const debKey = type + '_' + tableKey;
-            if (lastAnnouncedTableActionTimes[debKey] && (now - lastAnnouncedTableActionTimes[debKey] < 3500)) {
+            // The same event arrives from liveOrderNotification,
+            // newCustomerOrderAlerts and activeOrders. One debounce key across
+            // all three paths prevents a triple announcement.
+            const debKey = alertType + '_' + tableKey;
+            if (lastAnnouncedTableActionTimes[debKey] && (now - lastAnnouncedTableActionTimes[debKey] < 4000)) {
                 return; // Debounced
             }
             lastAnnouncedTableActionTimes[debKey] = now;
 
-            playChimeAndVoice(type, tableKey, byUser);
+            playChimeAndVoice(alertType, tableKey, byUser);
 
-            const who = byUser ? ` from ${byUser}` : '';
             const tName = formatTableNameForVoice(tableKey);
-            if (type === 'update') {
-                showToast(`📝 Order Updated: ${tName}${who}`);
+            if (qrOrder) {
+                if (alertType === 'customerUpdate') {
+                    showToast(`📱 Customer QR Order Updated: ${tName}`);
+                } else {
+                    showToast(`📱 Customer QR Order: ${tName}`);
+                }
             } else {
-                showToast(`🔔 New Order: ${tName}${who}`);
+                const who = byUser ? ` from ${byUser}` : '';
+                if (type === 'update') {
+                    showToast(`📝 Order Updated: ${tName}${who}`);
+                } else {
+                    showToast(`🔔 New Order: ${tName}${who}`);
+                }
             }
 
             renderLiveStaffAlerts();
@@ -3914,7 +4028,9 @@
                 isUpdate: actionType === 'update',
                 itemsCount: itemCount,
                 total: totalDue,
-                by: loggedInDisplayName || (isCustomerMode ? "Customer QR" : "Staff"),
+                // A customer phone has no logged-in staff name. Without this
+                // guard the banner said "from Admin" for every QR order.
+                by: isCustomerMode ? "Customer QR" : (loggedInDisplayName || "Staff"),
                 source: isCustomerMode ? "Customer QR" : (loggedInDisplayName || "Staff"),
                 timestamp: Date.now(),
                 timeStr: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -3938,14 +4054,17 @@
         // Dedicated live order event broadcast listener
         db.ref('liveOrderNotification').on('value', (snapshot) => {
             const data = snapshot.val();
-            if (!data || !data.timestamp) return;
 
             if (!initialLiveNotificationLoaded) {
+                // Mark the baseline even when the node is empty. Previously an
+                // empty node left the flag false and silently swallowed the very
+                // first customer QR order after opening the POS.
                 initialLiveNotificationLoaded = true;
-                lastLiveNotificationTimestamp = data.timestamp;
+                lastLiveNotificationTimestamp = (data && data.timestamp) || 0;
                 return;
             }
 
+            if (!data || !data.timestamp) return;
             if (data.timestamp <= lastLiveNotificationTimestamp) return;
             lastLiveNotificationTimestamp = data.timestamp;
 
@@ -3954,7 +4073,7 @@
 
             if (!isCustomerMode) {
                 const actType = data.isUpdate || data.action === 'update' ? 'update' : 'order';
-                handleIncomingOrderAlert(actType, data.table, data.by, data.itemsCount, data.total);
+                handleIncomingOrderAlert(actType, data.table, data.by, data.itemsCount, data.total, isCustomerQrAlert(data));
             }
         });
 
@@ -3981,7 +4100,7 @@
                         lastNotifiedOrderAlerts[tKey] = ts;
                         if (item.originDeviceId !== posDeviceId) {
                             const actType = item.isUpdate ? 'update' : 'order';
-                            handleIncomingOrderAlert(actType, item.table || tKey, item.by, item.itemsCount, item.total);
+                            handleIncomingOrderAlert(actType, item.table || tKey, item.by, item.itemsCount, item.total, isCustomerQrAlert(item));
                         }
                     }
                 });
@@ -4072,7 +4191,15 @@
 
             const now = Date.now();
             // Banners follow the same per-account settings as the chime/toast.
-            const orderKeys = canReceiveOrderNotifications() ? Object.keys(newCustomerOrderAlerts) : [];
+            // Customer QR banners use the separate QR switch, so a counter
+            // account can see QR orders even when staff-entered orders are off.
+            const orderKeys = Object.keys(newCustomerOrderAlerts).filter(tKey => {
+                const al = newCustomerOrderAlerts[tKey];
+                if (!al) return false;
+                return isCustomerQrAlert(al)
+                    ? canReceiveCustomerQrNotifications()
+                    : canReceiveOrderNotifications();
+            });
             const waiterKeys = canReceiveWaiterNotifications() ? Object.keys(staffAlerts) : [];
 
             let visibleOrderCount = 0;
@@ -4096,15 +4223,20 @@
                 const remainingMins = Math.ceil(remainingSecs / 60);
 
                 const isUp = !!al.isUpdate;
+                const isQr = isCustomerQrAlert(al);
                 const sourceLabel = al.by ? al.by : (al.source || 'Customer');
                 const banner = document.createElement('div');
-                banner.className = 'staff-alert-banner' + (isUp ? ' update-type' : '');
+                banner.className = 'staff-alert-banner' + (isUp ? ' update-type' : '') + (isQr ? ' qr-type' : '');
+                const bannerTitle = isQr
+                    ? (isUp ? 'Customer QR Order Updated' : 'Customer QR Order')
+                    : (isUp ? 'Order Updated (' + sourceLabel + ')' : 'New Order (' + sourceLabel + ')');
+                const bannerIcon = isQr ? '📱' : (isUp ? '📝' : '🔔');
                 banner.innerHTML = `
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:22px;">${isUp ? '📝' : '🔔'}</span>
+                        <span style="font-size:22px;">${bannerIcon}</span>
                         <div>
                             <div style="font-weight:900; color:${isUp ? '#9a3412' : '#1e3a8a'}; font-size:14px;">
-                                <strong>${tKey}</strong>: ${isUp ? 'Order Updated (' + sourceLabel + ')' : 'New Order (' + sourceLabel + ')'}
+                                <strong>${tKey}</strong>: ${bannerTitle}
                             </div>
                             <div style="font-size:12px; color:${isUp ? '#c2410c' : '#3b82f6'}; font-weight:700;">
                                 ${al.itemsCount || 1} items • $${Number(al.total || 0).toFixed(2)} • at ${al.timeStr || 'just now'} <span style="opacity:0.85; font-size:11px;">(⏱️ auto-clears in ${remainingMins}m)</span>
@@ -4920,6 +5052,13 @@
 
         async function openTable(tableKey) {
             if (isCustomerMode && currentTableKey && currentTableKey !== tableKey) {
+                return;
+            }
+            // A payment may still be syncing for this table. Opening it now could
+            // put a brand-new order on top of the about-to-be-closed bill.
+            const pendingKey = getMasterTableKey(tableKey);
+            if (pendingPaymentTables.has(tableKey) || pendingPaymentTables.has(pendingKey)) {
+                showToast('⏳ Payment is still saving for ' + pendingKey + ' — please wait a moment');
                 return;
             }
             if (isLinkedSlaveTable(tableKey)) {
@@ -7299,24 +7438,36 @@
             return String((item && (item.cat || item.category)) || '').trim();
         }
 
-        function isDrinkOrderItem(item) {
-            const category = getOrderItemCategory(item).toLowerCase().replace(/[_-]+/g, ' ');
-            const name = String((item && item.name) || '').toLowerCase();
-            const drinkCategoryTerms = [
-                'drink', 'beverage', 'tea', 'teh', 'coffee', 'milo', 'milkshake',
-                'milk shake', 'fresh juice', 'juice', 'syrup', 'delina', 'sijoku', 'sizzoku', 'soft drink',
-                'hot drink', 'iced drink', 'ice blended', 'smoothie', 'soda'
-            ];
-            if (drinkCategoryTerms.some(term => category.includes(term))) return true;
+        // Categories that always print in the DRINKS block. These are the real
+        // Firebase category names used by the menu (Malay + English).
+        const DRINK_ORDER_CATEGORY_TERMS = [
+            'minuman', 'sejuk', 'hot drink', 'milk shake', 'milkshake',
+            'fresh juice', 'juice', 'drink', 'beverage'
+        ];
 
-            // Fallback for menus where the category field is generic or missing.
-            const drinkItemTerms = [
-                'teh tarik', 'teh c', 'teh o', 'tea', 'coffee', 'milo', 'nescafe',
-                'milkshake', 'milk shake', 'fresh juice', 'juice', 'sirap',
-                'soft drink', 'coke', 'cola', 'sprite', 'soda', 'lemonade',
-                'hot chocolate', 'iced chocolate', 'smoothie'
-            ];
-            return drinkItemTerms.some(term => name.includes(term));
+        function normalizeOrderCategory(value) {
+            return String(value || '').trim().toLowerCase()
+                .replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
+        }
+
+        function isDrinkOrderItem(item) {
+            const category = normalizeOrderCategory(getOrderItemCategory(item));
+            if (category) {
+                if (DRINK_ORDER_CATEGORY_TERMS.some(term => category.includes(term))) return true;
+
+                // A configured food category is authoritative. Without this,
+                // "Roti Milo" and "Nasi Ayam (Steam)" would print as DRINKS
+                // just because their names contain "milo" / "tea".
+                const knownCategories = (Array.isArray(categories) ? categories : [])
+                    .map(cat => normalizeOrderCategory(cat));
+                if (knownCategories.includes(category)) return false;
+            }
+
+            // Fallback only for items with a missing or unknown category.
+            // Word boundaries stop "Steam" from matching "tea".
+            const name = normalizeOrderCategory(item && item.name);
+            const drinkItemPattern = /\b(teh tarik|teh c|teh o|teh|kopi|tea|coffee|milo|nescafe|milkshake|milk shake|fresh juice|juice|sirap|soft drink|coke|cola|sprite|soda|lemonade|hot chocolate|iced chocolate|smoothie)\b/;
+            return drinkItemPattern.test(name);
         }
 
         function getSortedOrderItems(items) {
@@ -7347,6 +7498,27 @@
             return isDrinkOrderItem(item) ? 'DRINKS' : 'FOOD';
         }
 
+        // Every paper output carries a date and time so old prints can be
+        // identified later. A saved sale reprint keeps the original sale date
+        // and time; live orders show the moment this paper is printed, which
+        // matches the time the customer bill has always shown.
+        function getOrderPrintDateTime(order) {
+            if (order && order.date && order.time) {
+                return { date: order.date, time: order.time };
+            }
+            const now = new Date();
+            return {
+                date: now.toLocaleDateString('en-GB'),
+                time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+        }
+
+        function getPrintTimestampText() {
+            const now = new Date();
+            return 'Printed: ' + now.toLocaleDateString('en-GB') + ' ' +
+                now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
         function printKitchenKOT(onComplete) {
             syncCartInputsToMemory();
             let order = activeOrders[currentTableKey];
@@ -7363,6 +7535,12 @@
             if (kTakenByEl) {
                 kTakenByEl.innerText = order.takenBy === 'Customer' ? 'Customer (Self-Order)' : (order.takenBy || loggedInDisplayName);
             }
+
+            const kotStamp = getOrderPrintDateTime(order);
+            const kDateEl = document.getElementById('k-date');
+            if (kDateEl) kDateEl.innerText = kotStamp.date;
+            const kTimeEl = document.getElementById('k-time');
+            if (kTimeEl) kTimeEl.innerText = kotStamp.time;
 
             const kIntakeEl = document.getElementById('k-intake');
             if (kIntakeEl) {
@@ -7461,7 +7639,9 @@
             }
 
             document.getElementById('p-method').innerText = order.paymentMethod || "Cash";
-            document.getElementById('p-time').innerText = order.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const receiptStamp = getOrderPrintDateTime(order);
+            document.getElementById('p-date').innerText = receiptStamp.date;
+            document.getElementById('p-time').innerText = receiptStamp.time;
 
             const pSeatedElem = document.getElementById('p-seated-info');
             if (pSeatedElem) {
@@ -7793,6 +7973,10 @@
                             <input type="checkbox" style="width:18px;height:18px;accent-color:#2563eb;" ${prefs.orders ? 'checked' : ''} onchange="setRoleNotificationPref('${key}','orders',this.checked)">
                             🔔 Orders
                         </label>
+                        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#0e7490;cursor:pointer;">
+                            <input type="checkbox" style="width:18px;height:18px;accent-color:#0891b2;" ${prefs.customerQr ? 'checked' : ''} onchange="setRoleNotificationPref('${key}','customerQr',this.checked)">
+                            📱 QR Order
+                        </label>
                         <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#b45309;cursor:pointer;">
                             <input type="checkbox" style="width:18px;height:18px;accent-color:#d97706;" ${prefs.waiter ? 'checked' : ''} onchange="setRoleNotificationPref('${key}','waiter',this.checked)">
                             🙋 Waiter
@@ -7803,7 +7987,7 @@
 
         function setRoleNotificationPref(roleKey, field, value) {
             if (!isAdminAccount()) return;
-            if (field !== 'orders' && field !== 'waiter') return;
+            if (field !== 'orders' && field !== 'customerQr' && field !== 'waiter') return;
             if (!roleKey || !credentials[roleKey]) return;
             const patch = {};
             patch[field] = !!value;
@@ -8173,8 +8357,13 @@
                     const serverOrder = checkResult.snap.val();
                     const serverClosed = isClosedOrder(serverOrder);
                     const localSid = currentOrder.sessionId || '';
-                    const serverOtherSession = serverOrder && typeof serverOrder === 'object' &&
-                        !serverClosed && serverOrder.sessionId && localSid && serverOrder.sessionId !== localSid;
+                    const serverSid = (serverOrder && typeof serverOrder === 'object' && !serverClosed)
+                        ? (serverOrder.sessionId || '')
+                        : '';
+                    // If either side has a session id, a mismatch means the cart
+                    // belongs to a different seating. This also covers a local
+                    // legacy cart with no sessionId pointed at a re-seated table.
+                    const serverOtherSession = Boolean(serverSid) && serverSid !== localSid;
                     if (serverClosed || serverOtherSession) {
                         alert('This table was settled or re-seated on another device. The latest table data will be reloaded — please check the order before charging.');
                         if (serverOrder && !serverClosed) activeOrders[paidOrderKey] = serverOrder;
@@ -8189,6 +8378,15 @@
                 } else if (checkResult && checkResult.error) {
                     console.error('Could not verify the table before payment:', checkResult.error);
                 }
+
+                // A legacy cart may have no sessionId. Adopt one now so the
+                // tombstone below always gets a real closedSessionId and cannot
+                // be bypassed by a stale cart later.
+                if (!order.sessionId) order.sessionId = newOrderSessionId();
+                // Fill receipt fields now; printing may happen after the write
+                // acknowledgement, when currentTableKey is already cleared.
+                order.paymentMethod = chosenPaymentMethod;
+                order.source = paidOrderKey;
 
                 // Save the sale and close the table atomically. A tiny "Closed" marker
                 // stays behind instead of a hard delete, so an old cart from a sleeping
@@ -8208,8 +8406,55 @@
                 // cache immediately, so the cashier can take the next order while
                 // the bill syncs. The promise below only handles confirmation and
                 // the rare failure (rules/connection) to restore the table.
+                pendingPaymentTables.add(paidOrderKey);
+                const pendingPaymentTimer = setTimeout(function () {
+                    pendingPaymentTables.delete(paidOrderKey);
+                }, 15000);
+                const clearPendingPayment = function () {
+                    clearTimeout(pendingPaymentTimer);
+                    pendingPaymentTables.delete(paidOrderKey);
+                };
+
+                const isCashPayment = String(chosenPaymentMethod).trim().toLowerCase() === 'cash';
+                const drawerShouldOpen = isCashPayment && hasPermission('billing') &&
+                    drawerConfig.openOnPayNow !== false;
+                const drawerPulse = drawerShouldOpen
+                    ? pulseCashDrawer(false).then(function (opened) { return opened === true; })
+                        .catch(function () { return false; })
+                    : Promise.resolve(false);
+                // Receipts are printed only after Firebase acknowledges the bill,
+                // so a failed write can never leave the customer holding a receipt
+                // for a payment that was not saved. Exactly one drawer pulse:
+                // hardware first, receipt kick only as the fallback.
+                const printPaidReceipt = function () {
+                    if (!shouldPrint) return;
+                    populateCustomerReceipt(order, paid, change);
+                    let receiptStarted = false;
+                    const startReceipt = function (drawerOpened) {
+                        if (receiptStarted) return;
+                        receiptStarted = true;
+                        triggerPrint("print-customer", null, {
+                            drawerKick: drawerShouldOpen && !drawerOpened
+                        });
+                    };
+                    if (drawerShouldOpen) {
+                        drawerPulse.then(startReceipt);
+                        setTimeout(function () { startReceipt(false); }, 1800);
+                    } else {
+                        startReceipt(false);
+                    }
+                };
+
                 const paymentWrite = db.ref().update(updates);
                 paymentWrite.then(function () {
+                    clearPendingPayment();
+                    // A receipt/DOM problem must never turn a saved payment into a
+                    // "failed" rollback.
+                    try {
+                        printPaidReceipt();
+                    } catch (printError) {
+                        console.error('Payment saved, but the receipt could not be prepared:', printError);
+                    }
                     // Shift totals are updated only after the bill is confirmed.
                     if (activeShift) {
                         db.ref('activeShift').transaction(function (shift) {
@@ -8260,7 +8505,8 @@
                             });
                         }
                     }
-                }).catch(function (writeError) {
+                }, function (writeError) {
+                    clearPendingPayment();
                     console.error('Payment could not be saved:', writeError);
                     // Put the unpaid cart back (only if the table is still on this
                     // seating) so the cashier can retry instead of losing the order.
@@ -8271,22 +8517,15 @@
                         }
                     }
                     requestRenderBigTablesGrid();
+                    if (paidOrderKey && currentTableKey === paidOrderKey) {
+                        renderCart({ skipInputSync: true });
+                    }
                     alert('Payment could not be saved. Please check the connection — the table has been restored so you can try again.');
                 });
-
-                // Open the cash drawer immediately for a cash bill; the write is
-                // already queued locally, so this no longer waits on the network.
-                if (String(chosenPaymentMethod).trim().toLowerCase() === 'cash' &&
-                    hasPermission('billing') && drawerConfig.openOnPayNow !== false) {
-                    pulseCashDrawer(false).then(function (opened) {
-                        if (!opened) showToast('Drawer not connected - open Admin > Cash Drawer Setup');
-                    });
-                }
 
                 if (activeOrders && paidOrderKey) delete activeOrders[paidOrderKey];
                 if (previousActiveOrdersMap && paidOrderKey) delete previousActiveOrdersMap[paidOrderKey];
 
-                order.paymentMethod = chosenPaymentMethod;
                 closePaymentModal(true);
                 pushCustomerDisplayState({
                     type: 'done',
@@ -8297,15 +8536,14 @@
                     table: paidOrderKey || ''
                 });
 
-                // Leave the table screen first; the receipt print runs afterwards.
-                if (shouldPrint) {
-                    populateCustomerReceipt(order, paid, change);
-                    backToTableSelection();
-                    triggerPrint("print-customer", null, {
-                        drawerKick: String(chosenPaymentMethod).trim().toLowerCase() === 'cash'
+                // Leave the table screen immediately; the receipt prints from the
+                // success handler once Firebase confirms the bill.
+                backToTableSelection();
+
+                if (!shouldPrint && drawerShouldOpen) {
+                    drawerPulse.then(function (opened) {
+                        if (!opened) showToast('Drawer not connected - open Admin > Cash Drawer Setup');
                     });
-                } else {
-                    backToTableSelection();
                 }
             } catch (error) {
                 console.error("Payment save failed:", error);
@@ -8332,6 +8570,8 @@
                 let tKey = "Table " + i;
                 if (tKey === currentTableKey) continue;
                 if (isLinkedSlaveTable(tKey)) continue;
+                // Never offer a table whose payment is still syncing.
+                if (pendingPaymentTables.has(tKey)) continue;
 
                 let isOccupied = activeOrders[tKey] && activeOrders[tKey].items && activeOrders[tKey].items.length > 0;
                 let btn = document.createElement('button');
@@ -8361,6 +8601,11 @@
 
         function confirmMoveTable() {
             if (!targetMoveDestination) return alert("Please select a destination table!");
+            const pendingMoveKey = getMasterTableKey(targetMoveDestination);
+            if (pendingPaymentTables.has(targetMoveDestination) || pendingPaymentTables.has(pendingMoveKey)) {
+                alert('Payment is still saving for ' + pendingMoveKey + '. Please wait a moment and try again.');
+                return;
+            }
             const sourceKey = currentTableKey;
             if (activeOrders[targetMoveDestination] && activeOrders[targetMoveDestination].items && activeOrders[targetMoveDestination].items.length > 0) {
                 if (!confirm("Destination table already has an active order! Merge orders?")) return;
@@ -8442,6 +8687,12 @@
         // slave's items stay orphaned in Firebase: opening the slave redirects to the
         // master, the items look "missing", and they are never billed at payment.
         async function mergeOrdersIntoMasterOnLink(master, linkedKeys) {
+            const pendingLinkKey = linkedKeys.find(k =>
+                pendingPaymentTables.has(k) || pendingPaymentTables.has(getMasterTableKey(k)));
+            if (pendingLinkKey) {
+                alert('Payment is still saving for ' + pendingLinkKey + '. Please wait a moment and try again.');
+                return;
+            }
             try {
                 const snaps = await Promise.all(linkedKeys.map(k => db.ref('activeOrders/' + k).once('value')));
                 const orders = {};
@@ -8663,6 +8914,9 @@
                 printContainer.appendChild(box);
                 new QRCode(box.querySelector(`#p-qr-${i}`), { text: `${liveBaseUrl}${separator}table=Table%20${i}`, width: 150, height: 150 });
             }
+
+            const qrTimeEl = document.getElementById('print-qr-time');
+            if (qrTimeEl) qrTimeEl.innerText = getPrintTimestampText();
 
             setTimeout(() => {
                 document.body.className = "print-qr-mode";
@@ -9268,13 +9522,15 @@ function deleteMenuItem(itemId) {
                 sum += Number(s.total) || 0;
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${s.time} - ${s.ref} (${s.source})${s.intake ? ' [' + (s.intake === 'phone' ? 'Phone' : 'Walk-in') + ']' : ''}</td>
+                    <td>${s.date ? s.date + ' ' : ''}${s.time} - ${s.ref} (${s.source})${s.intake ? ' [' + (s.intake === 'phone' ? 'Phone' : 'Walk-in') + ']' : ''}</td>
                     <td style="text-align:right;">$${Number(s.total).toFixed(2)}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
             document.getElementById('print-history-grand-total').innerText = sum.toFixed(2);
+            const historyTimeEl = document.getElementById('print-history-time');
+            if (historyTimeEl) historyTimeEl.innerText = getPrintTimestampText();
             document.body.className = "print-history-mode";
             window.print();
             setTimeout(() => { document.body.className = ""; }, 1000);
