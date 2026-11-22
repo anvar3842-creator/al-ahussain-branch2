@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Al Hussain Restaurant point-of-sale system: table management, ordering, kitchen KOT, billing, payments, stock, expenses and daily reports.">
-    <title>Al Hussain Restaurant - POS System v2.4</title>
+    <title>Al Hussain Restaurant - POS System v2.5</title>
     
     <!-- Instant Customer QR Detection to prevent any login or table selection screen flash -->
     <script>
@@ -114,6 +114,9 @@
 
         .header { background: rgba(255,255,255,.94); border: 1px solid rgba(226,232,240,.9); box-shadow: 0 6px 20px rgba(15,23,42,.06); backdrop-filter: blur(12px); padding: 12px 18px; margin: 12px 16px 0; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         .header-title { display: flex; align-items: center; gap: 10px; }
+        .header-title-main { display: flex; flex-direction: column; min-width: 0; }
+        .header-shop-contact { font-size: 10px; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .login-shop-contact { margin: 4px 0 12px; font-size: 11.5px; font-weight: 700; color: #475569; text-align: center; }
         .header h2 { margin: 0; font-size: 20px; font-weight: 900; background: linear-gradient(135deg, #4f46e5, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 8px; letter-spacing: .2px; }
         .header-home-btn { background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe; padding: 7px 14px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; font-family: inherit; }
         .header-home-btn:hover { background: #6d28d9; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(109, 40, 217, 0.25); }
@@ -535,6 +538,7 @@
         .staff-alert-new-items { margin-top: 3px; font-size: 12px; font-weight: 900; color: #0e7490; background: #ffffffb3; border-radius: 7px; padding: 3px 7px; display: inline-block; max-width: 100%; }
         .tc-new-items { margin: 4px 0 2px; padding: 4px 7px; border-radius: 8px; background: #ecfdf5; border: 1px dashed #6ee7b7; color: #047857; font-size: 10px; font-weight: 900; line-height: 1.35; position: relative; z-index: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .cart-new-badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #dcfce7; border: 1px solid #86efac; color: #15803d; font-size: 9.5px; font-weight: 900; vertical-align: middle; letter-spacing: 0.02em; }
+        .cart-old-badge { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: #f1f5f9; border: 1px solid #cbd5e1; color: #64748b; font-size: 9.5px; font-weight: 900; vertical-align: middle; letter-spacing: 0.02em; }
         .customer-order-rounds { margin: 4px 0 10px; padding: 10px 12px; border: 1.5px solid #bae6fd; background: #f0f9ff; border-radius: 12px; }
         .cust-rounds-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; font-weight: 900; color: #0369a1; margin-bottom: 6px; }
         .cust-rounds-head span { font-size: 10.5px; font-weight: 800; color: #0284c7; background: #e0f2fe; border-radius: 999px; padding: 1px 8px; }
@@ -1712,6 +1716,7 @@
     .tc-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
     .tc-staff { display: inline-flex; align-items: center; gap: 4px; font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tc-staff.is-customer { background: #e0f2fe; color: #0284c7; border-color: #bae6fd; }
+    .tc-round-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 9.5px; font-weight: 900; padding: 2px 7px; border-radius: 999px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; white-space: nowrap; }
     .tc-empty { margin: auto 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; position: relative; z-index: 1; }
     .tc-empty-icon { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: #ecfdf5; border: 1px solid #bbf7d0; box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.6); }
     .tc-empty-text { font-size: 12px; font-weight: 900; color: #047857; letter-spacing: 0.01em; }
@@ -1776,6 +1781,7 @@
     <div id="login-screen" class="login-overlay" style="display: none;">
         <div class="login-box">
             <h2 id="login-shop-name">Al Hussain Restaurant</h2>
+            <div id="login-shop-contact" class="login-shop-contact">Nagara Brunei Darussalam.</div>
             <form onsubmit="handleLogin(event)">
                 <input type="text" id="login-user" placeholder="Username / Name (e.g. admin, user1)" required autocomplete="username">
                 <input type="password" id="login-pass" placeholder="Password" required autocomplete="current-password">
@@ -1795,7 +1801,10 @@
     <div id="main-app" role="main" style="display: none; height: 100vh; flex-direction: column;">
         <div class="header">
             <div class="header-title">
-                <h2 id="app-header-title">Al Hussain Restaurant POS</h2>
+                <div class="header-title-main">
+                    <h2 id="app-header-title">Al Hussain Restaurant POS</h2>
+                    <div id="header-shop-contact" class="header-shop-contact">Nagara Brunei Darussalam.</div>
+                </div>
                 <span class="live-sync-badge" id="live-sync-indicator" title="Cloud synchronization active"><span class="live-dot"></span> Live Sync</span>
                 <span class="badge" id="display-user">Admin</span>
             </div>
@@ -2193,7 +2202,7 @@
             </div>
             <div class="modal-body" style="overflow-y:auto; flex:1; padding-top:14px;">
                 <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:12px;padding:10px 14px;font-size:12.5px;font-weight:700;color:#5b21b6;margin-bottom:14px;">
-                    <b>Shop-wide (எல்லா POS + customer QR):</b> Shop Name, Address, Company, Thank-you messages, Currency — Firebase-ல sync ஆகும்.<br>
+                    <b>Shop-wide (எல்லா POS + customer QR):</b> Shop Name, Address, Shop Phone, Company, Thank-you messages, Currency — Firebase-ல sync ஆகும்.<br>
                     <b>இந்த device-க்கு மட்டும்:</b> Quick Cash, Print Receipt default, Sound, QR Base URL. மாத்துனதும் <b>Save Settings</b> அழுத்துங்க.
                 </div>
 
@@ -2201,6 +2210,7 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
                     <label style="font-size:12px;font-weight:800;color:#334155;">Shop Name<input type="text" id="set-shop-name" style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
                     <label style="font-size:12px;font-weight:800;color:#334155;">Address Line<input type="text" id="set-address-line" style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
+                    <label style="font-size:12px;font-weight:800;color:#334155;">Shop Phone (e.g. +673 712 3456)<input type="tel" inputmode="tel" id="set-shop-phone" placeholder="+673 ..." style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
                     <label style="font-size:12px;font-weight:800;color:#334155;">Company / Account Line<input type="text" id="set-company-line" style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
                     <label style="font-size:12px;font-weight:800;color:#334155;">Currency Symbol<input type="text" id="set-currency" maxlength="4" placeholder="$" style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
                     <label style="font-size:12px;font-weight:800;color:#334155;">Receipt Thank-you Message<input type="text" id="set-receipt-thanks" style="width:100%;padding:9px 11px;margin-top:4px;border:2px solid #e2e8f0;border-radius:9px;box-sizing:border-box;font-family:inherit;font-weight:700;font-size:13px;outline:none;"></label>
@@ -2757,16 +2767,18 @@
       </div>
     </div>
 
-    <div id="print-receipt"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 22px; font-weight: 900;" class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p style="margin: 2px 0; font-size: 16px; font-weight: 900;" id="r-shop-addr">Nagara Brunei Darussalam.</p><p style="margin: 2px 0; font-size: 13px; font-weight: 900;" id="r-company">Company Acc: Al Hussain Enterprise</p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;"><div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="p-taken-by" class="print-ref-strong"></span></div><div id="p-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="p-intake-val" class="print-ref-strong"></span></div><div id="p-cust-info" style="display:none; margin-top:2px;"><b>Customer:</b> <span id="p-cust-name-val"></span><br><b>Phone:</b> <span id="p-cust-phone-val"></span></div><div><b>Pay:</b> <span id="p-method"></span></div><div><b>Date:</b> <span id="p-date"></span> | <b>Time:</b> <span id="p-time"></span></div><div id="p-seated-info" style="display:none; font-size:14px; margin-top:2px;"><b>Seated:</b> <span id="p-seated-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 17px; font-weight: 900; margin-bottom: 6px;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Qty</th><th style="text-align: right; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Price</th></tr></thead><tbody id="p-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="font-size: 17px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span><span class="cur">$</span><span id="p-subtotal">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 900; margin-top: 4px;"><span>TOTAL:</span><span><span class="cur">$</span><span id="p-total">0.00</span></span></div><div style="font-size: 17px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;"><div style="display: flex; justify-content: space-between;"><span>Paid:</span><span><span class="cur">$</span><span id="p-paid">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 19px;"><span>Change:</span><span><span class="cur">$</span><span id="p-change">0.00</span></span></div></div><div style="text-align: center; margin-top: 8px; font-size: 17px; font-weight: 900;"><p id="r-thanks">Thank you! Please come again.</p></div><div id="receipt-kick" style="display:none;"></div></div>
+    <div id="print-receipt"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 22px; font-weight: 900;" class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p style="margin: 2px 0; font-size: 16px; font-weight: 900;" id="r-shop-addr" class="print-shop-addr">Nagara Brunei Darussalam.</p><p style="margin: 2px 0; font-size: 14px; font-weight: 900;" id="r-shop-phone" class="print-shop-phone"></p><p style="margin: 2px 0; font-size: 13px; font-weight: 900;" id="r-company">Company Acc: Al Hussain Enterprise</p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;"><div><b>Type:</b> <span id="p-order-type"></span> | <b>No:</b> <span id="p-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="p-taken-by" class="print-ref-strong"></span></div><div id="p-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="p-intake-val" class="print-ref-strong"></span></div><div id="p-cust-info" style="display:none; margin-top:2px;"><b>Customer:</b> <span id="p-cust-name-val"></span><br><b>Phone:</b> <span id="p-cust-phone-val"></span></div><div><b>Pay:</b> <span id="p-method"></span></div><div><b>Date:</b> <span id="p-date"></span> | <b>Time:</b> <span id="p-time"></span></div><div id="p-seated-info" style="display:none; font-size:14px; margin-top:2px;"><b>Seated:</b> <span id="p-seated-val"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 17px; font-weight: 900; margin-bottom: 6px;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Qty</th><th style="text-align: right; padding: 4px 0; font-size: 17px; font-weight: 900; color: #000;">Price</th></tr></thead><tbody id="p-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="font-size: 17px; font-weight: 900; display: flex; justify-content: space-between;"><span>Subtotal:</span><span><span class="cur">$</span><span id="p-subtotal">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 22px; font-weight: 900; margin-top: 4px;"><span>TOTAL:</span><span><span class="cur">$</span><span id="p-total">0.00</span></span></div><div style="font-size: 17px; font-weight: 900; margin-top: 6px; border-top: 3px solid black; padding-top: 4px;"><div style="display: flex; justify-content: space-between;"><span>Paid:</span><span><span class="cur">$</span><span id="p-paid">0.00</span></span></div><div style="display: flex; justify-content: space-between; font-size: 19px;"><span>Change:</span><span><span class="cur">$</span><span id="p-change">0.00</span></span></div></div><div style="text-align: center; margin-top: 8px; font-size: 17px; font-weight: 900;"><p id="r-thanks">Thank you! Please come again.</p></div><div id="receipt-kick" style="display:none;"></div></div>
     
     <div id="print-kitchen"><div style="text-align: center; margin-bottom: 6px;"><h2 style="margin: 0; font-size: 24px; font-weight: 900;">*** KITCHEN ORDER ***</h2><hr style="border-top: 4px solid black; margin: 4px 0;"></div><div style="font-size: 18px; font-weight: 900; margin-bottom: 8px;"><div><b>Type:</b> <span id="k-order-type"></span> | <b>No:</b> <span id="k-table" class="print-ref-strong"></span></div><div><b>Order By:</b> <span id="k-taken-by" class="print-ref-strong"></span></div><div id="k-intake" style="display:none; margin-top:2px;"><b>Intake:</b> <span id="k-intake-val" class="print-ref-strong"></span></div><div id="k-cust-info" style="display:none; margin-top:2px;"><b>Customer Name:</b> <span id="k-cust-name-val"></span></div><div><b>Date:</b> <span id="k-date"></span> | <b>Time:</b> <span id="k-time"></span></div></div><table style="width: 100%; border-collapse: collapse; font-size: 20px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left; font-size: 20px; font-weight: 900; color: #000;">Item & Notes</th><th style="text-align: center; font-size: 20px; font-weight: 900; color: #000;">Qty</th></tr></thead><tbody id="k-items"></tbody></table></div>
     
     <div id="print-drawer"><div style="text-align: center; font-size: 16px; font-weight: 900;"><p>*** OPEN CASH DRAWER ***</p></div><div id="drawer-kick" style="display:none;"></div></div>
-    <div id="print-sales-history"><div style="text-align: center; margin-bottom: 6px;"><h2 class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p><b>SALES HISTORY REPORT</b></p><p id="print-history-time" style="margin:2px 0; font-size:12px; font-weight:900;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead><tbody id="print-history-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;"><span>TOTAL:</span><span><span class="cur">$</span><span id="print-history-grand-total">0.00</span></span></div></div>
-    <div id="print-day-close"><div style="text-align: center; margin-bottom: 6px;"><h2 class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p><b>DAY CLOSE REPORT</b></p><p id="dc-date" style="margin:2px 0; font-size:13px;"></p><p id="dc-closed-by" style="margin:2px 0; font-size:13px; font-weight:bold;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 15px; font-weight: 900; margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Sales:</span><span><span class="cur">$</span><span id="dc-sales">0.00</span></span></div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Expenses:</span><span><span class="cur">$</span><span id="dc-expenses">0.00</span></span></div><hr style="border-top: 2px dashed black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 18px;"><span>Net Balance:</span><span><span class="cur">$</span><span id="dc-net">0.00</span></span></div><div style="margin-top: 6px; font-size: 13px; border-top: 1px dotted black; padding-top: 4px;"><div style="display:flex; justify-content:space-between;"><span>Cash Sales:</span><span><span class="cur">$</span><span id="dc-cash">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Card Sales:</span><span><span class="cur">$</span><span id="dc-card">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>QR Pay Sales:</span><span><span class="cur">$</span><span id="dc-qr">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Total Bills Count:</span><span id="dc-bills-count">0</span></div></div></div><div><p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>EXPENSES:</b></p><table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900; margin-top: 4px;"><tbody id="dc-expenses-list"></tbody></table></div></div>
+    <div id="print-sales-history"><div style="text-align: center; margin-bottom: 6px;"><h2 class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p class="print-shop-addr" style="margin:2px 0; font-size:12px; font-weight:900;">Nagara Brunei Darussalam.</p><p class="print-shop-phone" style="margin:2px 0; font-size:12px; font-weight:900;"></p><p><b>SALES HISTORY REPORT</b></p><p id="print-history-time" style="margin:2px 0; font-size:12px; font-weight:900;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><table style="width: 100%; border-collapse: collapse; font-size: 14px; font-weight: 900;"><thead><tr style="border-bottom: 3px solid black;"><th style="text-align: left;">Time / Ref</th><th style="text-align: right;">Amount</th></tr></thead><tbody id="print-history-items"></tbody></table><hr style="border-top: 3px solid black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: 900;"><span>TOTAL:</span><span><span class="cur">$</span><span id="print-history-grand-total">0.00</span></span></div></div>
+    <div id="print-day-close"><div style="text-align: center; margin-bottom: 6px;"><h2 class="print-shop-name">AL HUSSAIN RESTAURANT</h2><p class="print-shop-addr" style="margin:2px 0; font-size:12px; font-weight:900;">Nagara Brunei Darussalam.</p><p class="print-shop-phone" style="margin:2px 0; font-size:12px; font-weight:900;"></p><p><b>DAY CLOSE REPORT</b></p><p id="dc-date" style="margin:2px 0; font-size:13px;"></p><p id="dc-closed-by" style="margin:2px 0; font-size:13px; font-weight:bold;"></p><hr style="border-top: 3px solid black; margin: 4px 0;"></div><div style="font-size: 15px; font-weight: 900; margin-bottom: 8px;"><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Sales:</span><span><span class="cur">$</span><span id="dc-sales">0.00</span></span></div><div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><span>Total Expenses:</span><span><span class="cur">$</span><span id="dc-expenses">0.00</span></span></div><hr style="border-top: 2px dashed black; margin: 4px 0;"><div style="display: flex; justify-content: space-between; font-size: 18px;"><span>Net Balance:</span><span><span class="cur">$</span><span id="dc-net">0.00</span></span></div><div style="margin-top: 6px; font-size: 13px; border-top: 1px dotted black; padding-top: 4px;"><div style="display:flex; justify-content:space-between;"><span>Cash Sales:</span><span><span class="cur">$</span><span id="dc-cash">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Card Sales:</span><span><span class="cur">$</span><span id="dc-card">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>QR Pay Sales:</span><span><span class="cur">$</span><span id="dc-qr">0.00</span></span></div><div style="display:flex; justify-content:space-between;"><span>Total Bills Count:</span><span id="dc-bills-count">0</span></div></div></div><div><p style="margin: 2px 0; font-size: 14px; font-weight: 900;"><b>EXPENSES:</b></p><table style="width: 100%; border-collapse: collapse; font-size: 13px; font-weight: 900; margin-top: 4px;"><tbody id="dc-expenses-list"></tbody></table></div></div>
     <div id="print-item-report">
         <div style="text-align: center; margin-bottom: 6px;">
             <h2 style="margin: 0; font-size: 20px; font-weight: 900;" class="print-shop-name">AL HUSSAIN RESTAURANT</h2>
+            <p class="print-shop-addr" style="margin: 2px 0; font-size: 12px; font-weight: 900;">Nagara Brunei Darussalam.</p>
+            <p class="print-shop-phone" style="margin: 2px 0; font-size: 12px; font-weight: 900;"></p>
             <p style="margin: 2px 0; font-size: 14px; font-weight: 900;">DAILY ITEM SOLD REPORT</p>
             <p id="print-item-report-scope" style="margin: 2px 0; font-size: 13px; font-weight: bold;"></p>
             <hr style="border-top: 3px solid black; margin: 4px 0;">
@@ -2794,7 +2806,7 @@
             <p style="margin: 0;">Printed on: <span id="print-item-report-time"></span></p>
         </div>
     </div>
-    <div id="print-qr-batch"><div style="text-align: center; margin-bottom: 20px;"><h2><span class="print-shop-name">AL HUSSAIN RESTAURANT</span> - QR CODES</h2><p id="print-qr-time" style="margin:4px 0 0; font-size:12px; font-weight:900;"></p></div><div id="print-qr-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
+    <div id="print-qr-batch"><div style="text-align: center; margin-bottom: 20px;"><h2><span class="print-shop-name">AL HUSSAIN RESTAURANT</span> - QR CODES</h2><p class="print-shop-addr" style="margin:4px 0; font-size:12px; font-weight:900;">Nagara Brunei Darussalam.</p><p class="print-shop-phone" style="margin:4px 0; font-size:12px; font-weight:900;"></p><p id="print-qr-time" style="margin:4px 0 0; font-size:12px; font-weight:900;"></p></div><div id="print-qr-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;"></div></div>
 
     <div id="table-link-modal">
       <div class="table-link-box">
@@ -2839,11 +2851,12 @@
         // every customer QR phone shows the same shop name, receipt text and
         // currency. Device-only choices stay in localStorage.
         const PUBLIC_DISPLAY_SETTINGS_PATH = 'settings/publicDisplay';
-        const PUBLIC_DISPLAY_KEYS = ['shopName', 'addressLine', 'companyLine', 'receiptThankYou', 'paidThankYou', 'currencySymbol'];
+        const PUBLIC_DISPLAY_KEYS = ['shopName', 'addressLine', 'shopPhone', 'companyLine', 'receiptThankYou', 'paidThankYou', 'currencySymbol'];
 
         const DEFAULT_SETTINGS = {
             shopName: "Al Hussain Restaurant",
             addressLine: "Nagara Brunei Darussalam.",
+            shopPhone: "",
             companyLine: "Company Acc: Al Hussain Enterprise",
             receiptThankYou: "Thank you! Please come again.",
             paidThankYou: "Thank you for dining at Al Hussain!",
@@ -2858,6 +2871,16 @@
                 .replace(/[\u0000-\u001f\u007f]/g, ' ')
                 .trim();
             return clean || DEFAULT_SETTINGS.shopName;
+        }
+
+        // Phone numbers are display text, not a dialling link. Keep +, digits,
+        // spaces and common separators so mobile keyboards can enter "+673 ...".
+        function sanitizeShopPhone(raw) {
+            return String(raw === undefined || raw === null ? '' : raw)
+                .replace(/[^0-9+\-()\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .slice(0, 40);
         }
 
         function sanitizeCurrencySymbol(raw) {
@@ -2899,6 +2922,7 @@
                         merged[k] = (parsed[k] !== undefined) ? parsed[k] : DEFAULT_SETTINGS[k];
                     }
                     merged.shopName = sanitizeShopName(merged.shopName);
+                    merged.shopPhone = sanitizeShopPhone(merged.shopPhone);
                     merged.currencySymbol = sanitizeCurrencySymbol(merged.currencySymbol);
                     return merged;
                 }
@@ -2909,6 +2933,7 @@
         function saveSettings(patch) {
             const next = Object.assign({}, getSettings(), patch);
             next.shopName = sanitizeShopName(next.shopName);
+            next.shopPhone = sanitizeShopPhone(next.shopPhone);
             next.currencySymbol = sanitizeCurrencySymbol(next.currencySymbol);
             localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(next));
             return next;
@@ -2933,9 +2958,11 @@
             PUBLIC_DISPLAY_KEYS.forEach(k => {
                 payload[k] = (k === 'shopName')
                     ? sanitizeShopName(settings[k])
-                    : (k === 'currencySymbol')
-                        ? sanitizeCurrencySymbol(settings[k])
-                        : String(settings[k] === undefined || settings[k] === null ? '' : settings[k]).trim();
+                    : (k === 'shopPhone')
+                        ? sanitizeShopPhone(settings[k])
+                        : (k === 'currencySymbol')
+                            ? sanitizeCurrencySymbol(settings[k])
+                            : String(settings[k] === undefined || settings[k] === null ? '' : settings[k]).trim();
             });
             db.ref(PUBLIC_DISPLAY_SETTINGS_PATH).update(payload).catch(err => {
                 console.warn('Public display settings could not be saved:', err && err.message ? err.message : err);
@@ -2955,6 +2982,8 @@
                 let nextVal;
                 if (k === 'shopName') {
                     nextVal = sanitizeShopName(values[k]);
+                } else if (k === 'shopPhone') {
+                    nextVal = sanitizeShopPhone(values[k]);
                 } else if (k === 'currencySymbol') {
                     nextVal = sanitizeCurrencySymbol(values[k]);
                 } else {
@@ -2984,21 +3013,41 @@
         function applySettingsToUI() {
             const s = getSettings();
             const shopName = sanitizeShopName(s.shopName);
+            const addressLine = String(s.addressLine === undefined || s.addressLine === null ? '' : s.addressLine).trim();
+            const shopPhone = sanitizeShopPhone(s.shopPhone);
+            const contactText = [addressLine, shopPhone].filter(Boolean).join('  •  ');
 
             const headerTitle = document.getElementById('app-header-title');
             // Customer QR screens show the table/order name in the header;
             // never replace it with the shop name when the sync arrives late.
             if (headerTitle && !isCustomerQrUi()) headerTitle.textContent = shopName + " POS";
 
+            const headerContact = document.getElementById('header-shop-contact');
+            if (headerContact) {
+                headerContact.textContent = contactText;
+                headerContact.style.display = contactText ? '' : 'none';
+            }
+
             const loginName = document.getElementById('login-shop-name');
             if (loginName) loginName.textContent = shopName;
+            const loginContact = document.getElementById('login-shop-contact');
+            if (loginContact) {
+                loginContact.textContent = contactText;
+                loginContact.style.display = contactText ? '' : 'none';
+            }
 
             document.querySelectorAll('.print-shop-name').forEach(el => {
                 el.textContent = String(shopName).toUpperCase();
             });
+            document.querySelectorAll('.print-shop-addr').forEach(el => {
+                el.textContent = addressLine;
+                el.style.display = addressLine ? '' : 'none';
+            });
+            document.querySelectorAll('.print-shop-phone').forEach(el => {
+                el.textContent = shopPhone;
+                el.style.display = shopPhone ? '' : 'none';
+            });
 
-            const addr = document.getElementById('r-shop-addr');
-            if (addr) addr.textContent = s.addressLine;
             const comp = document.getElementById('r-company');
             if (comp) comp.textContent = s.companyLine;
             const thanks = document.getElementById('r-thanks');
@@ -3069,6 +3118,7 @@
             const s = getSettings();
             setFieldVal('set-shop-name', s.shopName);
             setFieldVal('set-address-line', s.addressLine);
+            setFieldVal('set-shop-phone', s.shopPhone);
             setFieldVal('set-company-line', s.companyLine);
             setFieldVal('set-receipt-thanks', s.receiptThankYou);
             setFieldVal('set-paid-thanks', s.paidThankYou);
@@ -3096,6 +3146,7 @@
             const next = {
                 shopName: sanitizeShopName(getFieldVal('set-shop-name', s.shopName)),
                 addressLine: getFieldVal('set-address-line', s.addressLine),
+                shopPhone: sanitizeShopPhone(getFieldVal('set-shop-phone', s.shopPhone)),
                 companyLine: getFieldVal('set-company-line', s.companyLine),
                 receiptThankYou: getFieldVal('set-receipt-thanks', s.receiptThankYou),
                 paidThankYou: getFieldVal('set-paid-thanks', s.paidThankYou),
@@ -4481,6 +4532,16 @@
                 data.takenBy === 'Customer QR';
         }
 
+        // One place for the per-account alert switch, used by both the live
+        // banners and the table/takeaway cards. QR orders must follow the QR
+        // switch, not the staff-order switch, on every account.
+        function canReceiveAlertForOrder(data) {
+            if (isCustomerMode || !data) return false;
+            return isCustomerQrAlert(data)
+                ? canReceiveCustomerQrNotifications()
+                : canReceiveOrderNotifications();
+        }
+
         function handleIncomingOrderAlert(type, tableKey, byUser, itemsCount, total, isCustomerQr) {
             if (isCustomerMode) return;
             // Customer QR orders have their own per-account switch and their own
@@ -5472,11 +5533,20 @@
             if (currentTableKey && activeOrders[currentTableKey]) {
                 const ord = activeOrders[currentTableKey];
                 if (ord && ord.items && ord.items.length > 0 && ord.lastDeviceId === posDeviceId) {
-                    if (!ord.sentToKitchen) {
+                    const wasSent = !!ord.sentToKitchen;
+                    // Always check for added quantities, even on an order that was
+                    // sent before. Leaving the table used to skip the round update
+                    // for a re-order, so the extra items never appeared as Round 2.
+                    // The return value survives the 20-round history cap, where the
+                    // list length stays the same even though a new round was added.
+                    const roundAdded = recordKitchenRound(ord, loggedInDisplayName || 'Staff');
+                    if (!wasSent || roundAdded) {
                         ord.sentToKitchen = true;
                         ord.lastUpdatedAt = Date.now();
+                        ord.lastDeviceId = posDeviceId;
+                        ord.lastUpdatedBy = loggedInDisplayName || 'Staff';
                         writeActiveOrder(currentTableKey, ord);
-                        broadcastLiveOrderEvent(currentTableKey, 'order', ord);
+                        broadcastLiveOrderEvent(currentTableKey, wasSent ? 'update' : 'order', ord);
                     }
                 }
             }
@@ -5608,6 +5678,23 @@
             }
 
             switchMobileTab('menu');
+            // First open after upgrading an already-sent order: snapshot its CURRENT
+            // items as Round 1 before anyone adds an extra. Without this, the extra
+            // would be swallowed into the baseline and no Round 2 would appear.
+            if (!isCustomerMode && activeOrders[currentTableKey]) {
+                const openingLegacy = activeOrders[currentTableKey];
+                if ((openingLegacy.sentToKitchen || openingLegacy.customerSent) &&
+                    getCustomerOrderBatches(openingLegacy).length === 0) {
+                    const legacyAt = Date.now();
+                    appendLegacyBaselineRound(
+                        openingLegacy,
+                        legacyAt,
+                        new Date(legacyAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        openingLegacy.takenBy || 'Staff'
+                    );
+                    writeActiveOrder(currentTableKey, openingLegacy);
+                }
+            }
             // Paint the locally cached cart immediately, then refresh this table from
             // Firebase in the background. Waiting for the network here made opening
             // a table feel slow on every click.
@@ -5636,6 +5723,20 @@
                     const freshOrder = freshSnapshot.val();
                     if (freshOrder && typeof freshOrder === 'object' && !isClosedOrder(freshOrder)) {
                         getOrderItemsArray(freshOrder);
+                        // Same legacy protection for the first network snapshot of
+                        // an already-sent table opened after the upgrade.
+                        if ((freshOrder.sentToKitchen || freshOrder.customerSent) &&
+                            getCustomerOrderBatches(freshOrder).length === 0) {
+                            const freshLegacyAt = Date.now();
+                            if (appendLegacyBaselineRound(
+                                freshOrder,
+                                freshLegacyAt,
+                                new Date(freshLegacyAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                freshOrder.takenBy || 'Staff'
+                            )) {
+                                writeActiveOrder(openingKey, freshOrder);
+                            }
+                        }
                         activeOrders[openingKey] = freshOrder;
                     } else {
                         delete activeOrders[openingKey];
@@ -5952,9 +6053,11 @@
                 card.className = `big-table-card ${isOccupied ? 'occupied' : 'free'} ${isLinked ? 'linked-table-card' : ''}`;
                 card.onclick = () => openTable(tableKey);
 
-                let orderAlertData = canReceiveOrderNotifications() ? newCustomerOrderAlerts[tableKey] : null;
-                let isOrderAlertActive = orderAlertData && (!orderAlertData.timestamp || (Date.now() - orderAlertData.timestamp <= ALERT_TIMEOUT_MS));
-                let orderAlert = canReceiveOrderNotifications() && (isOrderAlertActive || (orderData && orderData.customerSent && !orderData.staffAcknowledged && (!orderData.customerSentAt || (Date.now() - orderData.customerSentAt <= ALERT_TIMEOUT_MS))));
+                const rawOrderAlert = newCustomerOrderAlerts[tableKey];
+                const orderAlertAllowed = canReceiveAlertForOrder(rawOrderAlert || orderData);
+                const orderAlertData = orderAlertAllowed ? rawOrderAlert : null;
+                const isOrderAlertActive = orderAlertData && (!orderAlertData.timestamp || (Date.now() - orderAlertData.timestamp <= ALERT_TIMEOUT_MS));
+                let orderAlert = orderAlertAllowed && (isOrderAlertActive || (orderData && orderData.customerSent && !orderData.staffAcknowledged && (!orderData.customerSentAt || (Date.now() - orderData.customerSentAt <= ALERT_TIMEOUT_MS))));
 
                 let waiterAlertData = staffAlerts[tableKey];
                 let waiterAlert = canReceiveWaiterNotifications() && waiterAlertData && (!waiterAlertData.timestamp || (Date.now() - waiterAlertData.timestamp <= ALERT_TIMEOUT_MS));
@@ -5987,14 +6090,20 @@
 
                 // Show the latest customer QR round on the card while the alert is
                 // active, so staff can see WHAT was just added without opening it.
+                const cardBatches = orderData ? getCustomerOrderBatches(orderData) : [];
+                const cardRoundNo = cardBatches.length
+                    ? getOrderRoundNo(cardBatches[cardBatches.length - 1], cardBatches.length - 1)
+                    : 0;
                 let cardNewItemsHtml = '';
                 if (orderAlert && orderData) {
                     const latestBatch = getLatestCustomerOrderBatch(orderData);
-                    if (latestBatch) {
+                    // A baseline is the old balance from before this build, not a
+                    // newly placed round. Never show it as "just added".
+                    if (latestBatch && !latestBatch.baseline) {
                         const shortText = formatCustomerBatchItems(latestBatch.items, 2);
                         const fullText = formatCustomerBatchItems(latestBatch.items);
                         if (shortText) {
-                            cardNewItemsHtml = `<div class="tc-new-items" title="${escapeHtml(fullText)}">➕ ${escapeHtml(shortText)}</div>`;
+                            cardNewItemsHtml = `<div class="tc-new-items" title="${escapeHtml(fullText)}">➕ Round ${cardRoundNo}: ${escapeHtml(shortText)}</div>`;
                         }
                     }
                 }
@@ -6029,6 +6138,7 @@
                                     ${isCustomerTaken ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
                                 </span>
                                 ${intakeBadge}
+                                ${cardRoundNo > 0 ? `<span class="tc-round-chip">🔁 Round ${cardRoundNo}</span>` : ''}
                             </div>
                         </div>` : `
                         <div class="tc-empty">
@@ -6109,10 +6219,18 @@
                         }
 
                         const tkLatestBatch = getLatestCustomerOrderBatch(orderData);
+                        const tkBatches = getCustomerOrderBatches(orderData);
+                        const tkRoundNo = tkBatches.length
+                            ? getOrderRoundNo(tkBatches[tkBatches.length - 1], tkBatches.length - 1)
+                            : 0;
                         const tkBatchAlert = newCustomerOrderAlerts[key];
-                        const tkBatchAlertActive = tkBatchAlert && (!tkBatchAlert.timestamp || (Date.now() - tkBatchAlert.timestamp <= ALERT_TIMEOUT_MS));
-                        const tkNewItemsText = (tkBatchAlertActive && tkLatestBatch) ? formatCustomerBatchItems(tkLatestBatch.items, 2) : '';
-                        const tkNewItemsFull = (tkBatchAlertActive && tkLatestBatch) ? formatCustomerBatchItems(tkLatestBatch.items) : '';
+                        const tkAlertAllowed = canReceiveAlertForOrder(tkBatchAlert || orderData);
+                        const tkBatchAlertActive = tkAlertAllowed && tkBatchAlert && (!tkBatchAlert.timestamp || (Date.now() - tkBatchAlert.timestamp <= ALERT_TIMEOUT_MS));
+                        // Baseline rounds are an old saved balance, not a fresh QR
+                        // re-order, so they must never appear as "just added".
+                        const tkFreshBatch = tkBatchAlertActive && tkLatestBatch && !tkLatestBatch.baseline ? tkLatestBatch : null;
+                        const tkNewItemsText = tkFreshBatch ? formatCustomerBatchItems(tkFreshBatch.items, 2) : '';
+                        const tkNewItemsFull = tkFreshBatch ? formatCustomerBatchItems(tkFreshBatch.items) : '';
 
                         card.innerHTML = `
                             <div class="takeaway-order-head">
@@ -6124,7 +6242,7 @@
                             </div>
                             ${custInfoHtml}
                             ${waitBannerHtml}
-                            ${tkNewItemsText ? `<div class="tc-new-items" title="${escapeHtml(tkNewItemsFull)}">➕ ${escapeHtml(tkNewItemsText)}</div>` : ''}
+                            ${tkNewItemsText ? `<div class="tc-new-items" title="${escapeHtml(tkNewItemsFull)}">➕ Round ${tkRoundNo}: ${escapeHtml(tkNewItemsText)}</div>` : ''}
                             <p class="takeaway-total">${curSym()}${orderTotal.toFixed(2)} <small>(${itemCount} Items)</small></p>
                             ${tkWaBtnHtml}
                             <div class="takeaway-foot">
@@ -6132,6 +6250,7 @@
                                     ${(orderData.takenBy === 'Customer' || orderData.takenBy === 'Customer QR') ? '📱 Customer Order' : ('👤 ' + (orderData.takenBy || 'Staff'))}
                                 </span>
                                 ${orderData.orderIntake ? ' ' + getOrderIntakeBadgeHtml(orderData.orderIntake) : ''}
+                                ${tkRoundNo > 0 ? `<span class="tc-round-chip" style="font-size:10px; padding:2px 7px;">🔁 Round ${tkRoundNo}</span>` : ''}
                             </div>
                         `;
                         takeawayCards.push(card);
@@ -7488,9 +7607,10 @@
             flashLiveSyncSuccess();
         }
 
-        // ---- Customer QR order rounds (new vs old) -------------------------
-        // Every customer "Send Order" appends one batch to the table order, so
-        // staff can see exactly what was just added and what was ordered before.
+        // ---- Order rounds (new vs old) -------------------------------------
+        // Every "send to kitchen" (customer QR or staff) appends one batch to the
+        // table order, so staff can see exactly what was just added and what was
+        // ordered before.
         function getCustomerOrderBatches(order) {
             if (!order || !Array.isArray(order.customerOrderBatches)) return [];
             return order.customerOrderBatches.filter(b => b && Array.isArray(b.items) && b.items.length > 0);
@@ -7499,6 +7619,180 @@
         function getLatestCustomerOrderBatch(order) {
             const batches = getCustomerOrderBatches(order);
             return batches.length ? batches[batches.length - 1] : null;
+        }
+
+        // Round numbers are persisted on every batch so the label stays correct
+        // when the 20-round history cap drops the oldest entries. Batches saved
+        // by older builds have no roundNo: they fall back to their 1-based
+        // position, which matches the numbers assigned to the new rounds.
+        function getOrderRoundNo(batch, index) {
+            const n = Number(batch && batch.roundNo);
+            if (Number.isFinite(n) && n > 0) return Math.floor(n);
+            return (Number(index) || 0) + 1;
+        }
+
+        function getNextOrderRoundNo(order) {
+            const batches = getCustomerOrderBatches(order);
+            const maxBatchNo = batches.reduce((max, b) => {
+                const n = Number(b && b.roundNo);
+                return Number.isFinite(n) && n > 0 ? Math.max(max, Math.floor(n)) : max;
+            }, 0);
+            const seq = Number(order && order.roundSeq);
+            return Math.max(maxBatchNo, Number.isFinite(seq) ? Math.floor(seq) : 0, batches.length) + 1;
+        }
+
+        // Live orders from the previous build have rounds but no saved numbers.
+        // Stamp them before the 20-round cap starts dropping history, otherwise
+        // the surviving rounds would be renumbered from 1 on screen.
+        function ensureOrderRoundNumbers(order) {
+            const batches = getCustomerOrderBatches(order);
+            let maxNo = 0;
+            batches.forEach((b, i) => {
+                const n = Number(b && b.roundNo);
+                if (Number.isFinite(n) && n > 0) maxNo = Math.max(maxNo, Math.floor(n));
+                else b.roundNo = i + 1;
+            });
+            const seq = Number(order && order.roundSeq);
+            const savedSeq = Number.isFinite(seq) ? Math.floor(seq) : 0;
+            if (batches.length || savedSeq) {
+                order.roundSeq = Math.max(savedSeq, maxNo, batches.length);
+            }
+            return batches;
+        }
+
+        // Move/link merges combine two histories. Renumber the merged list so
+        // two tables cannot both contribute "Round 2" to the same order.
+        function renumberOrderRounds(order) {
+            const batches = getCustomerOrderBatches(order);
+            batches.forEach((b, i) => { b.roundNo = i + 1; });
+            if (batches.length) order.roundSeq = batches.length;
+            return batches;
+        }
+
+        // A batch line only stores id/name/qty, which cannot tell two variants of
+        // the same menu item apart (same id, different add-ons or notes). New
+        // rounds store this stable signature too, so a NEW/OLD badge can never
+        // count another variant's quantity on the wrong cart line.
+        function getOrderLineSignature(line) {
+            if (!line) return '';
+            const options = (line.options && typeof line.options === 'object') ? line.options : {};
+            const notes = (line.notes && typeof line.notes === 'object') ? line.notes : {};
+            const optionParts = Object.keys(options).sort().map(k => {
+                const o = options[k] || {};
+                return [
+                    String(k),
+                    String(o.name || ''),
+                    Math.round((Number(o.price) || 0) * 100) / 100,
+                    Number(o.qty) || 0
+                ];
+            });
+            const noteParts = Object.keys(notes).filter(k => notes[k]).sort();
+            // Use the same effective price as getItemLineTotal so the signature
+            // stays identical whether or not renderCart already filled customPrice
+            // in from price. Without this, a not-yet-rendered legacy line and the
+            // same line after rendering would produce different signatures.
+            const basePrice = Number(line.customPrice != null ? line.customPrice : line.price) || 0;
+            return JSON.stringify([
+                optionParts,
+                noteParts,
+                String(line.comment || ''),
+                Math.round(basePrice * 100) / 100
+            ]);
+        }
+
+        // An order that was already sent by the previous build has items but no
+        // rounds and no per-line sentQty. Take the items on the table as a
+        // baseline round instead of showing the whole order as a fake NEW round.
+        // Returns true only when this call handled the legacy order.
+        function appendLegacyBaselineRound(order, roundAt, roundTimeStr, byLabel) {
+            if (!order) return false;
+            const batches = getCustomerOrderBatches(order);
+            if (batches.length > 0 || order.legacySentBaseline) return false;
+            if (!(order.sentToKitchen || order.customerSent)) return false;
+            const baselineItems = [];
+            let baselineTotal = 0;
+            getOrderItemsArray(order).forEach(it => {
+                if (!it || !it.name) return;
+                const qty = Math.max(0, Number(it.qty) || 0);
+                if (!qty) return;
+                it.sentQty = qty;
+                baselineItems.push({
+                    id: it.id != null ? String(it.id) : '',
+                    name: String(it.name),
+                    qty,
+                    note: getItemNotesList(it).join(', '),
+                    sig: getOrderLineSignature(it)
+                });
+                baselineTotal += getItemLineTotal(it);
+            });
+            order.legacySentBaseline = true;
+            if (!baselineItems.length) return true;
+            const baselineRoundNo = getNextOrderRoundNo(order);
+            const baselineAt = Number(order.seatedAt) || Number(order.customerSentAt) ||
+                Number(order.sentToKitchenAt) || roundAt;
+            const baselineTimeStr = order.seatedTime || order.customerSentTime || roundTimeStr;
+            order.customerOrderBatches = batches.concat([{
+                roundNo: baselineRoundNo,
+                at: baselineAt,
+                timeStr: baselineTimeStr,
+                items: baselineItems,
+                total: Math.round(baselineTotal * 100) / 100,
+                by: order.takenBy || byLabel || 'Staff',
+                baseline: true
+            }]).slice(-20);
+            order.roundSeq = baselineRoundNo;
+            return true;
+        }
+
+        // Records the quantities added since the previous send as one round and
+        // marks every line as sent. Returns true when a round was appended.
+        // Used by staff "Send to Kitchen" and auto-save.
+        function recordKitchenRound(order, byLabel) {
+            if (!order) return false;
+            const roundAt = Date.now();
+            const roundTimeStr = new Date(roundAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const batches = ensureOrderRoundNumbers(order);
+            // Legacy order sent by the previous build: record the current items
+            // as a baseline, never as a fake NEW round.
+            if (appendLegacyBaselineRound(order, roundAt, roundTimeStr, byLabel)) {
+                return getCustomerOrderBatches(order).length > batches.length;
+            }
+            const roundItems = [];
+            let roundTotal = 0;
+            getOrderItemsArray(order).forEach(it => {
+                if (!it || !it.name) return;
+                const qty = Math.max(0, Number(it.qty) || 0);
+                if (!qty) return;
+                if (it.sentQty == null) {
+                    // Lines saved before sentQty tracking existed: trust what the
+                    // recorded rounds already cover; anything beyond that is new.
+                    it.sentQty = Math.min(qty, batches.reduce((sum, b) => sum + getCustomerBatchQtyForItem(b, it), 0));
+                }
+                const alreadySent = Math.max(0, Math.min(qty, Number(it.sentQty) || 0));
+                const addedQty = Math.round((qty - alreadySent) * 100) / 100;
+                it.sentQty = qty;
+                if (addedQty <= 0) return;
+                roundItems.push({
+                    id: it.id != null ? String(it.id) : '',
+                    name: String(it.name),
+                    qty: addedQty,
+                    note: getItemNotesList(it).join(', '),
+                    sig: getOrderLineSignature(it)
+                });
+                roundTotal += getItemLineTotal(it) * (addedQty / qty);
+            });
+            if (roundItems.length === 0) return false;
+            const roundNo = getNextOrderRoundNo(order);
+            order.customerOrderBatches = batches.concat([{
+                roundNo: roundNo,
+                at: roundAt,
+                timeStr: roundTimeStr,
+                items: roundItems,
+                total: Math.round(roundTotal * 100) / 100,
+                by: byLabel || 'Staff'
+            }]).slice(-20);
+            order.roundSeq = roundNo;
+            return true;
         }
 
         function formatCustomerBatchItems(items, maxItems) {
@@ -7518,6 +7812,7 @@
             if (!batch || !item) return 0;
             const itemId = item.id != null ? String(item.id) : '';
             const itemName = String(item.name || '').trim().toLowerCase();
+            const itemSig = getOrderLineSignature(item);
             return (batch.items || []).reduce((sum, bi) => {
                 if (!bi) return sum;
                 const bId = bi.id != null ? String(bi.id) : '';
@@ -7526,8 +7821,25 @@
                 // legacy lines that were saved before ids were assigned.
                 const sameLine = (itemId && bId) ? (itemId === bId) : (!!itemName && itemName === bName);
                 if (!sameLine) return sum;
+                // New rounds carry a variant signature. Old rounds do not, so they
+                // keep the previous id/name matching for backwards compatibility.
+                if (bi.sig && String(bi.sig) !== itemSig) return sum;
                 return sum + (Number(bi.qty) || 0);
             }, 0);
+        }
+
+        // How much of a line is already "sent" when two orders are merged/moved.
+        // A line with no sentQty may be a fresh never-sent line (keep it new) or a
+        // pre-tracking line from an order that was already sent (trust the rounds).
+        function defaultSentQtyForMerge(line, order) {
+            const qty = Math.max(0, Number(line.qty) || 0);
+            if (line.sentQty != null) return Math.max(0, Number(line.sentQty) || 0);
+            const ownBatches = (order && Array.isArray(order.customerOrderBatches)) ? order.customerOrderBatches : [];
+            if (ownBatches.length > 0) {
+                const cover = ownBatches.reduce((sum, b) => sum + getCustomerBatchQtyForItem(b, line), 0);
+                return Math.min(qty, cover);
+            }
+            return (order && (order.sentToKitchen || order.customerSent)) ? qty : 0;
         }
 
         function renderCustomerOrderRounds(order) {
@@ -7544,15 +7856,18 @@
                 el.innerHTML = '';
                 return;
             }
-            const newestFirst = batches.slice().reverse();
-            el.innerHTML = `<div class="cust-rounds-head"><strong>📱 Customer QR Orders</strong><span>${batches.length} round${batches.length === 1 ? '' : 's'}</span></div>` +
-                newestFirst.map((b, idx) => {
-                    const isNew = idx === 0;
+            const latestRoundNo = getOrderRoundNo(batches[batches.length - 1], batches.length - 1);
+            const newestFirst = batches.map((b, i) => ({ b, roundNo: getOrderRoundNo(b, i) })).reverse();
+            el.innerHTML = `<div class="cust-rounds-head"><strong>🔁 Order Rounds</strong><span>Latest: Round ${latestRoundNo} • ${batches.length} round${batches.length === 1 ? '' : 's'}</span></div>` +
+                newestFirst.map((entry, idx) => {
+                    const b = entry.b;
+                    const isNew = idx === 0 && !b.baseline;
                     const itemsText = formatCustomerBatchItems(b.items);
+                    const byText = b.by ? ` • ${escapeHtml(String(b.by))}` : '';
                     return `<div class="cust-round">
                         <div class="cust-round-head">
-                            <span class="cust-round-tag ${isNew ? 'new' : 'old'}">${isNew ? 'NEW' : 'OLD'}</span>
-                            <span class="cust-round-time">${escapeHtml(b.timeStr || '')}</span>
+                            <span class="cust-round-tag ${isNew ? 'new' : 'old'}">ROUND ${entry.roundNo} • ${isNew ? 'NEW' : 'OLD'}</span>
+                            <span class="cust-round-time">${escapeHtml(b.timeStr || '')}${byText}</span>
                             <span class="cust-round-total">${curSym()}${Number(b.total || 0).toFixed(2)}</span>
                         </div>
                         <div class="cust-round-items">${escapeHtml(itemsText)}</div>
@@ -7595,7 +7910,13 @@
             const totalItemCount = items.reduce((s, x) => s + (Number(x.qty) || 1), 0);
 
             renderCustomerOrderRounds(order);
-            const latestCustomerBatch = getLatestCustomerOrderBatch(order);
+            const customerBatches = getCustomerOrderBatches(order);
+            const latestCustomerBatch = customerBatches.length ? customerBatches[customerBatches.length - 1] : null;
+            const latestIsBaseline = !!(latestCustomerBatch && latestCustomerBatch.baseline);
+            const earlierCustomerBatches = latestIsBaseline ? customerBatches : customerBatches.slice(0, -1);
+            const latestRoundNo = latestCustomerBatch
+                ? getOrderRoundNo(latestCustomerBatch, customerBatches.length - 1)
+                : 0;
 
             const mobBadge = document.getElementById('mob-cart-badge');
             const deskBadge = document.getElementById('desktop-cart-badge');
@@ -7637,9 +7958,21 @@
                 const tkQty = Math.max(0, Math.min(totalQty, Number(item.takeawayQty) || 0));
                 const tr = document.createElement('tr');
                 const lineTotal = getItemLineTotal(item);
-                const newFromCustomer = (!isCustomerMode && latestCustomerBatch)
-                    ? getCustomerBatchQtyForItem(latestCustomerBatch, item)
+                const newFromCustomer = (!isCustomerMode && latestCustomerBatch && !latestIsBaseline)
+                    ? Math.min(totalQty, getCustomerBatchQtyForItem(latestCustomerBatch, item))
                     : 0;
+                const oldFromRounds = (!isCustomerMode && earlierCustomerBatches.length)
+                    ? Math.min(
+                        Math.max(0, totalQty - newFromCustomer),
+                        earlierCustomerBatches.reduce((sum, b) => sum + getCustomerBatchQtyForItem(b, item), 0)
+                    )
+                    : 0;
+                const oldRoundNos = oldFromRounds > 0
+                    ? earlierCustomerBatches.map((b, idx) => ({
+                        no: getOrderRoundNo(b, idx),
+                        qty: getCustomerBatchQtyForItem(b, item)
+                    })).filter(x => x.qty > 0).map(x => x.no)
+                    : [];
 
                 const catOpts = getOptionsForItem(item);
 
@@ -7695,7 +8028,7 @@
 
                 tr.innerHTML = `
                     <td>
-                        <div class="cart-item-name">${item.name}${newFromCustomer > 0 ? ` <span class="cart-new-badge" title="Added by customer at ${escapeHtml(latestCustomerBatch.timeStr || '')}">NEW +${newFromCustomer}</span>` : ''}</div>
+                        <div class="cart-item-name">${item.name}${newFromCustomer > 0 ? ` <span class="cart-new-badge" title="Added in Round ${latestRoundNo} at ${escapeHtml(latestCustomerBatch.timeStr || '')}${latestCustomerBatch.by ? ' by ' + escapeHtml(String(latestCustomerBatch.by)) : ''}">NEW R${latestRoundNo} +${newFromCustomer}</span>` : ''}${oldFromRounds > 0 ? ` <span class="cart-old-badge" title="Ordered in ${oldRoundNos.length === 1 ? 'Round ' + oldRoundNos[0] : 'Rounds ' + oldRoundNos.join(', ')}">OLD ${oldFromRounds}</span>` : ''}</div>
                         ${customOptsHtml}
                         ${isDedicatedTakeaway ? `
                         <div style="margin-top: 5px; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 6px; background: #fffbeb; border: 1.5px solid #fde68a; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; color: #b45309;">
@@ -7883,7 +8216,6 @@
                 order.customerPhone = sessionStorage.getItem("myTkPhone") || order.customerPhone || "";
             }
 
-            const isUpdate = !!(order.customerSent && order.customerSentAt);
             order.customerSent = true;
             order.customerSentAt = Date.now();
             order.customerSentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -7916,11 +8248,16 @@
                     id: it.id != null ? String(it.id) : '',
                     name: String(it.name),
                     qty: Number(it.qty) || 0,
-                    note: getItemNotesList(it).join(', ')
+                    note: getItemNotesList(it).join(', '),
+                    sig: getOrderLineSignature(it)
                 }));
             const customerBatchTotal = Math.round(
                 submittedItems.reduce((sum, it) => sum + getItemLineTotal(it), 0) * 100
             ) / 100;
+            // A fresh QR scan starts with customerSent=false in its private draft,
+            // so the local flag cannot tell a re-order from a first order. Decide
+            // from the shared order inside the transaction instead.
+            let qrOrderIsUpdate = false;
             // A Firebase transaction serializes simultaneous sends from different phones.
             // Merge only this phone's private draft into the latest shared table order.
             db.ref("activeOrders/" + tableKeyForSend).transaction(current => {
@@ -7937,6 +8274,14 @@
                     seatedAt: submittedOrderMeta.seatedAt || Date.now(),
                     seatedTime: submittedOrderMeta.seatedTime || new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
                 };
+                // An active order from the previous build has no rounds. Snapshot
+                // its existing items as Round 1 before this scan is appended, so a
+                // customer QR re-order never labels the whole table as NEW.
+                appendLegacyBaselineRound(latest, customerBatchAt, customerBatchTime, latest.takenBy || "Customer QR");
+                // Sent flags cover normal QR re-orders; a baseline/staff-sent order
+                // with rounds is also an update because this scan becomes Round 2.
+                qrOrderIsUpdate = !!(latest.customerSent || latest.sentToKitchen) ||
+                    getCustomerOrderBatches(latest).length > 0;
                 const merged = { ...latest };
                 const mergedItems = Array.isArray(latest.items) ? latest.items.map(it => ({ ...it })) : [];
                 submittedItems.forEach(incoming => {
@@ -7956,10 +8301,13 @@
                         String(it.id) === String(incoming.id) && variantKey(it) === incomingVariant
                     );
                     if (existing) {
-                        existing.qty = (Number(existing.qty) || 0) + qty;
+                        const priorQty = Number(existing.qty) || 0;
+                        const priorSentQty = defaultSentQtyForMerge(existing, latest);
+                        existing.qty = priorQty + qty;
+                        existing.sentQty = priorSentQty + qty;
                         if (incoming.takeawayQty) existing.takeawayQty = (Number(existing.takeawayQty) || 0) + Number(incoming.takeawayQty || 0);
                     } else {
-                        mergedItems.push({ ...incoming, qty });
+                        mergedItems.push({ ...incoming, qty, sentQty: qty });
                     }
                 });
                 merged.items = mergedItems;
@@ -7983,20 +8331,25 @@
                 }
                 // Append this scan as a numbered round (newest last) so the staff
                 // screen can separate "NEW" items from the earlier "OLD" rounds.
-                const previousBatches = Array.isArray(latest.customerOrderBatches) ? latest.customerOrderBatches : [];
+                const previousBatches = Array.isArray(latest.customerOrderBatches)
+                    ? ensureOrderRoundNumbers(latest)
+                    : [];
+                const nextRoundNo = getNextOrderRoundNo(latest);
                 merged.customerOrderBatches = previousBatches.concat([{
+                    roundNo: nextRoundNo,
                     at: customerBatchAt,
                     timeStr: customerBatchTime,
                     items: customerBatchItems,
                     total: customerBatchTotal,
-                    isUpdate: !!isUpdate,
+                    isUpdate: qrOrderIsUpdate,
                     by: "Customer QR"
                 }]).slice(-20);
+                merged.roundSeq = nextRoundNo;
                 return merged;
             }).then(result => {
                 if (!result.committed) throw new Error("Order could not be saved. Please try again.");
                 const savedOrder = result.snapshot.val() || order;
-                broadcastLiveOrderEvent(tableKeyForSend, isUpdate ? "update" : "order", savedOrder, {
+                broadcastLiveOrderEvent(tableKeyForSend, qrOrderIsUpdate ? "update" : "order", savedOrder, {
                     items: customerBatchItems,
                     total: customerBatchTotal,
                     timeStr: customerBatchTime
@@ -8087,6 +8440,7 @@
                 return alert("No items in cart to send! Please add items first.");
             }
             const isUpdate = !!(order.sentToKitchen || order.customerSent);
+            recordKitchenRound(order, loggedInDisplayName || 'Staff');
             order.sentToKitchen = true;
             order.sentToKitchenAt = Date.now();
             order.lastUpdatedAt = Date.now();
@@ -8825,7 +9179,7 @@
         // origin (anvar3842-creator.github.io). Keep these names branch-specific.
         const CUSTOMER_DISPLAY_CHANNEL = 'al_hussain_customer_display_branch2_v1';
         const CUSTOMER_DISPLAY_STORAGE = 'al_hussain_customer_display_state_branch2';
-        const CUSTOMER_DISPLAY_DONE_MS = 15000;
+        const CUSTOMER_DISPLAY_DONE_MS = 60000;
 
         let customerDisplayChannel = null;
         let customerDisplayIdleTimer = null;
@@ -9288,6 +9642,16 @@
                     if (paidOrderKey && currentTableKey === paidOrderKey) {
                         renderCart({ skipInputSync: true });
                     }
+                    // The "thank you" already went out optimistically; take it back
+                    // so the customer screen does not claim a payment that failed.
+                    pushCustomerDisplayState({
+                        type: 'pay',
+                        total: grand,
+                        paid: paid,
+                        change: change,
+                        method: chosenPaymentMethod,
+                        table: paidOrderKey || ''
+                    });
                     alert('Payment could not be saved. Please check the connection — the table has been restored so you can try again.');
                 });
 
@@ -9385,9 +9749,31 @@
                 }
                 currentOrder.items.forEach(it => {
                     let ex = destOrder.items.find(x => x.id === it.id);
-                    if (ex) ex.qty += it.qty;
-                    else destOrder.items.push(it);
+                    if (ex) {
+                        const priorQty = Number(ex.qty) || 0;
+                        const incomingQty = Number(it.qty) || 0;
+                        const incomingSentQty = defaultSentQtyForMerge(it, currentOrder);
+                        const priorSentQty = defaultSentQtyForMerge(ex, destOrder);
+                        ex.qty = priorQty + incomingQty;
+                        ex.sentQty = priorSentQty + incomingSentQty;
+                    } else {
+                        const moved = { ...it };
+                        moved.sentQty = defaultSentQtyForMerge(it, currentOrder);
+                        destOrder.items.push(moved);
+                    }
                 });
+                const combinedBatches = [];
+                [destOrder, currentOrder].forEach(o => {
+                    (Array.isArray(o.customerOrderBatches) ? o.customerOrderBatches : []).forEach(b => {
+                        if (b && Array.isArray(b.items) && b.items.length) combinedBatches.push(b);
+                    });
+                });
+                if (combinedBatches.length) {
+                    destOrder.customerOrderBatches = combinedBatches
+                        .sort((a, b) => (Number(a.at) || 0) - (Number(b.at) || 0))
+                        .slice(-20);
+                    renumberOrderRounds(destOrder);
+                }
                 writeActiveOrder(targetMoveDestination, destOrder).then(result => {
                     if (!isCustomerMode && (!result || result.committed !== false)) {
                         clearActiveOrder(sourceKey, currentOrder);
@@ -9504,10 +9890,16 @@
                             const incomingVariant = variantKey(incoming);
                             const existing = mergedItems.find(it => String(it.id) === String(incoming.id) && variantKey(it) === incomingVariant);
                             if (existing) {
-                                existing.qty = (Number(existing.qty) || 0) + qty;
+                                const priorQty = Number(existing.qty) || 0;
+                                const incomingSentQty = defaultSentQtyForMerge(incoming, slaveOrder);
+                                const priorSentQty = defaultSentQtyForMerge(existing, masterOrder);
+                                existing.qty = priorQty + qty;
+                                existing.sentQty = priorSentQty + incomingSentQty;
                                 if (incoming.takeawayQty) existing.takeawayQty = (Number(existing.takeawayQty) || 0) + Number(incoming.takeawayQty || 0);
                             } else {
-                                mergedItems.push({ ...incoming, qty });
+                                const newLine = { ...incoming, qty };
+                                newLine.sentQty = defaultSentQtyForMerge(incoming, slaveOrder);
+                                mergedItems.push(newLine);
                             }
                         });
 
@@ -9534,6 +9926,19 @@
 
                         updates['activeOrders/' + slaveKey] = null;
                     });
+
+                    const combinedBatches = [];
+                    [masterOrder, ...slaveEntries.map(([, o]) => o)].forEach(o => {
+                        (o && Array.isArray(o.customerOrderBatches) ? o.customerOrderBatches : []).forEach(b => {
+                            if (b && Array.isArray(b.items) && b.items.length) combinedBatches.push(b);
+                        });
+                    });
+                    if (combinedBatches.length) {
+                        merged.customerOrderBatches = combinedBatches
+                            .sort((a, b) => (Number(a.at) || 0) - (Number(b.at) || 0))
+                            .slice(-20);
+                        renumberOrderRounds(merged);
+                    }
 
                     merged.customerSent = anyCustomerSent;
                     merged.lastUpdatedAt = Date.now();
